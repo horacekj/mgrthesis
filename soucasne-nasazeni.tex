@@ -141,3 +141,73 @@ kolejiště.
 \caption{Schéma komponent řízení kolejiště v \gls{kmz}.}
 \label{fig:railroad-topology}
 \end{figure}
+
+Autor si rovnou dovolí uvést, že komplikovanější systém řízení modelového
+kolejiště snad nemá v Česku a na Slovensku obdobu. Na první pohled je vidět,
+že kolejiště je řízeno dvěma různými systémy a vyvstává otázka, proč je
+neintegrovat do systémy jednoho. Taková řešení existují a mnozí modeláři
+i modelářské kluby je používají. Jsou hojně podporována komerčními softwary,
+jsou nasazená na velkých modelových kolejištích například v Hamburku a ve Vídni
+\cite{}. Všechna tato řešení jsou však o kompromisech. U tvorby a nasazení
+systému \gls{mtb} stály osoby, které pracují na zabezpečení skutečné železnice.
+Systém \gls{mtb} je tak oproti komerčně dostupným řešením řízení modelových
+kolejišť navrhován s důrazem na spolehlivost a především bezpečnost.
+
+Uveďme jeden příklad za všechny: komerčně využívaná sběrnice RS pro snímání
+stavu kolejiště nedokáže rozpoznat, že nějaký z RS modulů přestal fungovat.
+Výstupní členy nijak nepotvrzují, že opravdu provedly akci, kterou počítač
+požaduje. Tyto příklady ilustrují, že komerčně dostupná řešení jsou podle
+autorova názoru spíš hračkou, než bezpečným a spolehlivým systémem pro řízení
+drahých modelů. Dovedete si představit, že by někdo ne skutečnou železnici
+nasadil systém, který by v krajní situaci nesprávně vyhodnotil volnost koleje,
+i když na ni stojí vlak?
+
+\section{Proč současný systém \gls{mtb} nedostačuje} \label{sec:mtb_fail}
+
+Systém \gls{mtb} s sebou nese řadu problémů.
+
+\begin{enumerate}
+\item \textbf{Licence, výrobní data}
+
+U současné implementace systému \gls{mtb} bohužel nebyly řádně vyřešeny licenční
+podmínky mezi jeho autorem a klubem. Souhrou událostí se \gls{kmz} dostal do
+situace, kdy nemáme zdrojová data schémat a layoutů desek plošných spojů ani
+zdrojové kódy firmwarů.
+
+\item \textbf{Hardware}
+
+Systém \gls{mtb} zaznamenal poslední aktualizaci hardwarových komponent v roce
+2007. V současné době jsou některé použité součástky bohužel prakticky
+nesehnatelné, což znemožňuje výstavbu dalších částí kolejiště. To je zcela
+zásadní problém.
+
+\item \textbf{Software}
+
+V současných deskách MTB se využívají procesory \textit{AT89C2051} (2~kB FLASH,
+128~B SRAM). Tyto procesory jsou poplatné době návrhu celého systému. Nejsou
+k dispozici zdrojové kódy firmwarů v procesorech a navíc firmware v nich
+naráží na hardwarové limity procesorů. Do procesoru se jednoduše nevejde další
+logika, což efektivně zabraňuje přidání nových funkcí desek. Procesorům navíc
+chybí některé klíčové periferie, například EEPROM paměť.
+
+\end{enumerate}
+
+Současný systém \gls{mtb} byl vyhodnocen jako celkově nedostatečný, je potřeba
+ho buď aktualizovat nebo nahradit za systém jiný.
+
+Při hledání alternativ si autor práce stanovil především tyto požadavky:
+
+\begin{compactenum}
+\item Systém musí být kompatibilní se současným řídicím softwarem kolejiště.
+\item Systém musí být udržitelný minimálně 20 let.
+\item Finanční náklady a čas vložený do povýšení současného systému na nový
+	systém by měly být minimalizovány.
+\item Systém musí být schopen potvrzovat akce řídicího počítače a evidovat správnou
+	funkčnost modulů.
+\item Systém by měl být rozšiřitelný co se týče podporované funkcionality –
+	nové požadavky na funkcionalitu by mělo být možné implementovat.
+\end{compactenum}
+
+K naplnění těchto požadavků lze přistoupit dvěma odlišnými cestami: zakoupením
+komerčního produktu a vytvořením produktu vlastního. Uveďme nejprve, jaká komerční
+řešení jsou pro naši aplikaci vhodná.
