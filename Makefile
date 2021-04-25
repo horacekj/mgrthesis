@@ -4,7 +4,7 @@ PDFLATEX=pdflatex --shell-escape
 AUXFILES=*.aux *.log *.out *.toc *.lot *.lof *.bcf *.blg *.run.xml \
          *.bbl *.idx *.ind *.ilg *.markdown.* *.acn *.acr *.alg *.glg *.glo \
          *.gls *.glsdefs *.ist
-PARTS=
+PARTS=$(wildcard *.tex)
 DATA=$(wildcard data/*)
 
 .PHONY: all clean wipe

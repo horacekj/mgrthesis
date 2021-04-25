@@ -28,6 +28,7 @@ Poznámky k diplomce
   - Udržitelnost
   - Firmware upgrade
   - Beacon
+  - IR per vstup
 
 ## Existující řešení
 
