@@ -17,6 +17,9 @@ modul řídí provoz na celé sběrnici, ostatní \gls{mtb} moduly pouze odpoví
 na příkazy \textit{MTB-USB} modulu. Říkáme, že sběrnice je \textit{single
 master, multiple slaves} \ref{fig:mtbbus-topology}.
 
+Každý modul má svou 8bitovou adresu, která se konfiguruje jumpery přímo na
+modulu.
+
 \begin{figure}[ht]
 \includegraphics[width=0.7\textwidth]{data/mtb-topology.pdf}
 \caption{Topologie systému \gls{mtb}.}
@@ -102,8 +105,39 @@ Na sběrnici mohou být \gls{mtb} moduly různého typu:
 
 \end{itemize}
 
+\begin{figure}[ht]
+\includegraphics[width=0.7\textwidth]{data/mtbttl_foto.jpg}
+\caption{Ukázka modulu MTB-TTL \cite{mtb:web}.}
+\label{fig:mtbttl}
+\end{figure}
+
+Po sběrnici se komunikuje definovaným protokolem \cite{mtbbus-proto}. Protokol
+definuje příkazy pro moduly, odpovědi modulů, časování apod.
+
+Práce se sběrnicí z pohledu aplikace v počítači probíhá následovně:
+
+\begin{compactenum}
+\item Připojit se k MTB-USB modulu.
+\item Provést sken aktivních modulů sběrnice.
+\item Nahrát do všech aktivních modulů konfiguraci.
+\item Přečíst stav vstupů.
+\item Zahájit provoz – od teď všechny moduly nahlašují změnu stavu vstupu.
+\item Číst vstupy, nastavovat výstupy.
+\item Ukončit komunikaci.
+\item Uzavřít spojení s MTB-USB.
+\end{compactenum}
+
 \section{Systém \gls{mtb} v kontextu řízení celého kolejiště} \label{sec:mtb_context}
 
 V \gls{kmz} je aktuálně systém \gls{mtb} nasazen na dvou kolejištích, další
 nasazení je na modulovém kolejišti Mendelovy univerzity v Brně, s kterou klub
-spolupracuje. Na těch kolejištích máme dohromady ...
+spolupracuje. Na těch kolejištích je aktuálně nasazeno 99 MTB desek.
+
+Pro zajímavost uveďme, jak systém MTB zapadá do celkové koncepce řízení
+kolejiště.
+
+\begin{figure}[ht]
+\includegraphics[width=\textwidth]{data/railroad-topology.pdf}
+\caption{Schéma komponent řízení kolejiště v \gls{kmz}.}
+\label{fig:railroad-topology}
+\end{figure}
