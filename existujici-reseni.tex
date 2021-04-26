@@ -152,3 +152,120 @@ bezpečné.}
 	kolejiště, nikoliv na řízení jízdy hnacích vozidel.
 
 \end{enumerate}
+
+Závěrem tedy uveďme, že z dosavadního popisu systému \gls{dcc} se zdá, že tento
+systém je pro řízení příslušenství vhodný, i když s drobnými nedokonalostmi.
+
+\subsection{Sběrnice zpětného hlášení}
+
+V předchozích odstavcích jsme došli k závěru, že systém \gls{dcc} je v zásadě
+vhodný pro řízení příslušenství kolejiště. Vycházeli jsme přitom z předpokladu,
+že jsme schopni bezpečně indikovat stav všech prvků v kolejišti. Indikace stavů
+probíhá v systému \gls{dcc} skrze \textit{sběrnici zpětného hlášení}
+(\textit{feedback bus} ve schématu \ref{fig:dcc-overview}). Prozkoumejme tedy
+spolehlivost této sběrnice.
+
+Existuje několik různých \textit{sběrnic zpětného hlášení}
+\cite{dcc_feedbacks:web}. \gls{nmra} nedefinuje jednotný standard pro
+\textit{sběrnici zpětného hlášení} \cite{dcc_specs:web}, proto různí výrobci
+používají různé sběrnice. Uveďme nejpoužívanější sběrnice a jejich vlastnosti.
+
+\subsubsection{S88}
+
+S88 je základní sběrnice zpětného hlášení. Její fungování lze v zásadě
+charakterizovat jako \uv{vylepšené posuvné registry} \cite{s88:web}. Jednotlivé
+moduly jsou řazeny za sebe, propojují se vždy sousední moduly. První modul
+je připojen do \gls{dcc} centrály.
+
+\begin{figure}[ht!]
+\includegraphics[width=\textwidth]{data/s88.pdf}
+\caption{Topologic sběrnice S88.}
+\label{fig:s88-topology}
+\end{figure}
+
+Tato sběrnice je určena pro low-cost malá kolejiště. Limitujícím faktorem
+je především napájení z 5~V, které není vhodné na delší rozvody a malá odolnost
+proti rušení \cite{s88:web}.
+
+Jak je patrné z topologie sběrnice, při výpadku (napájení) jednoho modulu
+jsou ztracena data i ze všech modulů dále od centrály. Takové chování je pro
+profesionální PLC systém nevhodné.
+
+\subsubsection{RSbus}
+
+RSbus je sběrnice firmy \textit{Lenz Elektronik}. Oproti S88 je organizována
+do topologie sběrnice. Jednotlivé moduly jsou napájeny samostatně, sběrnice je
+dimenzovaná až na 128 modulů, každý s~8 digitálními vstupy \cite{rs:web}
+\cite{rs_lib:web}.
+
+\begin{figure}[ht!]
+\includegraphics[width=\textwidth]{data/rs.pdf}
+\caption{Topologic sběrnice RSbus.}
+\label{fig:rs-topology}
+\end{figure}
+
+\gls{dcc} centrála řídí komunikaci na sběrnici: posílá výzvy jednotlivým
+modulům a moduly odpovídají, pokud mají nějaká data k odeslání. Moduly odesílají
+data jen pokud došlo ke změně vstupů, což znamená, že nelze odlišit nefunkční
+modul od funkčního modulu, jehož stav vstupů je setrvalý.
+
+Takové chování nesplňuje požadavky definované výše. Pokud by například došlo
+výpadku RS modulu a následnému obsazení kolejového obvodu, který tento modul
+indikuje, z pohledu řídicího softwaru by byl kolejový obvod stále volný, přesto,
+že v obvodu stojí nějaké vozidlo. Řídicí software by pak povolil vjezd vlaku na
+úsek, čímž by mohl způsobil srážku vlaků.
+
+K výpadku RS modulu může dojít snadno například ztrátou napájení vlivem chybné
+obsluhy, reakce pojistky na přetížení, poruchy apod.
+
+\subsubsection{LocoNET}
+
+Poslední z analyzovaných sběrnic je LocoNET. LocoNET je proprietární sběrnice
+společnosti \textit{Digitrax}, jejíž plná specifikace není volně dostupná.
+Plné použití této sběrnice podléhá licenčním poplatkům \cite{loconet_license:web}.
+Zajímavou vlastnosti sběrnice je, že slučuje sběrnici \textit{throttle bus}
+a \textit{feedback bus} (viz obr \ref{fig:dcc-overview}). Řídicí software
+v počítači tak může přímo dotazovat moduly zpětného hlášení a úplně tak obejít
+DCC centrálu. Sběrnice LocoNET je navíc obousměrná a LocoNET moduly jsou
+vstupně-výstupní, takže počítač může přímo povelovat periferie
+\cite{loconet:web}.
+
+\begin{figure}[ht!]
+\includegraphics[width=\textwidth]{data/loconet.pdf}
+\caption{Topologic sběrnice LocoNET.}
+\label{fig:loconet-topology}
+\end{figure}
+
+Protokol sběrnice umožňuje dotazovat moduly na jejich stav \cite{loconet-specs},
+což umožňuje počítači přímo rozpoznat, které moduly jsou na sběrnici přítomny,
+výpadek modulu a oživení modulu po výpadku.
+
+Sběrnice LocoNET splňuje požadavky na bezpečné řízení periferií. Při bližší
+inspekci však zjišťujeme, že nasazení této sběrnice by znamenalo nakoupit a
+vyměnit cca 100 modulů v kolejišti. Výměna by navíc musela být rozsáhlejší,
+LocoNET moduly přímo nepodporují například generování signálu \textit{S-COM}
+(TODO ref). Pro nasazení sběrnice LocoNET by musely být instalovány speciální
+přídavné moduly pro řízení návěstidel.
+
+\section{Závěr}
+
+V této kapitole byly popsány základní přístupy k řízení moderní digitální
+modelové železnice. Bylo zkoumáno, jestli komerční produkty splní požadavky,
+které si dala tato práce za cíl. Po vyloučení technicky nezpůsobilých řešení
+zbyla sběrnice LocoNET s poznámkou, že její nasazení by bylo poměrně finančně
+náročné a pracné.
+
+Při uvažování sběrnice LocoNET jsme narazili na problém s integrací ovládání
+návěstidel. Tento problém je obecnějšího rázu: jakékoliv komerční řešení není
+schopné nabídnout takovou flexibilitu, jakou bychom v \gls{kmz} potřebovali.
+Potřebujeme být schopni integrovat systém řízení kolejiště jeden se současnými
+periferiemi, ale i s periferiemi budoucími. Potřebujeme být schopni pružně
+reagovat na nové periferie, které přijdou za 10 let.
+
+Uvažme taky aspekt zpětné kompatibility – vlastní systém nám umožní co možná
+nejrozumněji zachovat kompatibilitu se stávajícím systémem řízení kolejiště
+a minimalizovat tak finanční náklady a čas nutný pro aktualizaci systému.
+
+Vnímejme tuto kapitolu tedy především jako přehled technologií, které se
+při řízení současné digitální modelové železnice používají. Přistupme k návrhu,
+jak povýšit systém \gls{mtb} výrobou vlastních komponent.
