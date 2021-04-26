@@ -127,6 +127,36 @@ Práce se sběrnicí z pohledu aplikace v počítači probíhá následovně:
 \item Uzavřít spojení s MTB-USB.
 \end{compactenum}
 
+\section{IR čidla} \label{sec:uni_ir}
+
+Nyní popíšeme princip fungování IR čidel v kolejišti, protože bude v dalších
+kapitolách stěžejní.
+
+IR čidlo je bodový detektor průjezdu vlaku. Do kolejí se vedle sebe umístí
+opticky oddělená vysílací dioda a fototranzistor. při průjezdu vlaku dojde k
+odrazu signálu od spodku vozu nebo lokomotivy, čímž je detekován průjezd vlaku.
+Výhodou je nenápadná instalace mezi pražce, která neruší celkový dojem modelu.
+
+TODO obrázek v kolejích
+
+Pro spolehlivou detekci odrazu od matných černých povrchů podvozků je třeba
+budit vysílací diodu vysokým proudem (řádově 200 mA), což vyžaduje použití
+diody v impulsním režimu. \textit{MTB-UNI} deska podporuje IR čidla na všech
+svých 16 vstupech, diody jsou buzeny tranzistory ve skupinách po 4 diodách.
+
+Aby bylo zajištěno spolehlivé vyhodnocení odraženého signálu, je vstup z
+fototranzistoru zapojen na digitální vstup postuvného registru přes kapacitní
+vazbu.
+
+Vstupy \textit{MTB-UNI} desky se konfigurují osazením rezistorových lišt nebo
+kondenzátorů do běžného nebo režimu nebo do režimu snímání IR čidla. Kromě
+toho musí o režimu pinu vědět i procesor, aby adekvátním způsobem zpracovával
+vstupní signál.
+
+TODO obrázek kapacitní vazby
+
+\textit{MTB-UNI} desky obsahují podporu IR čidel.
+
 \section{Systém \gls{mtb} v kontextu řízení celého kolejiště} \label{sec:mtb_context}
 
 V \gls{kmz} je aktuálně systém \gls{mtb} nasazen na dvou kolejištích, další
