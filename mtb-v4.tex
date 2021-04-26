@@ -1,0 +1,85 @@
+Našim základním cílem v této kapitole bude navrhnout \gls{plc} systém, který
+splňuje požadavky definované na konci kapitoly \ref{chap:nasazeni}. Při návrhu
+tohoto systému vyjdeme z přirozeného požadavku na minimální změny v aktuálním
+harwaru a softwaru kolejiště. Navrhneme nový systém jako iteraci současného
+systému \gls{mtb}. Tento systém pojmenujeme \textit{MTB v4}.
+
+Nový systém vyřeší všechny problémy aktuální verze systému \gls{mtb} popsané
+v kapitole \ref{chap:nasazeni}. Při návrhu vezmeme v potaz aktuální technologie
+v oblasti \gls{plc} obvodů a zvážíme implementace těcht technolgií. Detailně
+rozebereme současnou implementace protokolu \gls{mtbbus} a u každé položky
+zvolíme, jestli a proč ji chceme zachovat.
+
+\section{Podrobná specifikace požadavků}
+
+Abychom byli schopni navrhnout MTB v4, musíme znát přesné požadavky na takový
+systém. Nyní požadavky formulujeme, přičemž budeme klást důraz na vysvětlení
+změn oproti současnému systému \gls{mtb}.
+
+\subsection{Interakce se systémem MTB}
+
+Zaměřme se nejprve po požadavky, které na systém \gls{mtb} kladou komponenty,
+které tento systém používají.
+
+\subsubsection{Hardware v kolejišti}
+
+K \gls{mtb} se na straně kolejiště připojují jednotlivé vstupy a výstupy
+popsané v kapitole \ref{chap:existujici-reseni}. Všechny v současnosti na
+kolejišti používané vstupy jsou digitálního formátu (binární vstupy), výstupy
+jsou buď digitální binární nebo S-COM \ref{scom}. S-COM výstupy jsou ve
+skutečnosti digitální výstupy, do kterých MTB deska moduluje S-COM signál.
+S-COM signál je jednoduchý pomalý signál, který lze s přehledem vytvářet běžným
+výstupním pinem procesoru nebo posuvného registru.
+
+Oproti současnému \gls{mtb} bychom nově chtěli podporovat \textit{kmitavý
+výstup} s počítačově definovou frekvencí kmitání a pevnou střídou. Jednalo by
+se o kmitání v řádu jednotek \textit{Hz}, využití tohoto typu výstupu je pro
+indikace v pultech a rozpojovače \ref{rozp}. I toto je však z pohledu hardwaru
+jednoduchý digitální výstup, pro přidání tohoto typu výstupu je třeba upravit
+pouze komunikační protokol a software a firmware modulů.
+
+Současné moduly \textit{MTB-UNI} umožňují výstupy typu S-COM pouze na pinech
+0–7, což je omezení dané malou pamětí procesoru. Toto omezení by mělo
+\textit{MTB v4} relaxovat a umožnit tak, aby každý výstup mohl být v jednom
+z režimů
+
+\begin{compactenum}
+\item digitální,
+\item S-COM,
+\item kmitavý.
+\end{compactenum}
+
+Co se týče vstupně-výstupních požadavků, \textit{MTB v4} by si vystačilo pouze
+s moduly typu \textit{MTB-UNI} \ref{uni}. Na kolejišti v současnosti není žádný
+prvek, který by vyžadoval například analogový vstup, analogový výstup nebo např.
+\textit{PWM} výstup. Na kolejištích se hojně používají servomotory, ale vždy
+pro řízení dvoupolohových prvků: výhybka, výkolejka, mechanické návěstidlo.
+Všechny tyto prvky k sobě mají řídicí elektroniku, která interaguje se systémem
+\gls{mtb} pouze digitálními piny. Typicky stačí 2 digitální výstupy (pro
+nastavení požadované polohy) a případně 2 digitální vstupy (pro detekci koncové
+polohy).
+
+Zmiňme na tomto místě, že neimplementace PWM výstupů do \textit{MTB-UNI v4}
+desky je koncepčním rozhodnutím autora této práce. Autor práce razí přístup
+\uv{ať jedna věc dělá jeden úkol a dělá ho dobře}. Místo návrhu všemocného
+\textit{MTB-UNI} modulu, který za pár let bude umět i uvařit kávu, se autor
+rozhodl vydat cestou univerzálního kompaktního snadno sériově vyrobitelného
+modulu s prostými digitálními vstupy a výstupy.
+
+Připomeňme, že \textit{MTB-UNI} desky umožňují speciální typ vstupů – IR vstupy,
+viz sekci \ref{sec:uni_ir}. Tyto vstupy vyžadují další elektroniku navíc.
+V nových \textit{MTB-UNI v4} deskách bude podpora pro IR čidla zrušena ve jménu
+předchozího odstavce. Bude navržena speciální deska pro buzení a vyhodnocování
+stavu IR čidel, která se bude připojovat přímo k digitálním vstupům
+\textit{MTB-UNI} desky. Ušetří se tak elektronika na \textit{MTB-UNI} deskách,
+na kterých se IR vstupy nevyužívají, zjednoduší se návrh desky plošných spojů
+a umožní se využít IR čidla i s jinými deskami, než MTB, např. pro přímou
+indikaci v pultech. Jedna deska bude dělat jednu věc a bude ji dělat dobře.
+
+Na současném kolejišti si tedy vystačím pouze s \textit{MTB-UNI} deskami, které
+budou navíc ořezané o podporu IR čidel. Ačkoliv je toto tvrzení pravdivé, bylo
+by neperspektivní si podporu jiných typů desek zavřít volbou nevhodného
+protokolu. Nový protokol sběrnice \gls{mtbbus} by měl být navržený univerzálně
+pro nejrůznější možné typu desek, které v budoucnu mohou přijít. Autor této
+práce má již v záměru takové desky desky vytvořit, více se můžete dočíst
+v budoucí kapitole \ref{todo}.
