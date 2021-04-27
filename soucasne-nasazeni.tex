@@ -17,8 +17,15 @@ modul řídí provoz na celé sběrnici, ostatní \gls{mtb} moduly pouze odpoví
 na příkazy \textit{MTB-USB} modulu. Říkáme, že sběrnice je \textit{single
 master, multiple slaves} \ref{fig:mtbbus-topology}.
 
-Každý modul má svou 8bitovou adresu, která se konfiguruje jumpery přímo na
-modulu.
+Každý \gls{mtb} modul má:
+
+\begin{compactenum}
+\item 8bitovou adresu, která se konfiguruje jumpery přímo na modulu,
+\item konfiguraci (typ vstupů/výstupů, rychlost sběrnice, ...),
+\item vstupy (stav vstupů),
+\item výstupy (stav výstupů).
+\end{compactenum}
+
 
 \begin{figure}[ht]
 \includegraphics[width=0.7\textwidth]{data/mtb-topology.pdf}
@@ -121,7 +128,7 @@ Práce se sběrnicí z pohledu aplikace v počítači probíhá následovně:
 \item Provést sken aktivních modulů sběrnice.
 \item Nahrát do všech aktivních modulů konfiguraci.
 \item Přečíst stav vstupů.
-\item Zahájit provoz – od teď všechny moduly nahlašují změnu stavu vstupu.
+\item Zahájit provoz – od teď všechny moduly nahlašují změny stavů vstupů.
 \item Číst vstupy, nastavovat výstupy.
 \item Ukončit komunikaci.
 \item Uzavřít spojení s MTB-USB.

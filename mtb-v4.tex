@@ -205,10 +205,19 @@ minimalizují náklady na povýšení sběrnice.
 Navrhneme IR desku, která bude zajišťovat podporu IR čidel, protože nová
 \textit{MTB-UNI} deska již nebude obsahovat přímou podporu IR čidel.
 
-Zachování většiny stávajícího hardwaru současných \textit{MTB-UNI} s sebou nese
-ponechání volby sběrnice \gls{mtbbus} na sběrnici RS485. RS485 nepřináší žádné
-zjevné nevýhody, takže není důvod, proč hardwarovou vrstvu komunikační sběrnice
-měnit.
+Zachování většiny stávajícího hardwaru současných \textit{MTB-UNI} a snaha o
+zachování kabeláže sběrnice s sebou nese ponechání volby sběrnice \gls{mtbbus}
+na standardu RS485. RS485 nepřináší žádné zjevné nevýhody, takže není důvod,
+proč hardwarovou vrstvu komunikační sběrnice měnit.
+
+Nové procesory v \gls{mtb} modulech umožní trvalé uložení konfigurace v modulech.
+Přesto bude autoritativním zdrojem konfigurace modulů i nadále počítač: po
+nalezení modulu na sběrnici počítač tento modul zkonfiguruje dle konfiguračního
+souboru. Tento přístup volíme proto, abychom byli schopni konfiguraci všech
+desek kolejiště centralizovaně ukládat a verzovat.\footnote{Uložení konfigurace
+v modulech i tak má smysl – například aby modul mohl aplikovat uložený bezpečný
+stav výstupů přímo při zapnutí napájení modulu a nemusel čekat na zapnutí
+řídicího SW v počítači.}
 
 \gls{mtb} moduly budou skrze desku \textit{MTB-USB} komunikovat s počítačem
 po portu USB, kterým bude tunelován \textit{USB CDC} protokol. V počítači tak
@@ -249,3 +258,100 @@ například v oblasti robotiky. S výhodou využijeme toho, že protokol CDC má
 nativní podporu ovladačů snad v majoritních operačních systémech a není tak
 nutné instalovat speciální ovladače. Tento aspekt nám umožní budoucí snadné
 nasazení u externích zákazníků.
+
+\subsection{\gls{mtbbus}}
+
+Nyní podrobně rozebereme návrh nové sběrnice \gls{mtbbus}. Oficiální autorem
+vytvořená plnohodnotná dokumentace nové sběrnice je k dispozici na
+\url{https://github.com/kmzbrnoI/mtbbus-protocol}.
+
+Požadavky definované v předchozích kapitolách vynucují razantní úpravy
+komunikačního protokolu sběrnice. Autor této práce se rozhodl sběrnici
+navrhnou celou od píky znovu. Sleduje tím především zajištění
+\textit{přehlednosti} komunikačního protokolu sběrnice a také vyřešení potíží s
+licencováním protokolu. Nový protokol je autorským dílem autora této práce
+a tudíž si licenční podmínky může stanovovat sám.
+
+\subsubsection{Hardware}
+
+Jak již bylo zmíněno v předchozí sekci, po hardwarové stránce bude zachován
+standard \textit{RS485} \cite{rs485}. Počet komunikačních bitů bude ponechán na 9.
+Devátý bit ve zprávách z master to slave desky indikuje, že se jedná o první
+byte zprávy. Ostatní bytes zprávy mají tento bit nastavený na 0. Devítibitová
+komunikace nám umožní na sběrnici zavést klíčový pojem \textit{zprávy}. Díky
+devátému bitu slave modul dokáže poznat, kdy zpráva začíná. Počet stop bitů
+ponecháme standardně na jednom bitu, paritní bit nepoužijeme.
+
+Aktuální specifikace sběrnice \gls{mtbbus} podporuje různé rychlost sběrnice –
+38400 Bd, 57600 Bd a 115200 Bd. Komunikace vždy začíná na 38400 Bd a jeden
+z prvních příkazů je příkaz na změnu rychlost sběrnice. Při výpadků a opětovném
+oživení modulu musí modul postupně vyzkoušet ony 3 rychlost a sledovat, na které
+rychlosti přijímá korektní data.
+
+Možnost různých rychlostí by autor chtěl ponechat – některé kolejiště se
+spletitou sběrnicí, dlouhou sběrnicí nebo sběrnicí se špatnými elektrickými
+vlastnostmi mohou vyžadovat nižší rychlosti. Rchlost nižší než 38400 Bd by
+neměla být třeba – tuto. rychlost by měla zvládat každá sběrnice. Při rychlosti
+115200 Bd dojde průměrně k 10 skenům jednoho modulu při počtu 50 modulů.
+Tato hodnota je poměrně malá, ale pro účely zabezpečovacího softwaru kolejiště
+dostatečná. V budoucnu možná dojde k dalšímu zvýšení rychlosti sběrnice.
+
+
+\subsubsection{Princip komunikace}
+
+Sběrnice bude fungovat v režimu \textit{single master, multiple slaves}. Chod
+na sběrnice bude řídit \textit{master} module – \textit{MTB-USB}. Master modul
+bude periodicky dotazovat všechny moduly sběrnice s výjimkami zpráv pro konkrétní
+moduly odeslané z počítače. Modul na každou zprávu pro něj odpoví právě jednou
+zprávou. Proto není nutné ve směru \textit{slave $\rightarrow$ master} používat
+devátý bit.
+
+Modul na periodické výzvy o odpověď (\textit{Module Inquiry}) vždy odpoví daty
+k odeslání. Pokud modul nemá žádná data k odeslání, odpoví zprávou
+\textit{Acknowledgement}. Tím \textit{MTB-USB} modulu potvrdí, že zprávu přijal
+a že komunikuje. \textit{MTB-USB} modul tka může monitorovat aktivní moduly
+sběrnice a dokonce detekovat moduly nové.
+
+Příklad komunikace po sběrnici:
+
+\begin{verbatim}
+> Module 1 Inquiry
+< Acknowledgement  # Module 1 žije a nemá žádná data k odeslání
+> Module 2 Inquiry
+# Timeout – modul 2 nežije
+> Module 3 Inquiry
+< State of inputs changed, new state: 0b00001010 0b11110000
+> Module 6 Inquiry
+< Acknowledgement
+> Change outputs of module 1 to 0b00101010 0b01000101
+> Module 10 Inquiry
+< Acknowledgement
+...
+\end{verbatim}
+
+Všimněte si, že v příkladu probíhá polling pouze některých adres – pro zmenšení
+latencí je vhodné často dotazovat aktivní moduly a neaktivní moduly skenovat
+jen čas od času (aby se dalo poznat, že moduly ožily). Dále si všimněte, že
+příkazy pro moduly chodí nezávisle na tom, která adresa je právě dotazována.
+
+\subsubsection{Komunikační protokol}
+
+Každá \textit{zpráva} má následující strukturu:
+
+\begin{enumerate}
+\item \textbf{Adresa modulu.}
+
+Tento byte má jako jediný nastavený svůj 9. bit na hodnotu 1.
+Adresa modulu je 8bitové číslo. Adresa 0 znamená, že příkaz se posílá
+jako \textit{broadcast} a mají ho číst všechny moduly na sběrnici. Typickým
+příkazem typu \textit{broadcast} je požadavek na reset výstupů všech modulů.
+
+Adresní prostor 255 modulů byl vyhodnocen jako dostatečně velký.
+
+\item \textbf{Délka zprávy.}
+\end{enumerate}
+
+\subsubsection{Adresování}
+
+
+TODO link to full specs

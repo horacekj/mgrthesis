@@ -69,6 +69,7 @@ Poznámky k diplomce
 * Použitý procesor, proč.
 * Hardware, firmware.
 * Řešení krabičky.
+* Spolehlivost: přeposílání paketů.
 
 ## MTB daemon
 
