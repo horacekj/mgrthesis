@@ -16,12 +16,10 @@ Abychom byli schopni navrhnout MTB v4, musíme znát přesné požadavky na tako
 systém. Nyní požadavky formulujeme, přičemž budeme klást důraz na vysvětlení
 změn oproti současnému systému \gls{mtb}.
 
-\subsection{Interakce se systémem MTB}
-
 Zaměřme se nejprve po požadavky, které na systém \gls{mtb} kladou komponenty,
 které tento systém používají.
 
-\subsubsection{Hardware v kolejišti}
+\subsection{Periferie v kolejišti}
 
 K \gls{mtb} se na straně kolejiště připojují jednotlivé vstupy a výstupy
 popsané v kapitole \ref{chap:existujici-reseni}. Všechny v současnosti na
@@ -83,3 +81,92 @@ protokolu. Nový protokol sběrnice \gls{mtbbus} by měl být navržený univerz
 pro nejrůznější možné typu desek, které v budoucnu mohou přijít. Autor této
 práce má již v záměru takové desky desky vytvořit, více se můžete dočíst
 v budoucí kapitole \ref{todo}.
+
+\subsection{Ovládání}
+
+Dalším uživatelem systému \gls{mtb} je řídicí software kolejiště. Tento
+software je aktuálně na programován pro operační systém Windows a s hardwarem
+kolejiště komunikuje pomocí dynamicky linkované knihovny, která musí dodržet
+specifikované API \cite{api}. Na straně softwaru máme tedy relativně volné
+ruce.
+
+Princip řízení kolejiště dává požadavek na organizaci \gls{mtbbus} v4 sběrnice:
+jednotlivé prvky jsou řízeny počítačem a výhradně počítačem.
+
+Novým požadavkem je, aby v počítači mohlo existovat více softwarů, které
+sběrnici řídí. V praxi totiž nastává kdy na jednu sběrnici jsou připojené systémy,
+které mají být z principu řízeny různými programy: například zabezpečení řízení
+provozu kolejiště a řízení pouličního a domovního osvětlení. Je vhodné mít oba
+systémy zapojené do jedné sběrnice, aby se minimalizoval počet modulů, zejména
+proto, že výstupů na řízení osvětlení je oproti řízení zabezpečení provozu málo.
+Dává však také smysl, aby software pro řízení provozu neřídil osvětlení, protože
+to není jeho účel.
+
+Dalším reálným příkladem z \gls{kmz} je jedna sběrnice, na které jsou připojeny
+periferie řízení tramvajové dopravy zároveň s periferiemi řízení silniční
+dopravy. Přestože oba systémy sdíli společnou sběrnici, na úrovni počítače by
+tyto systémy měly řídit dva různé programy. Jednom z hlavních přidaných hodnot
+návrhu nového systému MTB je, že umožní \textit{multi-mater} řízení.
+
+\subsection{Další požadavky}
+
+Uveďme nyní některé méně důležité požadavky na novou verzi sběrnici \gls{mtbbus},
+jejichž naplnění nám však výrazně zpříjemní její používání. Již teď předejímáme,
+že všechny tyto požadavky se v implementaci podařilo naplnit.
+
+\begin{enumerate}
+\item \textbf{Umožnit nalezení \gls{mtb} modulů i po startu sběrnice.}
+
+	V kapitole \ref{sec:mtbbus} byl popsán poměrně striktní proces používání
+	sběrnice – od vyhledání modulů až po ukončení práce se sběrnicí. Současná
+	implementace tohoto procesu neumožňuje, aby počítač detekoval moduly, které
+	na sběrnici přibudou za jejího chodu. Taková situace může nastat například
+	tak, že je prvně zapnut řídicí počítač a až pak napájení sběrnice. Je
+	nepříjemné muset v takovém případě manuálně spouštět proces skenování
+	znovu.
+
+	Obecně se celý postup práce se sběrnicí popsaný v kapitole \ref{sec:mtbbus}
+	zdá být příliš striktním. \gls{mtb} v4 by mělo tento proces zjednodušit.
+
+\item \textbf{Z počítače bude možné na každém modulu zapnout identifikační LED.}
+
+	Pro snadnou identifikaci konkrétního modulu v kolejišti, například při
+	diagnostice závady, by operátor měl mít možnost na libovolném modulu
+	zapnout indikační LED. Při diagnostice pod kolejištěm tak snadno identifikuje
+	konkrétní modul.
+
+\item \textbf{Firmware \gls{mtb} modulů by mělo být možné aktualizovat přímo
+	po sběrnici \gls{mtbbus}.}
+
+	Pod kolejištěm jsou nasazeny vyšší desítky modulů. Aktualizace jejich
+	firmwaru ručním programováním všech modulů by byla časově náročná. Sběrnice
+	by měla umožňovat aktualizaci firmwaru modulů přímo, ideálně za současného
+	plného chodu zbytku modulů.
+
+\end{enumerate}
+
+\subsection{Shrnutí požadavků}
+
+Shrňme stručně všechny požadavky na systém \gls{mtb} v4.
+
+\begin{compactenum}
+\item K \gls{mtb} v4 se musí na straně počítače dát přistoupit skrze hJOP RCS
+	API \cite{}.
+\item V počítači může běžet více softwarů řídících výstupy a snímajících vstupy
+	modulů sběrnice \gls{mtbbus} v4.
+\item Systém \gls{mtb} v4 musí být navržený univerzálně pro nejrůznější typy
+	modulů. Jedinou společnou vlastností modulů je, že snímají vstupy a nastavují
+	výstupy.
+\item Je třeba vyřešit zpětnou kompatibilitu především se stávajícími
+	\textit{MTB-UNI} deskami v kolejišti.
+\item Celé řešení by mělo být psáno opensource a openhardware, aby se dalo volně
+	využívat.
+\item Desky sběrnice \gls{mtbbus} v4 by mělo být možné průběžně vyhledávat,
+	a detekovat nefunkční.
+\item Implementace systému by měla využívat osvědčené komponenty, u nichž
+	je dlouhodobý výhled dostupnosti.
+\item Desky \gls{mtb} potvrzují příkazy, lze monitorovat jejich správnou funkčnost.
+\item Z počítače bude možné na každém modulu zapnout identifikační LED.
+\item Moduly \textit{MTB-UNI} budou nově podporovat kmitavé výstupy.
+\item Moduly \textit{MTB-UNI} budou nově podporovat S-COM výstupy na všech pinech.
+\end{compactenum}
