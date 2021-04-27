@@ -170,3 +170,82 @@ Shrňme stručně všechny požadavky na systém \gls{mtb} v4.
 \item Moduly \textit{MTB-UNI} budou nově podporovat kmitavé výstupy.
 \item Moduly \textit{MTB-UNI} budou nově podporovat S-COM výstupy na všech pinech.
 \end{compactenum}
+
+
+\section{Návrh systému MTB v4}
+
+Nyní provedeme návrh nového systému pro sběr dat z kolejiště a ovládání
+periferií kolejiště. Detailně zdůvodníme každý aspekt nově navrhnutého systému.
+
+\subsection{Vysokoúrovňový návrh}
+
+Zachováme základní koncept fungování systému \gls{mtb} \uv{single master,
+multiple slaves}. Vytvoříme novou verzi modulu \textit{MTB-USB}, který bude
+jako jediný řídicím prvkem nové sběrnice \gls{mtbbus} v4. Model \textit{single
+master, multiple slaves} je osvědčeným modelem, který se snadno implementuje,
+lze snadno spočítat nejlepší a nejhorší časy odezvy sběrnice a obecně se dobře
+mapuje na problém, který systémem \gls{mtb} chceme řešit.
+
+Vytvořením nové verze modulu \textit{MTB-USB} sledujeme především to, aby
+existovala svobodná implementace této desky, nová deska nám dále umožní využívat
+moderních procesorů a integrovaných obvodů, které nám usnadní implementaci.
+Tuto desku si můžeme dovolit vytvořit úplně novou, protože je pouze jedna
+pro celé kolejiště. Malé počty desek implikují malé náklady na aktualizaci
+sběrnice, což je přesně to, co chceme.
+
+Navrhneme novou \textit{MTB-USB} desku, která bude splňovat všechny požadavky
+definované výše a která bude založena na moderních, ale dlouhodobě dostupných
+součástkách.
+
+Nebudeme však vynucovat výměnu všech stávajících \textit{MTB-UNI} desek v
+kolejišti. Provedeme výměnu procesoru v současné \textit{MTB-UNI} desce za
+procesor nový a umožníme tak starým deskám fungovat na nové sběrnici. Tím se
+minimalizují náklady na povýšení sběrnice.
+
+Navrhneme IR desku, která bude zajišťovat podporu IR čidel, protože nová
+\textit{MTB-UNI} deska již nebude obsahovat přímou podporu IR čidel.
+
+Zachování většiny stávajícího hardwaru současných \textit{MTB-UNI} s sebou nese
+ponechání volby sběrnice \gls{mtbbus} na sběrnici RS485. RS485 nepřináší žádné
+zjevné nevýhody, takže není důvod, proč hardwarovou vrstvu komunikační sběrnice
+měnit.
+
+\gls{mtb} moduly budou skrze desku \textit{MTB-USB} komunikovat s počítačem
+po portu USB, kterým bude tunelován \textit{USB CDC} protokol. V počítači tak
+bude celá sběrnice přístupná skrze sériový port. Počítač nemůže komunikovat
+po sběrnici RS485 přímo, protože na to nemá hardwarové periferie, proto bude
+komunikovat s modulem \textit{MTB-USB}, který bude řešit časově kritické operace
+sběrnice \gls{mtbbus}. \footnote{TODO popsat?}
+
+Otázkou zůstává, kde naplníme požadavek na \textit{multi-master} řízení celého
+systému. Existují v zásadě 2 možné přístupy:
+
+\begin{compactenum}
+\item \textit{MTB-USB} deska se bude k počítači připojovat rozhraním, které
+	nativně umožňuje komunikaci pouze s jednou aplikací (např. USB) a řízení více
+	programy se bude řešit na úrovni softwaru v počítači.
+\item \textit{MTB-USB} deska se připojí k počítači rozhraním, které přirozeně
+	podporuje více připojených zařízení, například ethernet.
+\end{compactenum}
+
+Oba přístupy se v komerčních systémech pro digitální řízení modelové železnice
+používají. Ať bude podpora více řídicích systému implementována kdekoliv, oproti
+jednomu řídicímu systému vyžaduje tato podpora netriviální programovou podporu
+navíc. Autor práce se rozhodl přesunout co nejvíce složitější logiky do počítačových
+aplikací, protože se ty se mnohem snáze vyvíjejí, ladí a aktualizují než firmware
+v embedded procesorech. V počítači můžeme navíc využívat vysokoúrovňovější
+nástroje. Vydáme se tedy cestou, kdy se deska \textit{MTB-USB} bude v k počítači
+připojovat již pomocí zmíněného virtuálního sériového portu. V počítači
+naprogramujeme novou aplikaci \textit{MTB Daemon}, která se na jedné straně
+připojí k \textit{MTB-USB} modulu a na straně druhé vystaví JSON TCP server
+s jednoduchým API, které umožní povelovat \gls{mtb} moduly z více počítačových
+programů. Získáme tím mj. velice hezké programové API, ke kterému se bude dát
+snadno připojit z knihoven nejrůznějších programovacích jazyků, a tím
+zpřístupníme systém \gls{mtb} širšímu spektru programátorů.
+
+Protokol CDC mezi počítačem a \textit{MTB-USB} deskou zvolíme proto, že se
+jedná de fakto o standard pro připojení specifických periferií k počítači,
+například v oblasti robotiky. S výhodou využijeme toho, že protokol CDC má
+nativní podporu ovladačů snad v majoritních operačních systémech a není tak
+nutné instalovat speciální ovladače. Tento aspekt nám umožní budoucí snadné
+nasazení u externích zákazníků.
