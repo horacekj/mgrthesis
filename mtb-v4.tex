@@ -538,7 +538,108 @@ konkrétní typy modulů.
 
 \end{enumerate}
 
+\subsubsection{Typické fungování sběrnice}
+
+Následující kroky popisují typické fungování systému \gls{mtb}.
+
+\begin{compactenum}
+\item Je zapnut řídicí počítač kolejiště.
+\item Je připojeno napájení \textit{MTB-USB} desky a všech \gls{mtb} modulů.
+\item \gls{mtb} moduly z paměti načtou konfiguraci, aplikují bezpečný stav
+výstupů, začnou poslouchat na sběrnici.
+\item \textit{MTB-USB} deska detekuje připojené moduly a zapamatuje si je.
+\item Počítačová aplikace se připojí k \textit{MTB-USB} desce.
+\item Počítačová aplikace vyčte z \textit{MTB-USB} desky seznam aktivních modulů.
+\item Aplikace vyčte typ připojených modulů, zkonfiguruje je.
+\item Řídicí SW kolejiště používá sběrnici – čte vstupy, nastavuje výstupy.
+\item Při odpojení řídicího SW kolejiště je \gls{mtb} modulům poslán příkaz
+	k resetování stavu výstupů, čímž je zajištěno, že při odpojení nebo pádu
+	řídicího softwaru se budou nacházet výstupy v definovaném stavu.
+\end{compactenum}
+
+Systém \gls{mtb} však nevyžaduje striktní pořadí těchto kroků. Napájení
+komponent může být zapnuto v libovolném pořadí, systém dokáže detekovat výpadky
+jednotlivých prvků a obnovovat je. Pro ilustraci uveďme několik příkladů situací,
+které v systému \gls{mtb} mohou nastat.
+
+\begin{itemize}
+\item Jiné pořadí zapnutí prvků.
+
+Pokud je \textit{MTB-USB} zapnut až po zapnutí počítače, počítač tento stav
+korektně detekuje (chybí CDC USB zařízení) a po připojení \textit{MTB-USB} jej
+korektně inicializuje.
+
+Sken všech adres sběrnice \gls{mtbbus} (255 adres) probíhá neustále, takže
+pokud jsou moduly sběrnice zapnuty až po zapnutí napájení \textit{MTB-USB} desky,
+jsou i tak korektně detekovány.
+
+\item Výpadek \gls{mtb} modulu.
+
+Pokud \gls{mtb} modul neodpovídá na požadavky, \textit{MTB-USB} to detekuje, nahlásí
+situaci do počítače a počítač se podle toho zachová.
+
+Pokud \textit{MTB-USB} deska detekuje nový \gls{mtb} modul, opět o tom zpraví
+počítač, ten provede vyčtení typu desky a zkonfiguruuje ji.
+
+\item Výměna modulu za chodu sběrnice
+
+Starý modul je při odpojení napájení nahlášen jako neaktivní, po výměně modulu
+je aktivován nový modul.
+
+\item Změna adresy modulu za chodu sběrnice
+
+Původní adresa je prohlášena za neaktivní (neodpovídá na požadavky), nová adresa
+je nalezena a zkonfigurována.
+
+\end{itemize}
+
+
 \subsubsection{Aktualizace firmwaru \gls{mtb} modulů}
 
-\subsubsection{Adresování}
+Sběrnice \gls{mtbbus} je navržena tak, aby skrze ní mohl být aktualizován
+firmware \gls{mtb} modulů. Při návrhu mechanismu aktualizace firmwaru bylo
+zvažováno, jestli proces aktualizace firmwaru nevést úplně jiným protokolem,
+než \gls{mtbbus}. \gls{mtbbus} Je dostatečně obecný a navíc je třeba, aby
+při aktualizaci jednoho modulu ostatní moduly sběrnice aktualizační příkazy
+ignorovaly a nerušily tak aktualizaci. Tyto argumenty vedly k implementaci
+mechanismu aktualizace firmwaru přímo do sběrnice \gls{mtbbus}. Výhodou tohoto
+řešení je, že zbylé moduly sběrnice mohou při aktualizaci firmwaru jednoho
+modulu nadále komunikovat, aktualizace tedy může probíhat za plného provozu.
 
+Protokol počítá s tím, že přepis flash paměti v \gls{mtb} deskách může
+probíhat pouze z bootloaderu \gls{mtb} desky. Aktualizační protokol proto
+podporuje reboot procesoru do bootloaderu. Procedůra aktualizace firmwaru
+probíhá následovně \footnote{Procedůra je podrobně popsaná v dokumentaci protokolu
+\gls{mtbbus} na
+\url{https://github.com/kmzbrnoI/mtbbus-protocol/blob/master/workflows.md}.}.
+
+\begin{compactenum}
+\item Master deska vyšle \textit{Firmware Upgrade Request}. Tím informuje \gls{mtb}
+	modul, že má rebootovat do bootloaderu.
+\item \gls{mtb} deska odpoví \textit{Acknowldgement} a rebootuje do bootloaderu.
+\item \gls{mtbusb} deska pošle \gls{mtb} desce žádost o její obecné informace.
+\item \gls{mtb} deska odpoví obecnými informacemi, ve kterých je mj. zaznačeno,
+	že je v bootloaderu.
+\item \gls{mtbusb} deska vyšle příkaz \textit{Firmware Write Flash}, ve kterém pošle
+	blok flash paměti k zapsání a její adresu. Slave deska tuto paměť zapisuje.
+\item \gls{mtbusb} modul se ptá \gls{mtb} modulu příkazem \textit{Firmware Write
+	Flash Status Request}, jestli již byl zápis dokončen. Jakmile je zápis bloku
+	paměti dokončen, přesouvá se na krok (5).
+\item Jakmile je zapsána celá paměť, master deska pošle příkaz \textit{Reboot},
+	\gls{mtb} modul provede kontrolu konzistence paměti a zapne se do hlavního
+	programu.
+\end{compactenum}
+
+Jak bylo zmíněno v posledním kroku, je doporučeno (a nový firmware
+\textit{MTB-UNI} modulů toto doporučení dodržuje), aby při každém náběhu
+procesoru modulu proběhla kontrola konzistence paměti. Kontrola konzistence
+paměti je implementována pomocí uloženého kontrolního součtu (\textit{CRC-16})
+na konkrétních adresách paměti. Protokol \gls{mtbbus} implementuje atribut,
+kterým může \gls{mtb} modul oznámit, že sice poslouchá, ale je v bootloaderu
+a odmítá nabootovat, protože nesedí kontrolní součet paměti programu.
+
+Aktualizace bootloaderu přes sběrnici \gls{mtbbus} není možná, protože vlivem
+výpadku napájení při aktualizaci programu by mohlo dojít k situaci, kdy se modul
+stane nepoužitelným. Bootloader by měl být malý a odzkoušený kus firmwaru, který
+se nahraje jednou a nikdy ho nebude třeba přehrávat. Přehrání bootloaderu by
+vyžadovalo ruční obcházení modulů s programátorem.
