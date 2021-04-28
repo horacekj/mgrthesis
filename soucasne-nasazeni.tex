@@ -191,7 +191,7 @@ vědět i~procesor, aby adekvátním způsobem zpracovával vstupní signál
 
 V~\gls{kmz} je aktuálně systém \gls{mtb} nasazen na dvou kolejištích, další
 nasazení je na modulovém kolejišti Mendelovy univerzity v~Brně, s~kterou klub
-spolupracuje. Na těch kolejištích je aktuálně nasazeno 99 \gls{mtb} desek.
+spolupracuje. Na těchto kolejištích je aktuálně nasazeno 99 \gls{mtb} desek.
 
 Pro kontext uveďme, jak systém \gls{mtb} zapadá do celkové koncepce řízení
 kolejiště. Viz schéma \ref{fig:control-topology}.
@@ -202,25 +202,30 @@ kolejiště. Viz schéma \ref{fig:control-topology}.
 \label{fig:control-topology}
 \end{figure}
 
-Rovnou uveďme, že komplikovanější systém řízení modelového kolejiště snad nemá
-v~Česku a~na Slovensku obdobu. Na první pohled je vidět, že kolejiště je řízeno
-dvěma různými systémy a~vyvstává otázka, proč je neintegrovat do systému
-jednoho. Taková řešení existují a~mnozí modeláři i~modelářské kluby je
-používají. Jsou hojně podporována komerčními softwary, jsou nasazená na velkých
-modelových kolejištích například v~Hamburku a~ve Vídni \cite{}. Všechna tato
-řešení jsou však o~kompromisech. U~tvorby a nasazení systému \gls{mtb} stály
-osoby, které pracují na zabezpečení skutečné železnice.  Systém \gls{mtb} je
-tak oproti komerčně dostupným řešením řízení modelových kolejišť navrhován
-s~důrazem na spolehlivost a především bezpečnost.
+Na první pohled je vidět, že kolejiště je řízeno dvěma různými systémy (modrá
+a~fialová část diagramu).  Vyvstává otázka, proč je neintegrovat do systému
+jednoho. Integrovaná řešení nabízejí majoritní výrobci hardwaru pro digitální
+řízení modelové železnice.  Řízení jízdy i~trakce jedním systémem (\gls{dcc})
+je rozšířeným přístupem jak v~Česku tak v~zahraničí. Všechna tato řešení jsou
+však o~kompromisech, jak se dozvíme v~\ref{sec:dcc}. U~tvorby a~nasazení
+systému \gls{mtb} stály osoby, které pracují na zabezpečení skutečné železnice.
+Systém \gls{mtb} je tak oproti komerčně dostupným řešením řízení modelových
+kolejišť navrhován s~důrazem na spolehlivost a~především bezpečnost.
 
-Uveďme jeden příklad za všechny: komerčně využívaná sběrnice RS pro snímání
-stavu kolejiště nedokáže rozpoznat, že nějaký z~RS modulů přestal fungovat.
-Výstupní členy nijak nepotvrzují, že opravdu provedly akci, kterou počítač
-požaduje. Tyto příklady ilustrují, že komerčně dostupná řešení jsou podle
-autorova názoru spíš hračkou, než bezpečným a spolehlivým systémem pro řízení
-drahých modelů. Dovedete si představit, že by někdo ne skutečnou železnici
-nasadil systém, který by v~krajní situaci nesprávně vyhodnotil volnost koleje,
-i když na ni stojí vlak?
+Uveďme dva příklady za všechny: komerčně využívaná sběrnice RS pro snímání
+stavu kolejiště nedokáže rozpoznat, že nějaký z~RS modulů (analogie \gls{mtb}
+modulů) přestal fungovat \cite{rs:web}. Dále výstupní moduly nijak nepotvrzují,
+že opravdu provedly akci, kterou počítač požaduje \cite{dcc_specs:web}. Tyto
+příklady ilustrují, že komerčně dostupná řešení jsou podle autorova názoru blíže
+hračce, než bezpečnému a~spolehlivému systému pro řízení modelů.
+
+Poslední část schématu \ref{fig:control-topology} je část zelená, která
+reprezentuje interakci s~uživatelem. \textit{Řídicí SW kolejiště} běží na
+samostatném serveru, ke kterému se připojují všichni uživatelé systému –
+dispečeři ze svých stanic, strojvedoucí ze svých ovladačů ale také třeba
+technikové se svými diagnostickými nástroji nebo externí programy využívající
+API serveru. Server kontroluje identitu uživatelů a umožňuje jim řídit ty
+systémy, ke kterým mají uživatelé práva.
 
 \section{Proč současný systém \gls{mtb} nedostačuje} \label{sec:mtb_fail}
 
@@ -230,9 +235,12 @@ Systém \gls{mtb} s~sebou nese řadu problémů.
 \item \textbf{Licence, výrobní data}
 
 U~současné implementace systému \gls{mtb} bohužel nebyly řádně vyřešeny licenční
-podmínky mezi jeho autorem a klubem. Souhrou událostí se \gls{kmz} dostal do
-situace, kdy nemáme zdrojová data schémat a layoutů desek plošných spojů ani
+podmínky mezi jeho autorem a~klubem. Souhrou událostí se \gls{kmz} dostal do
+situace, kdy nemáme zdrojová data schémat a~layoutů desek plošných spojů ani
 zdrojové kódy firmwarů.
+
+Aktuální situace tak prakticky znemožňuje výrobu dalších \gls{mtb} desek,
+o~záměru chtít systém \gls{mtb} nabízet mimo klub ani nemůže být řeč.
 
 \item \textbf{Hardware}
 
@@ -243,32 +251,33 @@ zásadní problém.
 
 \item \textbf{Software}
 
-V~současných deskách MTB se využívají procesory \textit{AT89C2051} (2~kB FLASH,
-128~B SRAM). Tyto procesory jsou poplatné době návrhu celého systému. Nejsou
-k~dispozici zdrojové kódy firmwarů v~procesorech a navíc firmware v~nich
-naráží na hardwarové limity procesorů. Do procesoru se jednoduše nevejde další
-logika, což efektivně zabraňuje přidání nových funkcí desek. Procesorům navíc
-chybí některé klíčové periferie, například EEPROM paměť.
+Současné MTB moduly využívají procesory \textit{AT89C2051} (2~kB FLASH,
+128~B SRAM). Tyto procesory svými parametry odpovídají době návrhu celého
+systému. Firmware v~procesorech naráží na jejich hardwarové limity – do
+procesoru se jednoduše nevejde další logika, což efektivně zabraňuje přidání
+nových funkcí. Procesorům navíc chybí některé klíčové periferie, například
+EEPROM paměť.
 
 \end{enumerate}
 
 Současný systém \gls{mtb} byl vyhodnocen jako celkově nedostatečný, je potřeba
 ho buď aktualizovat nebo nahradit za systém jiný.
 
-Při hledání alternativ si autor práce stanovil především tyto požadavky:
+Na náhradu systému \gls{mtb} autor práce stanovil především následující
+požadavky.
 
 \begin{compactenum}
 \item Systém musí být kompatibilní se současným řídicím softwarem kolejiště.
 \item Systém musí být kompatibilní se současným hardwarem kolejiště.
-\item Systém musí být udržitelný minimálně 20 let.
-\item Finanční náklady a čas vložený do povýšení současného systému na nový
+\item Systém musí být udržitelný minimálně 20~let.
+\item Finanční náklady a~čas vložený do povýšení současného systému na nový
 	systém by měly být minimalizovány.
-\item Systém musí být schopen potvrzovat akce řídicího počítače a evidovat správnou
+\item Systém musí být schopen potvrzovat akce řídicího počítače a~evidovat správnou
 	funkčnost modulů.
 \item Systém by měl být rozšiřitelný co se týče podporované funkcionality –
 	nové požadavky na funkcionalitu by mělo být možné implementovat.
 \end{compactenum}
 
-K~naplnění těchto požadavků lze přistoupit dvěma odlišnými cestami: zakoupením
-komerčního produktu a vytvořením produktu vlastního. Uveďme nejprve, jaká komerční
-řešení jsou pro naši aplikaci vhodná.
+K~naplnění těchto požadavků lze přistoupit dvěma různými způsoby: zakoupením
+komerčního produktu nebo vytvořením produktu vlastního. Prozkoumejme nejprve,
+jestli existují komerční řešení, která naplňují definované požadavky.
