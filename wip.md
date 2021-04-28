@@ -85,3 +85,4 @@ Poznámky k diplomce
 
 TODOs:
 * Ukázka inicializace modulu na nové sběrnici.
+* Další typy modulů napsat.

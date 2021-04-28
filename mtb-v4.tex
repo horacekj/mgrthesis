@@ -36,7 +36,7 @@ indikace v pultech a rozpojovače \ref{rozp}. I toto je však z pohledu hardwaru
 jednoduchý digitální výstup, pro přidání tohoto typu výstupu je třeba upravit
 pouze komunikační protokol a software a firmware modulů.
 
-Současné moduly \textit{MTB-UNI} umožňují výstupy typu S-COM pouze na pinech
+Současné moduly \gls{mtbuni} umožňují výstupy typu S-COM pouze na pinech
 0–7, což je omezení dané malou pamětí procesoru. Toto omezení by mělo
 \textit{MTB v4} relaxovat a umožnit tak, aby každý výstup mohl být v jednom
 z režimů
@@ -48,7 +48,7 @@ z režimů
 \end{compactenum}
 
 Co se týče vstupně-výstupních požadavků, \textit{MTB v4} by si vystačilo pouze
-s moduly typu \textit{MTB-UNI} \ref{uni}. Na kolejišti v současnosti není žádný
+s moduly typu \gls{mtbuni} \ref{uni}. Na kolejišti v současnosti není žádný
 prvek, který by vyžadoval například analogový vstup, analogový výstup nebo např.
 \textit{PWM} výstup. Na kolejištích se hojně používají servomotory, ale vždy
 pro řízení dvoupolohových prvků: výhybka, výkolejka, mechanické návěstidlo.
@@ -57,24 +57,24 @@ Všechny tyto prvky k sobě mají řídicí elektroniku, která interaguje se sy
 nastavení požadované polohy) a případně 2 digitální vstupy (pro detekci koncové
 polohy).
 
-Zmiňme na tomto místě, že neimplementace PWM výstupů do \textit{MTB-UNI v4}
+Zmiňme na tomto místě, že neimplementace PWM výstupů do \gls{mtbuni} v4
 desky je koncepčním rozhodnutím autora této práce. Autor práce razí přístup
 \uv{ať jedna věc dělá jeden úkol a dělá ho dobře}. Místo návrhu všemocného
-\textit{MTB-UNI} modulu, který za pár let bude umět i uvařit kávu, se autor
+\gls{mtbuni} modulu, který za pár let bude umět i uvařit kávu, se autor
 rozhodl vydat cestou univerzálního kompaktního snadno sériově vyrobitelného
 modulu s prostými digitálními vstupy a výstupy.
 
-Připomeňme, že \textit{MTB-UNI} desky umožňují speciální typ vstupů – IR vstupy,
+Připomeňme, že \gls{mtbuni} desky umožňují speciální typ vstupů – IR vstupy,
 viz sekci \ref{sec:uni_ir}. Tyto vstupy vyžadují další elektroniku navíc.
-V nových \textit{MTB-UNI v4} deskách bude podpora pro IR čidla zrušena ve jménu
+V nových \gls{mtbuni} v4 deskách bude podpora pro IR čidla zrušena ve jménu
 předchozího odstavce. Bude navržena speciální deska pro buzení a vyhodnocování
 stavu IR čidel, která se bude připojovat přímo k digitálním vstupům
-\textit{MTB-UNI} desky. Ušetří se tak elektronika na \textit{MTB-UNI} deskách,
+\gls{mtbuni} desky. Ušetří se tak elektronika na \gls{mtbuni} deskách,
 na kterých se IR vstupy nevyužívají, zjednoduší se návrh desky plošných spojů
 a umožní se využít IR čidla i s jinými deskami, než MTB, např. pro přímou
 indikaci v pultech. Jedna deska bude dělat jednu věc a bude ji dělat dobře.
 
-Na současném kolejišti si tedy vystačím pouze s \textit{MTB-UNI} deskami, které
+Na současném kolejišti si tedy vystačím pouze s \gls{mtbuni} deskami, které
 budou navíc ořezané o podporu IR čidel. Ačkoliv je toto tvrzení pravdivé, bylo
 by neperspektivní si podporu jiných typů desek zavřít volbou nevhodného
 protokolu. Nový protokol sběrnice \gls{mtbbus} by měl být navržený univerzálně
@@ -158,7 +158,7 @@ Shrňme stručně všechny požadavky na systém \gls{mtb} v4.
 	modulů. Jedinou společnou vlastností modulů je, že snímají vstupy a nastavují
 	výstupy.
 \item Je třeba vyřešit zpětnou kompatibilitu především se stávajícími
-	\textit{MTB-UNI} deskami v kolejišti.
+	\gls{mtbuni} deskami v kolejišti.
 \item Celé řešení by mělo být psáno opensource a openhardware, aby se dalo volně
 	využívat.
 \item Desky sběrnice \gls{mtbbus} v4 by mělo být možné průběžně vyhledávat,
@@ -167,8 +167,8 @@ Shrňme stručně všechny požadavky na systém \gls{mtb} v4.
 	je dlouhodobý výhled dostupnosti.
 \item Desky \gls{mtb} potvrzují příkazy, lze monitorovat jejich správnou funkčnost.
 \item Z počítače bude možné na každém modulu zapnout identifikační LED.
-\item Moduly \textit{MTB-UNI} budou nově podporovat kmitavé výstupy.
-\item Moduly \textit{MTB-UNI} budou nově podporovat S-COM výstupy na všech pinech.
+\item Moduly \gls{mtbuni} budou nově podporovat kmitavé výstupy.
+\item Moduly \gls{mtbuni} budou nově podporovat S-COM výstupy na všech pinech.
 \end{compactenum}
 
 
@@ -197,15 +197,15 @@ Navrhneme novou \textit{MTB-USB} desku, která bude splňovat všechny požadavk
 definované výše a která bude založena na moderních, ale dlouhodobě dostupných
 součástkách.
 
-Nebudeme však vynucovat výměnu všech stávajících \textit{MTB-UNI} desek v
-kolejišti. Provedeme výměnu procesoru v současné \textit{MTB-UNI} desce za
+Nebudeme však vynucovat výměnu všech stávajících \gls{mtbuni} desek v
+kolejišti. Provedeme výměnu procesoru v současné \gls{mtbuni} desce za
 procesor nový a umožníme tak starým deskám fungovat na nové sběrnici. Tím se
 minimalizují náklady na povýšení sběrnice.
 
 Navrhneme IR desku, která bude zajišťovat podporu IR čidel, protože nová
-\textit{MTB-UNI} deska již nebude obsahovat přímou podporu IR čidel.
+\gls{mtbuni} deska již nebude obsahovat přímou podporu IR čidel.
 
-Zachování většiny stávajícího hardwaru současných \textit{MTB-UNI} a snaha o
+Zachování většiny stávajícího hardwaru současných \gls{mtbuni} a snaha o
 zachování kabeláže sběrnice s sebou nese ponechání volby sběrnice \gls{mtbbus}
 na standardu RS485. RS485 nepřináší žádné zjevné nevýhody, takže není důvod,
 proč hardwarovou vrstvu komunikační sběrnice měnit.
@@ -503,7 +503,7 @@ Protokol je navržený tak, aby moduly mohly mít libovolné vstupy i výstupy
 i jejich počty. Obsah datových bytů zpráv \textit{Set Output}, \textit{Input
 Changed} a \textit{Input State} je proto specifikovaný ve specifikaci modulů.
 
-Například modul \textit{MTB-UNI} má 16 analogových a 16 digitálních výstupů.
+Například modul \gls{mtbuni} má 16 analogových a 16 digitálních výstupů.
 Protože počet vstupů i výstupů je malý, posílá se v protokolu vždy celý stav
 vstupů a výstupů. Protokol počítá s tím, že jiné moduly mohou mít vstupy a
 výstupy například s větším rozsahem hodnot. V takovém případě protokol umožňuje
@@ -522,7 +522,7 @@ vstupy.}
 Konfigurace různých typů modulů se mohou zásadně lišit v počtu
 konfigurovatelných hodnot.
 
-Například modul \textit{MTB-UNI} ma 24 nebo 26 konfiguračních bytů
+Například modul \gls{mtbuni} ma 24 nebo 26 konfiguračních bytů
 \ref{uni:proto}. Proto se celá konfigurace modulu posílá najednou.  Protokol
 však umožňuje libovolný způsob zasílá konfigurace: počítač například u modulů s
 větším množstvím konfigurace může poslat rozsah adres, jejichž hodnoty chce
@@ -540,7 +540,8 @@ konkrétní typy modulů.
 
 \subsubsection{Typické fungování sběrnice}
 
-Následující kroky popisují typické fungování systému \gls{mtb}.
+Následující kroky popisují typické fungování systému \gls{mtb} (srovnejte
+s~postupem definovaným na konci \ref{sec:mtbbus}).
 
 \begin{compactenum}
 \item Je zapnut řídicí počítač kolejiště.
@@ -631,7 +632,7 @@ probíhá následovně \footnote{Procedůra je podrobně popsaná v dokumentaci 
 \end{compactenum}
 
 Jak bylo zmíněno v posledním kroku, je doporučeno (a nový firmware
-\textit{MTB-UNI} modulů toto doporučení dodržuje), aby při každém náběhu
+\gls{mtbuni} modulů toto doporučení dodržuje), aby při každém náběhu
 procesoru modulu proběhla kontrola konzistence paměti. Kontrola konzistence
 paměti je implementována pomocí uloženého kontrolního součtu (\textit{CRC-16})
 na konkrétních adresách paměti. Protokol \gls{mtbbus} implementuje atribut,
@@ -650,7 +651,7 @@ vyžadovalo ruční obcházení modulů s programátorem.
 \subsection{MTB-USB v4}
 
 
-\subsection{MTB-UNI v4}
+\subsection{\gls{mtbuni} v4}
 
 
 \subsection{MTB-2-AVR}

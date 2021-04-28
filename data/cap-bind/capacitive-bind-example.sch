@@ -1,0 +1,107 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Device:R R?
+U 1 1 6089BEF8
+P 3550 3000
+F 0 "R?" H 3620 3046 50  0000 L CNN
+F 1 "10k" H 3620 2955 50  0000 L CNN
+F 2 "" V 3480 3000 50  0001 C CNN
+F 3 "~" H 3550 3000 50  0001 C CNN
+	1    3550 3000
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 6089BFF6
+P 4050 3000
+F 0 "R?" H 4120 3046 50  0000 L CNN
+F 1 "100k" H 4120 2955 50  0000 L CNN
+F 2 "" V 3980 3000 50  0001 C CNN
+F 3 "~" H 4050 3000 50  0001 C CNN
+	1    4050 3000
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:VCC #PWR?
+U 1 1 6089C71E
+P 3550 2850
+F 0 "#PWR?" H 3550 2700 50  0001 C CNN
+F 1 "VCC" H 3565 3023 50  0000 C CNN
+F 2 "" H 3550 2850 50  0001 C CNN
+F 3 "" H 3550 2850 50  0001 C CNN
+	1    3550 2850
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:VCC #PWR?
+U 1 1 6089CAE6
+P 4050 2850
+F 0 "#PWR?" H 4050 2700 50  0001 C CNN
+F 1 "VCC" H 4065 3023 50  0000 C CNN
+F 2 "" H 4050 2850 50  0001 C CNN
+F 3 "" H 4050 2850 50  0001 C CNN
+	1    4050 2850
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 6089C2EA
+P 3800 3300
+F 0 "C?" V 3650 3300 50  0000 C CNN
+F 1 "100n" V 3550 3300 50  0000 C CNN
+F 2 "" H 3838 3150 50  0001 C CNN
+F 3 "~" H 3800 3300 50  0001 C CNN
+	1    3800 3300
+	0    1    -1   0   
+$EndComp
+Wire Wire Line
+	3650 3300 3550 3300
+Wire Wire Line
+	3550 3300 3550 3150
+Connection ~ 3550 3300
+Wire Wire Line
+	3950 3300 4050 3300
+Wire Wire Line
+	4050 3300 4050 3150
+Connection ~ 4050 3300
+$Comp
+L Connector:Conn_01x01_Male J?
+U 1 1 608A04C4
+P 3000 3300
+F 0 "J?" H 3100 3100 50  0000 C CNN
+F 1 "IR" H 3100 3200 50  0000 C CNN
+F 2 "" H 3000 3300 50  0001 C CNN
+F 3 "~" H 3000 3300 50  0001 C CNN
+	1    3000 3300
+	1    0    0    1   
+$EndComp
+Wire Wire Line
+	3200 3300 3550 3300
+$Comp
+L Connector:Conn_01x01_Female J?
+U 1 1 608A2EAD
+P 4600 3300
+F 0 "J?" H 4550 3500 50  0000 L CNN
+F 1 "CPU" H 4500 3400 50  0000 L CNN
+F 2 "" H 4600 3300 50  0001 C CNN
+F 3 "~" H 4600 3300 50  0001 C CNN
+	1    4600 3300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4050 3300 4400 3300
+$EndSCHEMATC
