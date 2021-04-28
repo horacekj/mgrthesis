@@ -82,3 +82,6 @@ Poznámky k diplomce
   - Další typy modulů: poreferovat.
   - Měření proudů driverem.
   - Bezdrátovost.
+
+TODOs:
+* Ukázka inicializace modulu na nové sběrnici.

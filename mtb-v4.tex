@@ -349,9 +349,196 @@ příkazem typu \textit{broadcast} je požadavek na reset výstupů všech modul
 Adresní prostor 255 modulů byl vyhodnocen jako dostatečně velký.
 
 \item \textbf{Délka zprávy.}
+
+Tento byte obsahuje počet datových bytů zprávy plus jedna. Pro univerzálnost bylo
+rozhodnuto protokol navrhnout tak, aby délka zpráv nebyla součástí definice
+jednotlivých příkazů, ale aby byla ve zprávě obsažena explicitně. Toto
+rozhodnutí umožňuje například \textit{MTB-USB} modulu přeposílat zprávy mezi
+\gls{mtbbus} a počítačem, aniž by \textit{MTB-USB} muselo dekódovat obsah
+zpráv, případně mít velkou tabulku \textit{typ zprávy, délka}. Některé zprávy
+navíc mohou mít variabilní délku ze své podstaty.
+
+Maximální hodnota tohoto bytu je 121, což umožňuje zprávy skládat do bufferů o
+délce 128 bytes. Maximální délka zprávy byla zvolena s ohledem na nevelké
+kapacity \textit{SRAM} mikrokontrolérů a časovou efektivitu případné
+retransmise.
+
+Původní verze protokolu \gls{mtbbus} umožňovala zprávy o délce nejvýše 7 bytů.
+Tato hodnota byla zásadně navýšena zejména proto, aby bylo možné novým
+protokolem posílat firmware pro aktualizaci \gls{mtb} desek.
+
+\item \textbf{Kód příkazu}
+
+Libovolné číslo v rozsahu 0–255. Význam jednotlivých kódů definuje specifikace
+protokolu.
+
+\item \textbf{Data příkazu}
+
+Až 120 bytů.
+
+\item \textbf{Kontrolní součet} (2 byty)
+
+Kontrolní součet se ve zprávě uvádí, aby bylo možné ověřit integritu přijímané
+zprávy. Integrita zprávy může být narušena například elektromagnetickým rušením
+nebo špatnými elektrickými vlastnostmi přenosového média.
+
+Původní protokol \gls{mtbbus} zabezpečoval integritu zprávy pomocí jednoduchého
+mechanismu \texttt{xor}, kdy na jednotlivé byty zprávy byl aplikován bitový xor
+a výsledná hodnota byla připojena na konec zprávy. Tento způsob je vhodný pro
+malé zprávy.
+
+Nová verze protokolu již umožňuje delší zprávy a tak byl navržen robustnější
+způsob zabezpečení zprávy. Sběrnice \gls{mtbbus} v4 používá pro zabezpečení
+zprávy mechanismus \textit{CRC-16} \cite{crc16-modbus}. Tento mechanismus je
+založen na dělení polynomů se zbytkem. Konkrétně se používá verze
+\texttt{CRC-16-IBM}, inspirací autorovi byla průmyslová sběrnice \textit{ModBus}
+\cite{modbus}, která tento způsob zabezpečení zpráv používá také.
+
 \end{enumerate}
+
+Příklad zprávy: \texttt{0x101 0x001 0x001 0x091 0x090}.
+
+\begin{compactenum}
+\item \texttt{0x101}: zpráva pro modul s adresou 1.
+\item \texttt{0x001}: následuje 1 byte zprávy.
+\item \texttt{0x001}: příkaz \texttt{0x01}.
+\item \texttt{0x091}, \texttt{0x090}: kontrolní byty \textit{CRC-16}.
+\end{compactenum}
+
+Zpráva neobsahuje žádná data příkazu.
+
+\subsubsection{Zprávy}
+
+Kompletní specifikace zpráv a jejich odpovědí je dostupná na
+\url{https://github.com/kmzbrnoI/mtbbus-protocol}, zde uvedeme stručný přehled.
+
+Zprávy master $\rightarrow$ slave:
+
+\begin{compactitem}
+\item \textit{Module Inquiry}
+\item \textit{Module Information Request}
+\item \textit{Set Configuration}
+\item \textit{Get Configuration}
+\item \textit{Beacon}
+\item \textit{Get Input}
+\item \textit{Set Output}
+\item \textit{Reset Outputs}
+\item \textit{Change Address}
+\item \textit{Change Speed}
+\item \textit{Firmware Upgrade Request}
+\item \textit{Firmware Write Flash}
+\item \textit{Firmware Write Flash Status Request}
+\item \textit{Module-specific Command}
+\item \textit{Reboot}
+
+\end{compactitem}
+
+Zprávy slave $\rightarrow$ master:
+
+\begin{compactitem}
+\item \textit{Acknowledgement}
+\item \textit{Error}
+\item \textit{Module Information}
+\item \textit{Module Configuration}
+\item \textit{Input Changed}
+\item \textit{Input State}
+\item \textit{Output Set}
+\item \textit{Firmware Write Flash Status}
+\item \textit{Module-specific command}
+\end{compactitem}
+
+
+
+Rozeberme nyní, proč zprávy vypadají tak, jak vypadají.
+
+Jak již bylo zmíněno, \textit{MTB-USB} deska průběžně skenuje aktivní
+i neaktivní moduly (aktivní častěji) a posílá modulům \textit{Module Inquiry}.
+Moduly odpovídají buď \textit{Acknowledgement} nebo \textit{Input Changed}.
+
+Zpráva \textit{Set Output} slouží k nastavení stavu výstupů modulu, zpráv
+\textit{Reset Outputs} slouží k navrácení výstupů do bezpečného stavu.
+Tato zpráva je typicky odesílána \textit{MTB-USB} modulem při ukončení komunikace
+s počítačem jako broadcast.
+
+Počítač může zapisovat nebo vyčítat konfiguraci modulů pomocí zpráv
+\textit{Get Configuration}, \textit{Set Configuration} a odpovědi
+\textit{Configuration}.
+
+Počítač může zapínat a vypínat indikační LED na \gls{mtb} modulech pomocí
+zprávy \textit{Beacon}.
+
+Modulům, které si ukládají adresu softwarově, může operátor z počítače změnit
+adresu pomocí zprávy \textit{Change Address}.
+
+Plánovaná změna rychlosti sběrnice se modulům ohlašuje pomocí zprávy
+\textit{Change Speed}, která je typicky odesílána jako broadcast. Každý modul
+si ukládá rychlost sběrnice do volatilní paměti a tuto rychlost použije při
+zapnutí. Očekává se, že budoucí typy procesorů v modulech \gls{mtb} budou
+schopny detekovat rychlost sběrnice automaticky. Aktuálně není na sběrnici
+\gls{mtbbus} implementován žádný mechanismus pro automatickou detekci rychlosti.
+V situaci, kdy je například do sběrnice doplněn nový modul, který je ale z
+výroby nastaven na jinou rychlost, než aktuálně sběrnice používá, se očekává,
+že operátor přenastaví rychlost sběrnice na rychlost nového modulu, odešle
+novému modulu příkaz na změnu rychlosti a vrátí rychlost sběrnice zpět.
+Tento mechanismus je přímočarý a lze provést za plného chodu sběrnice.
+
+Vysvětlení procesoru aktualizace firmwaru modulů se budeme věnovat v samostatné
+kapitole.
+
+Poslední zajímavou zprávou je \textit{Module-specific command}. Tato zpráva
+umožňuje tunelovat pro modul libovolná data. Pokud typ modulu podporuje nějaké
+speciální operace, může tento typ zprávy využít k řízení těchto operací.
+
+
+\subsubsection{Dvouvrstvost protokolu}
+
+Specifikace protokolu je tzv. \textit{dvouvrstvá}. Protokol specifikuje typy
+zpráv, ale specifikace obsahu některých zpráv může být různá pro různé typy
+modulů. Specifickými vlastnostmi modulů jsou:
+
+\begin{enumerate}
+\item Formát dat vstupů, formát dat výstupů
+
+Protokol je navržený tak, aby moduly mohly mít libovolné vstupy i výstupy
+i jejich počty. Obsah datových bytů zpráv \textit{Set Output}, \textit{Input
+Changed} a \textit{Input State} je proto specifikovaný ve specifikaci modulů.
+
+Například modul \textit{MTB-UNI} má 16 analogových a 16 digitálních výstupů.
+Protože počet vstupů i výstupů je malý, posílá se v protokolu vždy celý stav
+vstupů a výstupů. Protokol počítá s tím, že jiné moduly mohou mít vstupy a
+výstupy například s větším rozsahem hodnot. V takovém případě protokol umožňuje
+to, aby se neposílal celý stav vstupů a výstupů, ale jen relevantní část.
+Například příkaz \textit{Set Output} může poslat jen ty výstupy, jejichž
+stav je třeba změnit. To je také důvodem, proč existují 2 různé zprávy
+\textit{Input Changed} (ve které se posílá jen stav změněných vstupů) a
+\textit{Input State} (ve které se posílá stav všech vstupů).
+\footnote{Všimněte si, že tento mechanismus umožňuje také provádět polling
+vstupů místo událostního hlášení změn stavů vstupů. To je zcela záměrný prvek
+protokolu. Tento prvek se využije například u budoucích modulů s analogovými
+vstupy.}
+
+\item Formát konfigurace
+
+Konfigurace různých typů modulů se mohou zásadně lišit v počtu
+konfigurovatelných hodnot.
+
+Například modul \textit{MTB-UNI} ma 24 nebo 26 konfiguračních bytů
+\ref{uni:proto}. Proto se celá konfigurace modulu posílá najednou.  Protokol
+však umožňuje libovolný způsob zasílá konfigurace: počítač například u modulů s
+větším množstvím konfigurace může poslat rozsah adres, jejichž hodnoty chce
+znát. Nebo naopak poslat rozsah adres a hodnoty na těchto adresách, které
+nastavuje.
+
+\item Adresování a data paměti pro aktualizaci firmware
+
+Různé typy modulů typicky obsahují různé procesory, které jinak adresují paměť.
+Liší se například šířka slova nebo velikost paměti. Význam datových bytů
+zpráv pracujících s aktualizací firmwaru procesoru je proto definován pro
+konkrétní typy modulů.
+
+\end{enumerate}
+
+\subsubsection{Aktualizace firmwaru \gls{mtb} modulů}
 
 \subsubsection{Adresování}
 
-
-TODO link to full specs
