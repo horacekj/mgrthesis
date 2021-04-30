@@ -1,0 +1,213 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Device:Polyfuse F1
+U 1 1 608BF111
+P 5100 4300
+F 0 "F1" V 4875 4300 50  0000 C CNN
+F 1 "50mA" V 4966 4300 50  0000 C CNN
+F 2 "" H 5150 4100 50  0001 L CNN
+F 3 "~" H 5100 4300 50  0001 C CNN
+	1    5100 4300
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R2
+U 1 1 608BF47F
+P 5700 4300
+F 0 "R2" V 5493 4300 50  0000 C CNN
+F 1 "2k2" V 5584 4300 50  0000 C CNN
+F 2 "" V 5630 4300 50  0001 C CNN
+F 3 "~" H 5700 4300 50  0001 C CNN
+	1    5700 4300
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:D_Schottky D1
+U 1 1 608C03EF
+P 5400 4650
+F 0 "D1" V 5446 4570 50  0000 R CNN
+F 1 "Schottky" V 5355 4570 50  0000 R CNN
+F 2 "" H 5400 4650 50  0001 C CNN
+F 3 "~" H 5400 4650 50  0001 C CNN
+	1    5400 4650
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R R1
+U 1 1 608C08A0
+P 5400 4000
+F 0 "R1" H 5470 4046 50  0000 L CNN
+F 1 "10k" H 5470 3955 50  0000 L CNN
+F 2 "" V 5330 4000 50  0001 C CNN
+F 3 "~" H 5400 4000 50  0001 C CNN
+	1    5400 4000
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x01_Female J1
+U 1 1 608C10AD
+P 4550 4300
+F 0 "J1" H 4442 4075 50  0000 C CNN
+F 1 "INPUT" H 4442 4166 50  0000 C CNN
+F 2 "" H 4550 4300 50  0001 C CNN
+F 3 "~" H 4550 4300 50  0001 C CNN
+	1    4550 4300
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:D_Zener D2
+U 1 1 608C1D48
+P 5650 5150
+F 0 "D2" V 5600 5350 50  0000 R CNN
+F 1 "5V1" V 5700 5400 50  0000 R CNN
+F 2 "" H 5650 5150 50  0001 C CNN
+F 3 "~" H 5650 5150 50  0001 C CNN
+	1    5650 5150
+	0    -1   1    0   
+$EndComp
+$Comp
+L Triac_Thyristor:BT169B Q1
+U 1 1 608C2981
+P 5950 5300
+F 0 "Q1" H 6038 5346 50  0000 L CNN
+F 1 "BT148" H 6038 5255 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-92_Inline" H 6050 5225 50  0001 L CIN
+F 3 "https://media.digikey.com/pdf/Data%20Sheets/NXP%20PDFs/BT169_Series.pdf" H 5950 5300 50  0001 L CNN
+	1    5950 5300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C2
+U 1 1 608C2FE2
+P 5650 5650
+F 0 "C2" H 5535 5604 50  0000 R CNN
+F 1 "100n" H 5535 5695 50  0000 R CNN
+F 2 "" H 5688 5500 50  0001 C CNN
+F 3 "~" H 5650 5650 50  0001 C CNN
+	1    5650 5650
+	1    0    0    1   
+$EndComp
+$Comp
+L Device:R R3
+U 1 1 608C3366
+P 5250 5400
+F 0 "R3" V 5043 5400 50  0000 C CNN
+F 1 "2k2" V 5134 5400 50  0000 C CNN
+F 2 "" V 5180 5400 50  0001 C CNN
+F 3 "~" H 5250 5400 50  0001 C CNN
+	1    5250 5400
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5800 5400 5650 5400
+Wire Wire Line
+	5650 5400 5650 5300
+Wire Wire Line
+	5650 5400 5650 5500
+Connection ~ 5650 5400
+Wire Wire Line
+	5650 5800 5650 5900
+Wire Wire Line
+	5650 5900 5950 5900
+Wire Wire Line
+	5950 5900 5950 5450
+$Comp
+L power:GND #PWR01
+U 1 1 608C98E6
+P 5650 5900
+F 0 "#PWR01" H 5650 5650 50  0001 C CNN
+F 1 "GND" H 5655 5727 50  0000 C CNN
+F 2 "" H 5650 5900 50  0001 C CNN
+F 3 "" H 5650 5900 50  0001 C CNN
+	1    5650 5900
+	1    0    0    -1  
+$EndComp
+Connection ~ 5650 5900
+Wire Wire Line
+	5400 5400 5650 5400
+$Comp
+L Device:C C1
+U 1 1 608CB2D9
+P 4850 5150
+F 0 "C1" H 4735 5104 50  0000 R CNN
+F 1 "100n" H 4735 5195 50  0000 R CNN
+F 2 "" H 4888 5000 50  0001 C CNN
+F 3 "~" H 4850 5150 50  0001 C CNN
+	1    4850 5150
+	1    0    0    1   
+$EndComp
+Wire Wire Line
+	4850 5300 4850 5400
+Wire Wire Line
+	4850 5400 5100 5400
+Wire Wire Line
+	4850 5400 4850 5900
+Wire Wire Line
+	4850 5900 5650 5900
+Connection ~ 4850 5400
+Wire Wire Line
+	5950 5150 5950 4900
+Wire Wire Line
+	5950 4900 5650 4900
+Wire Wire Line
+	4850 4900 4850 5000
+Wire Wire Line
+	5650 5000 5650 4900
+Connection ~ 5650 4900
+Wire Wire Line
+	5650 4900 5400 4900
+Wire Wire Line
+	5400 4800 5400 4900
+Connection ~ 5400 4900
+Wire Wire Line
+	5400 4900 4850 4900
+$Comp
+L Connector:Conn_01x01_Male J2
+U 1 1 608C165A
+P 6250 4300
+F 0 "J2" H 6350 4550 50  0000 C CNN
+F 1 "CPU" H 6350 4450 50  0000 C CNN
+F 2 "" H 6250 4300 50  0001 C CNN
+F 3 "~" H 6250 4300 50  0001 C CNN
+	1    6250 4300
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	6050 4300 5850 4300
+Wire Wire Line
+	5550 4300 5400 4300
+Wire Wire Line
+	5400 4500 5400 4300
+Connection ~ 5400 4300
+Wire Wire Line
+	5400 4300 5250 4300
+Wire Wire Line
+	5400 4150 5400 4300
+Wire Wire Line
+	4950 4300 4750 4300
+$Comp
+L power:+5V #PWR?
+U 1 1 608E2885
+P 5400 3850
+F 0 "#PWR?" H 5400 3700 50  0001 C CNN
+F 1 "+5V" H 5415 4023 50  0000 C CNN
+F 2 "" H 5400 3850 50  0001 C CNN
+F 3 "" H 5400 3850 50  0001 C CNN
+	1    5400 3850
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC
