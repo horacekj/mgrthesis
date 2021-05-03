@@ -1,147 +1,157 @@
-Našim základním cílem v této kapitole bude navrhnout \gls{plc} systém, který
-splňuje požadavky definované na konci kapitoly \ref{chap:nasazeni}. Při návrhu
-tohoto systému vyjdeme z přirozeného požadavku na minimální změny v aktuálním
-harwaru a softwaru kolejiště. Navrhneme nový systém jako iteraci současného
-systému \gls{mtb}. Tento systém pojmenujeme \textit{MTB v4}.
+V~této kapitole představíme návrh vlastního \gls{plc} systému, který
+splňuje požadavky definované v~\ref{subsec:gen_requirements}. Návrh systému
+vychází z~přirozeného požadavku na minimální změny v~aktuálním harwaru
+a~softwaru kolejiště. Nový systém je navržen jako iterace současného systému
+\gls{mtb}, jmenuje se \textit{MTB v4}.
 
-Nový systém vyřeší všechny problémy aktuální verze systému \gls{mtb} popsané
-v kapitole \ref{chap:nasazeni}. Při návrhu vezmeme v potaz aktuální technologie
-v oblasti \gls{plc} obvodů a zvážíme implementace těcht technolgií. Detailně
-rozebereme současnou implementace protokolu \gls{mtbbus} a u každé položky
-zvolíme, jestli a proč ji chceme zachovat.
+\gls{mtb} v4 řeší všechny problémy aktuálního systému \gls{mtb} popsané
+v~kapitole \ref{sec:mtb_fail}. Při návrhu byly vzány v~potaz aktuální
+technologie v~oblasti \gls{plc} obvodů, přičemž byla zvážena vhodnost jejich
+implementace do systému \gls{mtb} v4. Tyto úvahy popíšeme. Detailně rozebereme
+současnou implementaci protokolu \gls{mtbbus} a~u~každé položky budeme
+argumentovat, jestli ji zachovat.
 
 \section{Podrobná specifikace požadavků}
 
-Abychom byli schopni navrhnout MTB v4, musíme znát přesné požadavky na takový
-systém. Nyní požadavky formulujeme, přičemž budeme klást důraz na vysvětlení
+Pro návrh systému \gls{mtb} v4 je třeba formulovat přesnější specifikaci
+požadavků, než jsou požadavky definované v~\ref{subsec:gen_requirements}. Nyní
+tyto přesné požadavky formulujeme, přičemž budeme klást důraz na vysvětlení
 změn oproti současnému systému \gls{mtb}.
 
-Zaměřme se nejprve po požadavky, které na systém \gls{mtb} kladou komponenty,
-které tento systém používají.
+Zaměřme se nejprve na požadavky, které na systém \gls{mtb} kladou komponenty,
+které jej užívají.
 
-\subsection{Periferie v kolejišti}
+\subsection{Periferie v~kolejišti}
 
-K \gls{mtb} se na straně kolejiště připojují jednotlivé vstupy a výstupy
-popsané v kapitole \ref{chap:existujici-reseni}. Všechny v současnosti na
-kolejišti používané vstupy jsou digitálního formátu (binární vstupy), výstupy
-jsou buď digitální binární nebo S-COM \ref{scom}. S-COM výstupy jsou ve
-skutečnosti digitální výstupy, do kterých MTB deska moduluje S-COM signál.
-S-COM signál je jednoduchý pomalý signál, který lze s přehledem vytvářet běžným
-výstupním pinem procesoru nebo posuvného registru.
+K~\gls{mtb} se na straně kolejiště připojují jednotlivé periferie popsané
+v~\ref{sec:dcc}. Všechny v~současnosti na kolejišti používané vstupy jsou
+digitálního charakteru (binární vstupy), výstupy jsou buď digitální binární
+nebo \textit{\gls{scom}}. \gls{scom} výstupy jsou ve skutečnosti digitální
+výstupy, do kterých \gls{mtb} deska moduluje \gls{scom} signál. \gls{scom}
+signál je záměrně jednoduchý pomalý signál, který lze s~přehledem vytvářet
+běžným výstupním pinem procesoru nebo posuvného registru \cite{scom-specs}.
 
-Oproti současnému \gls{mtb} bychom nově chtěli podporovat \textit{kmitavý
-výstup} s počítačově definovou frekvencí kmitání a pevnou střídou. Jednalo by
-se o kmitání v řádu jednotek \textit{Hz}, využití tohoto typu výstupu je pro
-indikace v pultech a rozpojovače \ref{rozp}. I toto je však z pohledu hardwaru
-jednoduchý digitální výstup, pro přidání tohoto typu výstupu je třeba upravit
-pouze komunikační protokol a software a firmware modulů.
+Oproti současnému \gls{mtb} by nové \gls{mtb} mělo podporovat tzv. \textit{kmitavý
+výstup} s~počítačově definovanou frekvencí kmitání a~pevnou střídou. Frekvence
+kmitání stačí v~řádu jednotek \textit{Hz}. Kmitavý výstup se využije pro
+indikace v~pultech a~k~ovládání rozpojovačů\footnote{Rozpojovač je mechanické
+zařízení pevně spojené s~kolejištěm, jehož účelem je rozpojit modelové spřáhlo
+bez ručního zásahu obsluhy do kolejiště.}. I~kmitavý výstup je však z~pohledu
+návrhu hardwaru jednoduchý digitální výstup – pro přidání kmitavého výstupu
+stačí upravit komunikační protokol \gls{mtbbus}, software v~počítači a~firmware
+modulů.
 
-Současné moduly \gls{mtbuni} umožňují výstupy typu S-COM pouze na pinech
-0–7, což je omezení dané malou pamětí procesoru. Toto omezení by mělo
-\textit{MTB v4} relaxovat a umožnit tak, aby každý výstup mohl být v jednom
-z režimů
+Současné moduly \gls{mtbuni} umožňují výstupy typu \gls{scom} pouze na pinech
+0–7, což je omezení dané malou pamětí procesoru současných \gls{mtbuni} modulů.
+Toto omezení by mělo \textit{MTB v4} relaxovat a umožnit tak, aby každý výstup
+mohl být v~jednom z~režimů
 
 \begin{compactenum}
 \item digitální,
-\item S-COM,
+\item \gls{scom},
 \item kmitavý.
 \end{compactenum}
 
-Co se týče vstupně-výstupních požadavků, \textit{MTB v4} by si vystačilo pouze
-s moduly typu \gls{mtbuni} \ref{uni}. Na kolejišti v současnosti není žádný
-prvek, který by vyžadoval například analogový vstup, analogový výstup nebo např.
-\textit{PWM} výstup. Na kolejištích se hojně používají servomotory, ale vždy
-pro řízení dvoupolohových prvků: výhybka, výkolejka, mechanické návěstidlo.
-Všechny tyto prvky k sobě mají řídicí elektroniku, která interaguje se systémem
-\gls{mtb} pouze digitálními piny. Typicky stačí 2 digitální výstupy (pro
-nastavení požadované polohy) a případně 2 digitální vstupy (pro detekci koncové
-polohy).
+Co se týče vstupně-výstupních požadavků periferií kolejiště, \textit{MTB v4} by
+si vystačilo pouze s~moduly typu \gls{mtbuni}. Na kolejištích \gls{kmz}
+v~současnosti není žádný prvek, který by vyžadoval například analogový vstup,
+analogový výstup nebo třeba \textit{PWM} výstup. Na kolejištích se sice hojně
+používají servomotory, ale vždy pro řízení dvoupolohových prvků: výhybka,
+výkolejka, mechanické návěstidlo. Všechny tyto prvky k~sobě mají řídicí
+elektroniku, která interaguje se systémem \gls{mtb} pouze digitálními piny.
+Typicky stačí na každý takový prvek 2~digitální výstupy \gls{mtbuni} modulu
+(pro nastavení požadované polohy) a případně 2~digitální vstupy (pro detekci
+koncové polohy).
 
-Zmiňme na tomto místě, že neimplementace PWM výstupů do \gls{mtbuni} v4
-desky je koncepčním rozhodnutím autora této práce. Autor práce razí přístup
-\uv{ať jedna věc dělá jeden úkol a dělá ho dobře}. Místo návrhu všemocného
-\gls{mtbuni} modulu, který za pár let bude umět i uvařit kávu, se autor
-rozhodl vydat cestou univerzálního kompaktního snadno sériově vyrobitelného
-modulu s prostými digitálními vstupy a výstupy.
+Zmiňme na tomto místě, že rozhodnutí neimplementovat PWM výstupy do
+\gls{mtbuni} v4 desky je koncepčním rozhodnutím autora této práce. Autor práce
+razí přístup \uv{ať jedna věc dělá jeden úkol a dělá ho dobře}. Místo návrhu
+všemocného \gls{mtbuni} modulu, který za pár let bude umět i uvařit kávu, se
+autor rozhodl vydat cestou univerzálního kompaktního snadno sériově
+vyrobitelného modulu s~prostými digitálními vstupy a výstupy.
 
-Připomeňme, že \gls{mtbuni} desky umožňují speciální typ vstupů – IR vstupy,
-viz sekci \ref{sec:uni_ir}. Tyto vstupy vyžadují další elektroniku navíc.
-V nových \gls{mtbuni} v4 deskách bude podpora pro IR čidla zrušena ve jménu
-předchozího odstavce. Bude navržena speciální deska pro buzení a vyhodnocování
-stavu IR čidel, která se bude připojovat přímo k digitálním vstupům
-\gls{mtbuni} desky. Ušetří se tak elektronika na \gls{mtbuni} deskách,
-na kterých se IR vstupy nevyužívají, zjednoduší se návrh desky plošných spojů
-a umožní se využít IR čidla i s jinými deskami, než MTB, např. pro přímou
-indikaci v pultech. Jedna deska bude dělat jednu věc a bude ji dělat dobře.
+Připomeňme, že \gls{mtbuni} desky umožňují speciální typ vstupů – IR vstupy
+(viz \ref{sec:ir}). Tyto vstupy vyžadují další elektroniku navíc.  V~nových
+\gls{mtbuni} v4 deskách je přímá podpora pro IR čidla zrušena. Bude navržena
+samostatná deska pro buzení a vyhodnocování stavu IR čidel, která se bude
+připojovat přímo k~digitálním vstupům \gls{mtbuni} desky. Ušetří se tak
+elektronika na \gls{mtbuni} modulech, na kterých se IR vstupy nevyužívají,
+zjednoduší se návrh desky plošných spojů \gls{mtbuni} v4 a umožní se využít IR
+čidla i~s~jinými moduly, než \gls{mtb} (např. pro přímou indikaci v~pultech).
+Jedna deska bude dělat jednu věc a~bude ji dělat dobře.
 
-Na současném kolejišti si tedy vystačím pouze s \gls{mtbuni} deskami, které
-budou navíc ořezané o podporu IR čidel. Ačkoliv je toto tvrzení pravdivé, bylo
-by neperspektivní si podporu jiných typů desek zavřít volbou nevhodného
-protokolu. Nový protokol sběrnice \gls{mtbbus} by měl být navržený univerzálně
-pro nejrůznější možné typu desek, které v budoucnu mohou přijít. Autor této
-práce má již v záměru takové desky desky vytvořit, více se můžete dočíst
-v budoucí kapitole \ref{todo}.
+V~novém systému \gls{mtb} tedy budou stačit pouze moduly typu \gls{mtbuni},
+které budou navíc ořezané o~přímou podporu IR čidel. I~přes to by bylo
+neperspektivní si podporu jiných typů modulů zavřít volbou nevhodného
+komunikačního protokolu modulů. Nový protokol sběrnice \gls{mtbbus} by měl být
+navržený univerzálně pro nejrůznější možné typy desek, které v~budoucnu mohou
+přijít.  Autor této práce má již v~záměru takové desky desky vytvořit, viz
+\ref{sec:future}.
 
 \subsection{Ovládání}
 
-Dalším uživatelem systému \gls{mtb} je řídicí software kolejiště. Tento
-software je aktuálně na programován pro operační systém Windows a s hardwarem
-kolejiště komunikuje pomocí dynamicky linkované knihovny, která musí dodržet
-specifikované API \cite{api}. Na straně softwaru máme tedy relativně volné
-ruce.
+Druhým \uv{uživatelem} systému \gls{mtb} je řídicí software kolejiště. Na
+kolejištích \gls{kmz} se v současné době využívá řídicí software
+hJOP\footnote{\url{https://hjop.kmz-brno.cz/}}. Tento software běží na
+operačním systému Windows a s~hardwarem kolejiště komunikuje pomocí dynamicky
+linkované knihovny, která musí dodržet specifikované API \cite{hjop:rcs:web}.
+Na straně řídícího softwaru jsou tedy pro návrh \gls{mtb} v4 takřka neomezené
+možnosti.
 
-Princip řízení kolejiště dává požadavek na organizaci \gls{mtbbus} v4 sběrnice:
-jednotlivé prvky jsou řízeny počítačem a výhradně počítačem.
+Princip řízení kolejiště počítačem však definuje zásadní požadavek na
+organizaci sběrnice \gls{mtbbus} v4: jednotlivé prvky jsou řízeny počítačem
+a~výhradně počítačem.
 
-Novým požadavkem je, aby v počítači mohlo existovat více softwarů, které
-sběrnici řídí. V praxi totiž nastává kdy na jednu sběrnici jsou připojené systémy,
-které mají být z principu řízeny různými programy: například zabezpečení řízení
-provozu kolejiště a řízení pouličního a domovního osvětlení. Je vhodné mít oba
-systémy zapojené do jedné sběrnice, aby se minimalizoval počet modulů, zejména
-proto, že výstupů na řízení osvětlení je oproti řízení zabezpečení provozu málo.
-Dává však také smysl, aby software pro řízení provozu neřídil osvětlení, protože
-to není jeho účel.
+Novým požadavkem je, aby v~počítači mohlo existovat více programů, které
+sběrnici řídí. V~praxi totiž nastává situace, kdy jsou na jednu sběrnici
+připojené systémy, které mají být z~principu řízeny různými programy: například
+řízení provozu vlaků a řízení pouličního a domovního osvětlení.  Je praktické mít
+oba systémy zapojené do jedné sběrnice (aby se minimalizoval počet \gls{mtb}
+modulů). Dává však také smysl, aby software pro řízení provozu železnice neřídil
+osvětlení, protože to není jeho účel.
 
-Dalším reálným příkladem z \gls{kmz} je jedna sběrnice, na které jsou připojeny
-periferie řízení tramvajové dopravy zároveň s periferiemi řízení silniční
-dopravy. Přestože oba systémy sdíli společnou sběrnici, na úrovni počítače by
-tyto systémy měly řídit dva různé programy. Jednom z hlavních přidaných hodnot
-návrhu nového systému MTB je, že umožní \textit{multi-mater} řízení.
+Dalším příkladem z~\gls{kmz} je jedna sběrnice, na které jsou připojeny
+periferie řízení tramvajové dopravy zároveň s~periferiemi řízení silniční
+dopravy. Přestože oba systémy sdílí společnou sběrnici, na úrovni počítače by
+tyto systémy měly řídit dva různé programy.
+
+Jednou z~hlavních přidaných hodnot \gls{mtb} v4 je, že umožní popsané
+\textit{multi-master} řízení.
 
 \subsection{Další požadavky}
 
-Uveďme nyní některé méně důležité požadavky na novou verzi sběrnici \gls{mtbbus},
-jejichž naplnění nám však výrazně zpříjemní její používání. Již teď předejímáme,
-že všechny tyto požadavky se v implementaci podařilo naplnit.
+Uveďme nyní některé méně důležité požadavky na \gls{mtb} v4, jejichž naplnění
+nám však výrazně zpříjemní její používání. Již teď předejmněme, že všechny tyto
+požadavky se v~implementaci podařilo naplnit.
 
 \begin{enumerate}
-\item \textbf{Umožnit nalezení \gls{mtb} modulů i po startu sběrnice.}
+\item \textbf{Umožnit nalezení \gls{mtb} modulů i~po startu sběrnice.}
 
-	V kapitole \ref{sec:mtbbus} byl popsán poměrně striktní proces používání
+	V~kapitole \ref{sec:mtbbus} byl popsán striktní proces používání
 	sběrnice – od vyhledání modulů až po ukončení práce se sběrnicí. Současná
 	implementace tohoto procesu neumožňuje, aby počítač detekoval moduly, které
 	na sběrnici přibudou za jejího chodu. Taková situace může nastat například
-	tak, že je prvně zapnut řídicí počítač a až pak napájení sběrnice. Je
-	nepříjemné muset v takovém případě manuálně spouštět proces skenování
-	znovu.
+	když je prvně zapnut řídicí počítač a~až pak napájení sběrnice. Je
+	nepříjemné muset v~takovém případě manuálně spouštět proces skenování
+	\gls{mtb} modulů znovu.
 
-	Obecně se celý postup práce se sběrnicí popsaný v kapitole \ref{sec:mtbbus}
-	zdá být příliš striktním. \gls{mtb} v4 by mělo tento proces zjednodušit.
+	Obecně se celý postup práce se sběrnicí popsaný v~kapitole \ref{sec:mtbbus}
+	zdá být zbytečně striktním. \gls{mtb} v4 by mělo tento proces zjednodušit.
 
-\item \textbf{Z počítače bude možné na každém modulu zapnout identifikační LED.}
+\item \textbf{Z~počítače bude možné na každém modulu zapnout identifikační LED.}
 
-	Pro snadnou identifikaci konkrétního modulu v kolejišti, například při
-	diagnostice závady, by operátor měl mít možnost na libovolném modulu
-	zapnout indikační LED. Při diagnostice pod kolejištěm tak snadno identifikuje
-	konkrétní modul.
+	Pro snadnou identifikaci konkrétního modulu v~kolejišti, například při
+	diagnostice závady, by operátor měl mít možnost z~počítače na libovolném
+	modulu zapnout indikační LED. Při diagnostice pod kolejištěm tak snadno
+	identifikuje konkrétní modul.
 
 \item \textbf{Firmware \gls{mtb} modulů by mělo být možné aktualizovat přímo
 	po sběrnici \gls{mtbbus}.}
 
-	Pod kolejištěm jsou nasazeny vyšší desítky modulů. Aktualizace jejich
-	firmwaru ručním programováním všech modulů by byla časově náročná. Sběrnice
-	by měla umožňovat aktualizaci firmwaru modulů přímo, ideálně za současného
-	plného chodu zbytku modulů.
+	V~kolejištích \gls{kmz} je aktuálně nasazeno 99~\gls{mtb} modulů.
+	Aktualizace jejich firmwaru ručním programováním všech modulů by byla
+	časově náročná. \gls{mtb} v4 by mělo umožňovat aktualizaci firmwaru modulů
+	přímo po \gls{mtbbus}, nejlépe za současného plného chodu zbytku modulů.
 
 \end{enumerate}
 
@@ -150,133 +160,137 @@ jejichž naplnění nám však výrazně zpříjemní její používání. Již 
 Shrňme stručně všechny požadavky na systém \gls{mtb} v4.
 
 \begin{compactenum}
-\item K \gls{mtb} v4 se musí na straně počítače dát přistoupit skrze hJOP RCS
-	API \cite{}.
-\item V počítači může běžet více softwarů řídících výstupy a snímajících vstupy
+\item K~\gls{mtb} v4 se musí na straně počítače dát přistoupit skrze
+	\textit{hJOP RCS API}\footnote{\url{https://hjop.kmz-brno.cz/rcs}}.
+\item V~počítači může běžet více softwarů řídících výstupy a snímajících vstupy
 	modulů sběrnice \gls{mtbbus} v4.
 \item Systém \gls{mtb} v4 musí být navržený univerzálně pro nejrůznější typy
 	modulů. Jedinou společnou vlastností modulů je, že snímají vstupy a nastavují
 	výstupy.
-\item Je třeba vyřešit zpětnou kompatibilitu především se stávajícími
-	\gls{mtbuni} deskami v kolejišti.
-\item Celé řešení by mělo být psáno opensource a openhardware, aby se dalo volně
-	využívat.
-\item Desky sběrnice \gls{mtbbus} v4 by mělo být možné průběžně vyhledávat,
+\item Je třeba vyřešit zpětnou kompatibilitu se stávajícími \gls{mtb} deskami
+	v~kolejišti.
+\item Celé řešení by mělo být psáno opensource a openhardware.
+\item Desky sběrnice \gls{mtbbus} v4 by mělo být možné průběžně vyhledávat
 	a detekovat nefunkční.
-\item Implementace systému by měla využívat osvědčené komponenty, u nichž
+\item Implementace \gls{mtb} v4 by měla využívat osvědčené komponenty, u~nichž
 	je dlouhodobý výhled dostupnosti.
-\item Desky \gls{mtb} potvrzují příkazy, lze monitorovat jejich správnou funkčnost.
-\item Z počítače bude možné na každém modulu zapnout identifikační LED.
+\item \gls{mtb} moduly potvrzují příkazy, lze monitorovat jejich správnou funkčnost.
+\item Z~počítače bude možné na každém \gls{mtb} modulu zapnout identifikační LED.
 \item Moduly \gls{mtbuni} budou nově podporovat kmitavé výstupy.
-\item Moduly \gls{mtbuni} budou nově podporovat S-COM výstupy na všech pinech.
+\item Moduly \gls{mtbuni} budou nově podporovat \gls{scom} výstupy na všech
+	výstupních pinech.
 \end{compactenum}
 
 
 \section{Návrh systému MTB v4}
 
-Nyní provedeme návrh nového systému pro sběr dat z kolejiště a ovládání
-periferií kolejiště. Detailně zdůvodníme každý aspekt nově navrhnutého systému.
+Nyní vyjdeme z~detailních požadavku definovaných v~předchozí kapitole
+a~provedeme návrh nového systému pro sběr dat a~ovládání periferií kolejiště.
+Detailně zdůvodníme každý aspekt nově navrženého systému.
 
 \subsection{Vysokoúrovňový návrh}
 
-Zachováme základní koncept fungování systému \gls{mtb} \uv{single master,
-multiple slaves}. Vytvoříme novou verzi modulu \textit{MTB-USB}, který bude
-jako jediný řídicím prvkem nové sběrnice \gls{mtbbus} v4. Model \textit{single
-master, multiple slaves} je osvědčeným modelem, který se snadno implementuje,
-lze snadno spočítat nejlepší a nejhorší časy odezvy sběrnice a obecně se dobře
-mapuje na problém, který systémem \gls{mtb} chceme řešit.
+Základní koncept fungování systému \gls{mtb} \uv{single master, multiple
+slaves} bude zachován. Bude vytvořena nová verze modulu \textit{\gls{mtbusb}},
+který bude jako jediný řídicím prvkem nové sběrnice \gls{mtbbus} v4. Model
+\textit{single master, multiple slaves} je osvědčeným modelem, který se snadno
+implementuje, lze snadno spočítat nejlepší a nejhorší časy odezvy sběrnice a
+obecně se dobře mapuje na problém, který systém \gls{mtb} řeší.
 
-Vytvořením nové verze modulu \textit{MTB-USB} sledujeme především to, aby
-existovala svobodná implementace této desky, nová deska nám dále umožní využívat
-moderních procesorů a integrovaných obvodů, které nám usnadní implementaci.
-Tuto desku si můžeme dovolit vytvořit úplně novou, protože je pouze jedna
-pro celé kolejiště. Malé počty desek implikují malé náklady na aktualizaci
-sběrnice, což je přesně to, co chceme.
+Vytvořením nové verze modulu \textit{MTB-USB} autor práce sleduje především
+naplnění cíle existence svobodné implementace systému \gls{mtb}. Nová deska
+umožní využití moderních procesorů a integrovaných obvodů, které usnadní
+implementaci. \gls{mtbusb} deska může být vytvořena jako úplně nová, protože je
+pouze jedna pro celé kolejiště a~tedy není problém ji vyměnit. Malé počty desek
+implikují malé náklady na výměnu.
 
-Navrhneme novou \textit{MTB-USB} desku, která bude splňovat všechny požadavky
-definované výše a která bude založena na moderních, ale dlouhodobě dostupných
+Bude navrhnut nový \gls{mtbuni} modul, který bude splňovat všechny požadavky
+definované výše a~který bude založen na moderních, ale dlouhodobě dostupných
 součástkách.
 
-Nebudeme však vynucovat výměnu všech stávajících \gls{mtbuni} desek v
-kolejišti. Provedeme výměnu procesoru v současné \gls{mtbuni} desce za
-procesor nový a umožníme tak starým deskám fungovat na nové sběrnici. Tím se
-minimalizují náklady na povýšení sběrnice.
+Nebude však nutné vyměnit všechny stávající \gls{mtbuni} moduly v~kolejišti.
+Stávajícím modulům bude vyměněn procesor, starým deskám tak bude umožněno
+fungovat na nové sběrnici. Tím se minimalizují náklady na povýšení sběrnice.
 
-Navrhneme IR desku, která bude zajišťovat podporu IR čidel, protože nová
-\gls{mtbuni} deska již nebude obsahovat přímou podporu IR čidel.
+Autor navrhne a popíše IR desku, která bude zajišťovat podporu IR čidel,
+protože nová \gls{mtbuni} deska již nebude obsahovat přímou podporu IR čidel.
 
-Zachování většiny stávajícího hardwaru současných \gls{mtbuni} a snaha o
-zachování kabeláže sběrnice s sebou nese ponechání volby sběrnice \gls{mtbbus}
-na standardu RS485. RS485 nepřináší žádné zjevné nevýhody, takže není důvod,
-proč hardwarovou vrstvu komunikační sběrnice měnit.
+Zachování většiny stávajícího hardwaru současných \gls{mtbuni} a snaha
+o~zachování kabeláže sběrnice s~sebou nese ponechání volby sběrnice \gls{mtbbus}
+na standardu RS485. RS485 nepřináší žádné zjevné nevýhody, takže není důvod
+ke změně hardwarové vrstvy sběrnice.
 
-Nové procesory v \gls{mtb} modulech umožní trvalé uložení konfigurace v modulech.
-Přesto bude autoritativním zdrojem konfigurace modulů i nadále počítač: po
+Nové procesory v~\gls{mtb} modulech umožní trvalé uložení konfigurace v~modulech.
+Přesto bude autoritativním zdrojem konfigurace modulů i~nadále počítač: po
 nalezení modulu na sběrnici počítač tento modul zkonfiguruje dle konfiguračního
-souboru. Tento přístup volíme proto, abychom byli schopni konfiguraci všech
+souboru programu. Tento autor zvolil proto, aby bylo možné  konfiguraci všech
 desek kolejiště centralizovaně ukládat a verzovat.\footnote{Uložení konfigurace
-v modulech i tak má smysl – například aby modul mohl aplikovat uložený bezpečný
-stav výstupů přímo při zapnutí napájení modulu a nemusel čekat na zapnutí
-řídicího SW v počítači.}
+v~modulech i~tak má smysl – například aby modul mohl aplikovat uložený bezpečný
+stav výstupů přímo při zapnutí napájení modulu a~nemusel čekat na zapnutí
+řídicího SW v~počítači.}
 
-\gls{mtb} moduly budou skrze desku \textit{MTB-USB} komunikovat s počítačem
-po portu USB, kterým bude tunelován \textit{USB CDC} protokol. V počítači tak
-bude celá sběrnice přístupná skrze sériový port. Počítač nemůže komunikovat
-po sběrnici RS485 přímo, protože na to nemá hardwarové periferie, proto bude
-komunikovat s modulem \textit{MTB-USB}, který bude řešit časově kritické operace
-sběrnice \gls{mtbbus}. \footnote{TODO popsat?}
+\gls{mtb} moduly budou skrze \gls{mtbusb} komunikovat s~počítačem po portu
+\gls{usb}, kterým bude tunelován \textit{USB \gls{cdc}} protokol. V~počítači tak bude
+\gls{mtbusb} modul dostupný jako sériový port. Počítač nemůže komunikovat po
+sběrnici RS485 přímo, protože na to nemá hardwarové periferie, proto bude
+komunikovat s~modulem \gls{mtbusb}, který bude řešit časově kritické operace
+sběrnice \gls{mtbbus}\footnote{Například kontrola odpovědi modulu v~časovém
+limitu cca $250~us$.}.
 
-Otázkou zůstává, kde naplníme požadavek na \textit{multi-master} řízení celého
-systému. Existují v zásadě 2 možné přístupy:
+Otázkou zůstává, kde naplnit požadavek na \textit{multi-master} řízení celého
+systému. Existují 2~možné přístupy:
 
 \begin{compactenum}
-\item \textit{MTB-USB} deska se bude k počítači připojovat rozhraním, které
-	nativně umožňuje komunikaci pouze s jednou aplikací (např. USB) a řízení více
-	programy se bude řešit na úrovni softwaru v počítači.
-\item \textit{MTB-USB} deska se připojí k počítači rozhraním, které přirozeně
-	podporuje více připojených zařízení, například ethernet.
+\item \textit{MTB-USB} deska se bude k~počítači připojovat rozhraním, které
+	nativně umožňuje komunikaci pouze s~jednou aplikací (např. USB), řízení více
+	programy se bude řešit na úrovni softwaru v~počítači.
+\item \textit{MTB-USB} deska se připojí k~počítači rozhraním, které přirozeně
+	podporuje více připojených zařízení, například \textit{ethernet}.
 \end{compactenum}
 
-Oba přístupy se v komerčních systémech pro digitální řízení modelové železnice
-používají. Ať bude podpora více řídicích systému implementována kdekoliv, oproti
-jednomu řídicímu systému vyžaduje tato podpora netriviální programovou podporu
-navíc. Autor práce se rozhodl přesunout co nejvíce složitější logiky do počítačových
-aplikací, protože se ty se mnohem snáze vyvíjejí, ladí a aktualizují než firmware
-v embedded procesorech. V počítači můžeme navíc využívat vysokoúrovňovější
-nástroje. Vydáme se tedy cestou, kdy se deska \textit{MTB-USB} bude v k počítači
-připojovat již pomocí zmíněného virtuálního sériového portu. V počítači
-naprogramujeme novou aplikaci \textit{MTB Daemon}, která se na jedné straně
-připojí k \textit{MTB-USB} modulu a na straně druhé vystaví JSON TCP server
-s jednoduchým API, které umožní povelovat \gls{mtb} moduly z více počítačových
-programů. Získáme tím mj. velice hezké programové API, ke kterému se bude dát
-snadno připojit z knihoven nejrůznějších programovacích jazyků, a tím
-zpřístupníme systém \gls{mtb} širšímu spektru programátorů.
+Oba přístupy se v~komerčních systémech pro digitální řízení modelové železnice
+používají\footnote{Viz např. rozhraní \textit{Lenz LI-USB-Ethernet}, centrála
+\textit{Digikeijs DR5000} aj.}.
+Ať bude podpora více řídicích systému implementována kdekoliv, oproti jednomu
+řídicímu systému vyžaduje tato podpora netriviální softwarovou podporu navíc.
+Autor práce se rozhodl přesunout co nejvíce složitější logiky do počítačových
+aplikací, protože ty se mnohem snáze vyvíjejí, ladí a aktualizují než
+firmware v~embedded procesorech. V~počítači je navíc možné využívat
+vysokoúrovňovější nástroje. Proto se autor vydal cestou, kdy se
+\gls{mtbusb} připojuje k~počítači pomocí virtuálního sériového portu, který
+umožňuje připojení jen jedné počítačové aplikace.
 
-Protokol CDC mezi počítačem a \textit{MTB-USB} deskou zvolíme proto, že se
-jedná de fakto o standard pro připojení specifických periferií k počítači,
-například v oblasti robotiky. S výhodou využijeme toho, že protokol CDC má
-nativní podporu ovladačů snad v majoritních operačních systémech a není tak
-nutné instalovat speciální ovladače. Tento aspekt nám umožní budoucí snadné
-nasazení u externích zákazníků.
+V~počítači vznikne nová aplikace \textit{MTB Daemon}, která se na jedné
+straně připojí k~\gls{mtbusb} a~na straně druhé vystaví JSON TCP
+server s~jednoduchým API, které umožní povelovat \gls{mtb} moduly z~více
+počítačových programů. Získá se tím mj. hezké programové API, ke kterému
+se bude dát snadno připojit z~knihoven nejrůznějších programovacích jazyků.
+Tím se systém \gls{mtb} zpřístupní širšímu spektru programátorů.
+
+Třída \gls{cdc} mezi počítačem a \gls{mtbusb} byla zvolena proto, že se jedná
+de fakto o~standard pro připojení specifických periferií k~počítači, například
+v~oblasti robotiky. S~výhodou využijeme toho, že protokol \gls{cdc} má nativní
+podporu ovladačů v~majoritních operačních systémech a není tak nutné instalovat
+speciální ovladače. Tento aspekt umožní snadné nasazení dalším uživatelům.
 
 \subsection{\gls{mtbbus}}
 
 Nyní podrobně rozebereme návrh nové sběrnice \gls{mtbbus}. Oficiální autorem
-vytvořená plnohodnotná dokumentace nové sběrnice je k dispozici na
+vytvořená plnohodnotná dokumentace nové sběrnice je k~dispozici na
 \url{https://github.com/kmzbrnoI/mtbbus-protocol}.
 
-Požadavky definované v předchozích kapitolách vynucují razantní úpravy
+Požadavky definované v~předchozích kapitolách vynucují razantní úpravy
 komunikačního protokolu sběrnice. Autor této práce se rozhodl sběrnici
 navrhnou celou od píky znovu. Sleduje tím především zajištění
-\textit{přehlednosti} komunikačního protokolu sběrnice a také vyřešení potíží s
-licencováním protokolu. Nový protokol je autorským dílem autora této práce
+\textit{přehlednosti} komunikačního protokolu sběrnice a také vyřešení potíží
+s~licencováním protokolu. Nový protokol je autorským dílem autora této práce
 a tudíž si licenční podmínky může stanovovat sám.
 
 \subsubsection{Hardware}
 
-Jak již bylo zmíněno v předchozí sekci, po hardwarové stránce bude zachován
+Jak již bylo zmíněno v~předchozí sekci, po hardwarové stránce bude zachován
 standard \textit{RS485} \cite{rs485}. Počet komunikačních bitů bude ponechán na 9.
-Devátý bit ve zprávách z master to slave desky indikuje, že se jedná o první
+Devátý bit ve zprávách z~master to slave desky indikuje, že se jedná o~první
 byte zprávy. Ostatní bytes zprávy mají tento bit nastavený na 0. Devítibitová
 komunikace nám umožní na sběrnici zavést klíčový pojem \textit{zprávy}. Díky
 devátému bitu slave modul dokáže poznat, kdy zpráva začíná. Počet stop bitů
@@ -284,7 +298,7 @@ ponecháme standardně na jednom bitu, paritní bit nepoužijeme.
 
 Aktuální specifikace sběrnice \gls{mtbbus} podporuje různé rychlost sběrnice –
 38400 Bd, 57600 Bd a 115200 Bd. Komunikace vždy začíná na 38400 Bd a jeden
-z prvních příkazů je příkaz na změnu rychlost sběrnice. Při výpadků a opětovném
+z~prvních příkazů je příkaz na změnu rychlost sběrnice. Při výpadků a opětovném
 oživení modulu musí modul postupně vyzkoušet ony 3 rychlost a sledovat, na které
 rychlosti přijímá korektní data.
 
@@ -292,22 +306,22 @@ Možnost různých rychlostí by autor chtěl ponechat – některé kolejiště
 spletitou sběrnicí, dlouhou sběrnicí nebo sběrnicí se špatnými elektrickými
 vlastnostmi mohou vyžadovat nižší rychlosti. Rchlost nižší než 38400 Bd by
 neměla být třeba – tuto. rychlost by měla zvládat každá sběrnice. Při rychlosti
-115200 Bd dojde průměrně k 10 skenům jednoho modulu při počtu 50 modulů.
+115200 Bd dojde průměrně k~10 skenům jednoho modulu při počtu 50 modulů.
 Tato hodnota je poměrně malá, ale pro účely zabezpečovacího softwaru kolejiště
-dostatečná. V budoucnu možná dojde k dalšímu zvýšení rychlosti sběrnice.
+dostatečná. V~budoucnu možná dojde k~dalšímu zvýšení rychlosti sběrnice.
 
 
 \subsubsection{Princip komunikace}
 
-Sběrnice bude fungovat v režimu \textit{single master, multiple slaves}. Chod
+Sběrnice bude fungovat v~režimu \textit{single master, multiple slaves}. Chod
 na sběrnice bude řídit \textit{master} module – \textit{MTB-USB}. Master modul
-bude periodicky dotazovat všechny moduly sběrnice s výjimkami zpráv pro konkrétní
-moduly odeslané z počítače. Modul na každou zprávu pro něj odpoví právě jednou
+bude periodicky dotazovat všechny moduly sběrnice s~výjimkami zpráv pro konkrétní
+moduly odeslané z~počítače. Modul na každou zprávu pro něj odpoví právě jednou
 zprávou. Proto není nutné ve směru \textit{slave $\rightarrow$ master} používat
 devátý bit.
 
-Modul na periodické výzvy o odpověď (\textit{Module Inquiry}) vždy odpoví daty
-k odeslání. Pokud modul nemá žádná data k odeslání, odpoví zprávou
+Modul na periodické výzvy o~odpověď (\textit{Module Inquiry}) vždy odpoví daty
+k~odeslání. Pokud modul nemá žádná data k~odeslání, odpoví zprávou
 \textit{Acknowledgement}. Tím \textit{MTB-USB} modulu potvrdí, že zprávu přijal
 a že komunikuje. \textit{MTB-USB} modul tka může monitorovat aktivní moduly
 sběrnice a dokonce detekovat moduly nové.
@@ -316,7 +330,7 @@ Příklad komunikace po sběrnici:
 
 \begin{verbatim}
 > Module 1 Inquiry
-< Acknowledgement  # Module 1 žije a nemá žádná data k odeslání
+< Acknowledgement  # Module 1 žije a nemá žádná data k~odeslání
 > Module 2 Inquiry
 # Timeout – modul 2 nežije
 > Module 3 Inquiry
@@ -329,7 +343,7 @@ Příklad komunikace po sběrnici:
 ...
 \end{verbatim}
 
-Všimněte si, že v příkladu probíhá polling pouze některých adres – pro zmenšení
+Všimněte si, že v~příkladu probíhá polling pouze některých adres – pro zmenšení
 latencí je vhodné často dotazovat aktivní moduly a neaktivní moduly skenovat
 jen čas od času (aby se dalo poznat, že moduly ožily). Dále si všimněte, že
 příkazy pro moduly chodí nezávisle na tom, která adresa je právě dotazována.
@@ -358,18 +372,18 @@ rozhodnutí umožňuje například \textit{MTB-USB} modulu přeposílat zprávy 
 zpráv, případně mít velkou tabulku \textit{typ zprávy, délka}. Některé zprávy
 navíc mohou mít variabilní délku ze své podstaty.
 
-Maximální hodnota tohoto bytu je 121, což umožňuje zprávy skládat do bufferů o
-délce 128 bytes. Maximální délka zprávy byla zvolena s ohledem na nevelké
+Maximální hodnota tohoto bytu je 121, což umožňuje zprávy skládat do bufferů
+o~délce 128 bytes. Maximální délka zprávy byla zvolena s~ohledem na nevelké
 kapacity \textit{SRAM} mikrokontrolérů a časovou efektivitu případné
 retransmise.
 
-Původní verze protokolu \gls{mtbbus} umožňovala zprávy o délce nejvýše 7 bytů.
+Původní verze protokolu \gls{mtbbus} umožňovala zprávy o~délce nejvýše 7 bytů.
 Tato hodnota byla zásadně navýšena zejména proto, aby bylo možné novým
 protokolem posílat firmware pro aktualizaci \gls{mtb} desek.
 
 \item \textbf{Kód příkazu}
 
-Libovolné číslo v rozsahu 0–255. Význam jednotlivých kódů definuje specifikace
+Libovolné číslo v~rozsahu 0–255. Význam jednotlivých kódů definuje specifikace
 protokolu.
 
 \item \textbf{Data příkazu}
@@ -399,7 +413,7 @@ založen na dělení polynomů se zbytkem. Konkrétně se používá verze
 Příklad zprávy: \texttt{0x101 0x001 0x001 0x091 0x090}.
 
 \begin{compactenum}
-\item \texttt{0x101}: zpráva pro modul s adresou 1.
+\item \texttt{0x101}: zpráva pro modul s~adresou 1.
 \item \texttt{0x001}: následuje 1 byte zprávy.
 \item \texttt{0x001}: příkaz \texttt{0x01}.
 \item \texttt{0x091}, \texttt{0x090}: kontrolní byty \textit{CRC-16}.
@@ -455,10 +469,10 @@ Jak již bylo zmíněno, \textit{MTB-USB} deska průběžně skenuje aktivní
 i neaktivní moduly (aktivní častěji) a posílá modulům \textit{Module Inquiry}.
 Moduly odpovídají buď \textit{Acknowledgement} nebo \textit{Input Changed}.
 
-Zpráva \textit{Set Output} slouží k nastavení stavu výstupů modulu, zpráv
-\textit{Reset Outputs} slouží k navrácení výstupů do bezpečného stavu.
+Zpráva \textit{Set Output} slouží k~nastavení stavu výstupů modulu, zpráv
+\textit{Reset Outputs} slouží k~navrácení výstupů do bezpečného stavu.
 Tato zpráva je typicky odesílána \textit{MTB-USB} modulem při ukončení komunikace
-s počítačem jako broadcast.
+s~počítačem jako broadcast.
 
 Počítač může zapisovat nebo vyčítat konfiguraci modulů pomocí zpráv
 \textit{Get Configuration}, \textit{Set Configuration} a odpovědi
@@ -467,27 +481,27 @@ Počítač může zapisovat nebo vyčítat konfiguraci modulů pomocí zpráv
 Počítač může zapínat a vypínat indikační LED na \gls{mtb} modulech pomocí
 zprávy \textit{Beacon}.
 
-Modulům, které si ukládají adresu softwarově, může operátor z počítače změnit
+Modulům, které si ukládají adresu softwarově, může operátor z~počítače změnit
 adresu pomocí zprávy \textit{Change Address}.
 
 Plánovaná změna rychlosti sběrnice se modulům ohlašuje pomocí zprávy
 \textit{Change Speed}, která je typicky odesílána jako broadcast. Každý modul
 si ukládá rychlost sběrnice do volatilní paměti a tuto rychlost použije při
-zapnutí. Očekává se, že budoucí typy procesorů v modulech \gls{mtb} budou
+zapnutí. Očekává se, že budoucí typy procesorů v~modulech \gls{mtb} budou
 schopny detekovat rychlost sběrnice automaticky. Aktuálně není na sběrnici
 \gls{mtbbus} implementován žádný mechanismus pro automatickou detekci rychlosti.
-V situaci, kdy je například do sběrnice doplněn nový modul, který je ale z
-výroby nastaven na jinou rychlost, než aktuálně sběrnice používá, se očekává,
+V~situaci, kdy je například do sběrnice doplněn nový modul, který je ale
+z~výroby nastaven na jinou rychlost, než aktuálně sběrnice používá, se očekává,
 že operátor přenastaví rychlost sběrnice na rychlost nového modulu, odešle
 novému modulu příkaz na změnu rychlosti a vrátí rychlost sběrnice zpět.
 Tento mechanismus je přímočarý a lze provést za plného chodu sběrnice.
 
-Vysvětlení procesoru aktualizace firmwaru modulů se budeme věnovat v samostatné
+Vysvětlení procesoru aktualizace firmwaru modulů se budeme věnovat v~samostatné
 kapitole.
 
 Poslední zajímavou zprávou je \textit{Module-specific command}. Tato zpráva
 umožňuje tunelovat pro modul libovolná data. Pokud typ modulu podporuje nějaké
-speciální operace, může tento typ zprávy využít k řízení těchto operací.
+speciální operace, může tento typ zprávy využít k~řízení těchto operací.
 
 
 \subsubsection{Dvouvrstvost protokolu}
@@ -504,9 +518,9 @@ i jejich počty. Obsah datových bytů zpráv \textit{Set Output}, \textit{Input
 Changed} a \textit{Input State} je proto specifikovaný ve specifikaci modulů.
 
 Například modul \gls{mtbuni} má 16 analogových a 16 digitálních výstupů.
-Protože počet vstupů i výstupů je malý, posílá se v protokolu vždy celý stav
-vstupů a výstupů. Protokol počítá s tím, že jiné moduly mohou mít vstupy a
-výstupy například s větším rozsahem hodnot. V takovém případě protokol umožňuje
+Protože počet vstupů i výstupů je malý, posílá se v~protokolu vždy celý stav
+vstupů a výstupů. Protokol počítá s~tím, že jiné moduly mohou mít vstupy a
+výstupy například s~větším rozsahem hodnot. V~takovém případě protokol umožňuje
 to, aby se neposílal celý stav vstupů a výstupů, ale jen relevantní část.
 Například příkaz \textit{Set Output} může poslat jen ty výstupy, jejichž
 stav je třeba změnit. To je také důvodem, proč existují 2 různé zprávy
@@ -514,18 +528,18 @@ stav je třeba změnit. To je také důvodem, proč existují 2 různé zprávy
 \textit{Input State} (ve které se posílá stav všech vstupů).
 \footnote{Všimněte si, že tento mechanismus umožňuje také provádět polling
 vstupů místo událostního hlášení změn stavů vstupů. To je zcela záměrný prvek
-protokolu. Tento prvek se využije například u budoucích modulů s analogovými
+protokolu. Tento prvek se využije například u~budoucích modulů s~analogovými
 vstupy.}
 
 \item Formát konfigurace
 
-Konfigurace různých typů modulů se mohou zásadně lišit v počtu
+Konfigurace různých typů modulů se mohou zásadně lišit v~počtu
 konfigurovatelných hodnot.
 
 Například modul \gls{mtbuni} ma 24 nebo 26 konfiguračních bytů
 \ref{uni:proto}. Proto se celá konfigurace modulu posílá najednou.  Protokol
-však umožňuje libovolný způsob zasílá konfigurace: počítač například u modulů s
-větším množstvím konfigurace může poslat rozsah adres, jejichž hodnoty chce
+však umožňuje libovolný způsob zasílá konfigurace: počítač například u~modulů
+s~větším množstvím konfigurace může poslat rozsah adres, jejichž hodnoty chce
 znát. Nebo naopak poslat rozsah adres a hodnoty na těchto adresách, které
 nastavuje.
 
@@ -533,7 +547,7 @@ nastavuje.
 
 Různé typy modulů typicky obsahují různé procesory, které jinak adresují paměť.
 Liší se například šířka slova nebo velikost paměti. Význam datových bytů
-zpráv pracujících s aktualizací firmwaru procesoru je proto definován pro
+zpráv pracujících s~aktualizací firmwaru procesoru je proto definován pro
 konkrétní typy modulů.
 
 \end{enumerate}
@@ -546,22 +560,22 @@ s~postupem definovaným na konci \ref{sec:mtbbus}).
 \begin{compactenum}
 \item Je zapnut řídicí počítač kolejiště.
 \item Je připojeno napájení \textit{MTB-USB} desky a všech \gls{mtb} modulů.
-\item \gls{mtb} moduly z paměti načtou konfiguraci, aplikují bezpečný stav
+\item \gls{mtb} moduly z~paměti načtou konfiguraci, aplikují bezpečný stav
 výstupů, začnou poslouchat na sběrnici.
 \item \textit{MTB-USB} deska detekuje připojené moduly a zapamatuje si je.
-\item Počítačová aplikace se připojí k \textit{MTB-USB} desce.
-\item Počítačová aplikace vyčte z \textit{MTB-USB} desky seznam aktivních modulů.
+\item Počítačová aplikace se připojí k~\textit{MTB-USB} desce.
+\item Počítačová aplikace vyčte z~\textit{MTB-USB} desky seznam aktivních modulů.
 \item Aplikace vyčte typ připojených modulů, zkonfiguruje je.
 \item Řídicí SW kolejiště používá sběrnici – čte vstupy, nastavuje výstupy.
 \item Při odpojení řídicího SW kolejiště je \gls{mtb} modulům poslán příkaz
-	k resetování stavu výstupů, čímž je zajištěno, že při odpojení nebo pádu
-	řídicího softwaru se budou nacházet výstupy v definovaném stavu.
+	k~resetování stavu výstupů, čímž je zajištěno, že při odpojení nebo pádu
+	řídicího softwaru se budou nacházet výstupy v~definovaném stavu.
 \end{compactenum}
 
 Systém \gls{mtb} však nevyžaduje striktní pořadí těchto kroků. Napájení
-komponent může být zapnuto v libovolném pořadí, systém dokáže detekovat výpadky
+komponent může být zapnuto v~libovolném pořadí, systém dokáže detekovat výpadky
 jednotlivých prvků a obnovovat je. Pro ilustraci uveďme několik příkladů situací,
-které v systému \gls{mtb} mohou nastat.
+které v~systému \gls{mtb} mohou nastat.
 
 \begin{itemize}
 \item Jiné pořadí zapnutí prvků.
@@ -579,7 +593,7 @@ jsou i tak korektně detekovány.
 Pokud \gls{mtb} modul neodpovídá na požadavky, \textit{MTB-USB} to detekuje, nahlásí
 situaci do počítače a počítač se podle toho zachová.
 
-Pokud \textit{MTB-USB} deska detekuje nový \gls{mtb} modul, opět o tom zpraví
+Pokud \textit{MTB-USB} deska detekuje nový \gls{mtb} modul, opět o~tom zpraví
 počítač, ten provede vyčtení typu desky a zkonfiguruuje ji.
 
 \item Výměna modulu za chodu sběrnice
@@ -602,15 +616,15 @@ firmware \gls{mtb} modulů. Při návrhu mechanismu aktualizace firmwaru bylo
 zvažováno, jestli proces aktualizace firmwaru nevést úplně jiným protokolem,
 než \gls{mtbbus}. \gls{mtbbus} Je dostatečně obecný a navíc je třeba, aby
 při aktualizaci jednoho modulu ostatní moduly sběrnice aktualizační příkazy
-ignorovaly a nerušily tak aktualizaci. Tyto argumenty vedly k implementaci
+ignorovaly a nerušily tak aktualizaci. Tyto argumenty vedly k~implementaci
 mechanismu aktualizace firmwaru přímo do sběrnice \gls{mtbbus}. Výhodou tohoto
 řešení je, že zbylé moduly sběrnice mohou při aktualizaci firmwaru jednoho
 modulu nadále komunikovat, aktualizace tedy může probíhat za plného provozu.
 
-Protokol počítá s tím, že přepis flash paměti v \gls{mtb} deskách může
-probíhat pouze z bootloaderu \gls{mtb} desky. Aktualizační protokol proto
+Protokol počítá s~tím, že přepis flash paměti v~\gls{mtb} deskách může
+probíhat pouze z~bootloaderu \gls{mtb} desky. Aktualizační protokol proto
 podporuje reboot procesoru do bootloaderu. Procedůra aktualizace firmwaru
-probíhá následovně \footnote{Procedůra je podrobně popsaná v dokumentaci protokolu
+probíhá následovně \footnote{Procedůra je podrobně popsaná v~dokumentaci protokolu
 \gls{mtbbus} na
 \url{https://github.com/kmzbrnoI/mtbbus-protocol/blob/master/workflows.md}.}.
 
@@ -618,11 +632,11 @@ probíhá následovně \footnote{Procedůra je podrobně popsaná v dokumentaci 
 \item Master deska vyšle \textit{Firmware Upgrade Request}. Tím informuje \gls{mtb}
 	modul, že má rebootovat do bootloaderu.
 \item \gls{mtb} deska odpoví \textit{Acknowldgement} a rebootuje do bootloaderu.
-\item \gls{mtbusb} deska pošle \gls{mtb} desce žádost o její obecné informace.
+\item \gls{mtbusb} deska pošle \gls{mtb} desce žádost o~její obecné informace.
 \item \gls{mtb} deska odpoví obecnými informacemi, ve kterých je mj. zaznačeno,
-	že je v bootloaderu.
+	že je v~bootloaderu.
 \item \gls{mtbusb} deska vyšle příkaz \textit{Firmware Write Flash}, ve kterém pošle
-	blok flash paměti k zapsání a její adresu. Slave deska tuto paměť zapisuje.
+	blok flash paměti k~zapsání a její adresu. Slave deska tuto paměť zapisuje.
 \item \gls{mtbusb} modul se ptá \gls{mtb} modulu příkazem \textit{Firmware Write
 	Flash Status Request}, jestli již byl zápis dokončen. Jakmile je zápis bloku
 	paměti dokončen, přesouvá se na krok (5).
@@ -631,16 +645,16 @@ probíhá následovně \footnote{Procedůra je podrobně popsaná v dokumentaci 
 	programu.
 \end{compactenum}
 
-Jak bylo zmíněno v posledním kroku, je doporučeno (a nový firmware
+Jak bylo zmíněno v~posledním kroku, je doporučeno (a nový firmware
 \gls{mtbuni} modulů toto doporučení dodržuje), aby při každém náběhu
 procesoru modulu proběhla kontrola konzistence paměti. Kontrola konzistence
 paměti je implementována pomocí uloženého kontrolního součtu (\textit{CRC-16})
 na konkrétních adresách paměti. Protokol \gls{mtbbus} implementuje atribut,
-kterým může \gls{mtb} modul oznámit, že sice poslouchá, ale je v bootloaderu
+kterým může \gls{mtb} modul oznámit, že sice poslouchá, ale je v~bootloaderu
 a odmítá nabootovat, protože nesedí kontrolní součet paměti programu.
 
 Aktualizace bootloaderu přes sběrnici \gls{mtbbus} není možná, protože vlivem
-výpadku napájení při aktualizaci programu by mohlo dojít k situaci, kdy se modul
+výpadku napájení při aktualizaci programu by mohlo dojít k~situaci, kdy se modul
 stane nepoužitelným. Bootloader by měl být malý a odzkoušený kus firmwaru, který
 se nahraje jednou a nikdy ho nebude třeba přehrávat. Přehrání bootloaderu by
-vyžadovalo ruční obcházení modulů s programátorem.
+vyžadovalo ruční obcházení modulů s~programátorem.
