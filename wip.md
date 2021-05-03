@@ -86,3 +86,4 @@ Poznámky k diplomce
 TODOs:
 * Ukázka inicializace modulu na nové sběrnici.
 * Další typy modulů napsat.
+* IRdet + uni v4 + uni v2L: eagle
