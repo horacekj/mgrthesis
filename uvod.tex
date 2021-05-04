@@ -1,35 +1,33 @@
 \textit{Programmable Logic Controller} (\gls{plc}) je vestavěný počítač,
-který zpracovává vstupy, provádí jejich vyhodnocování, komunikuje s dalšími
+který zpracovává vstupy, provádí jejich vyhodnocování, komunikuje s~dalšími
 \gls{plc} obvody a nastavuje výstupy \cite{plc:web}. Je základní jednotkou průmyslové
 automatizace. \gls{plc} obvody se používají například pro řízení procesů
 výrobních linek, kde zpracovávají data z~nejrůznějších čidel a~ovládají
 periferie – například motorické pohony, signalizační diody, robotické ruky,
 lasery apod.
 
-Obvody \gls{plc} jsou zcela klíčové v tom, že tvoří rozhraní mezi hardwarovými
-periferiemi (například motorem) a počítačem, který zpracovává data. Na
-\gls{plc} obvody budeme v této práci nahlížet jako na vstupně–výstupní moduly,
+Obvody \gls{plc} jsou klíčové, protože tvoří rozhraní mezi hardwarovými
+periferiemi a počítačem, který zpracovává data. Na
+\gls{plc} obvody budeme v~této práci nahlížet jako na vstupně–výstupní moduly,
 jejichž hlavním úkolem je správně zpracovávat vstupní signály a správně ovládat
-výstupní periferie. Řízení samotného procesu přenecháme počítači, s kterým
-\gls{plc} moduly komunikují. \footnote{Toto není jediná možná aplikace \gls{plc}
+výstupní periferie. Řízení samotného procesu přenecháme počítači, s~kterým
+\gls{plc} moduly komunikují.\footnote{Toto není jediná možná aplikace \gls{plc}
 obvodů – obvod samotný může mít vlastní inteligenci, zde však tuto situaci
-zkoumat nebudeme.} Pro propojení modulů se používá například \textit{Ethernet}
-nebo sběrnice \textit{ModBus} \cite{modbus:web}.
+zkoumat nebudeme.}
 
 Cílem této práce je navrhnout a implementovat novou verzi sběrnice pro řízení
 \gls{plc} obvodů zvanou \textit{\gls{mtbbus}} (\textit{Model Train
-Bus}\footnote{Expanze zkratky do jejího plného významu nedává smysl, i tak
+Bus}\footnote{Expanze zkratky do jejího plného významu nedává smysl, i~tak
 budeme používat označení MTBbus, protože tak je zkratka zaužívaná.}).
 
-\gls{mtbbus} je sběrnice, která se v současnosti využívá pro řízení modelových
-kolejišť, kde plní podobnou funkci, jako v příkladu s výrobní linkou – čte
-signály z kolejiště (například polohy výhybek, obsazenost kolejových obvodů
-\cite{ko:web}) a poveluje prvky v kolejišti (návěstidla, přestavníky výhybek,
+\gls{mtbbus} je sběrnice, která se v~současnosti využívá pro řízení modelových
+kolejišť, kde plní podobnou funkci, jako v~příkladu s~výrobní linkou – čte
+signály z~kolejiště (například polohy výhybek, obsazenost kolejových obvodů
+\cite{ko:web}) a poveluje prvky v~kolejišti (návěstidla, přestavníky výhybek,
 přejezdy apod.). Obdobným způsobem funguje zapezpečovací zařízení na skutečné
-železnici. Sběrnice \gls{mtbbus} není určená k řízení jízdy hnacích vozidel,
-tuto funkci plní jiné sběrnice.
+železnici.
 
-Primární využití sběrnice \gls{mtbbus} definuje požadavky, které jsou na tuto sběrnici
-kladeny a které tato práce popíše a vyjde z nich při návrhu nové verze sběrnice.
+Využití sběrnice \gls{mtbbus} definuje požadavky, které jsou na tuto sběrnici
+kladeny. Tyto požadavky budou popsány a využity při návrhu nové verze sběrnice.
 Ačkoliv je sběrnice navržena pro řízení modelových kolejišť, její návrh je
-obecný, takže ji lze využít v mnoha dalších aplikacích.
+obecný, takže ji lze využít v~mnoha dalších aplikacích.
