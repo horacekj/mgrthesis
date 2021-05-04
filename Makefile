@@ -16,7 +16,6 @@ $(THESIS).pdf: $(THESIS).tex $(BIB) $(PARTS) $(GRAPHS) $(DATA)
 	biber $(basename $<).bcf
 	makeglossaries $(THESIS)
 	$(PDFLATEX) -interaction=batchmode $< # Update the index after the bibliography insertion.
-	# texindy -I latex -C utf8 -L english $(basename $<).idx
 	texfot $(PDFLATEX) $< # The final typesetting, now also with index.
 
 clean:

@@ -275,62 +275,68 @@ speciální ovladače. Tento aspekt umožní snadné nasazení dalším uživate
 
 \subsection{\gls{mtbbus}}
 
-Nyní podrobně rozebereme návrh nové sběrnice \gls{mtbbus}. Oficiální autorem
-vytvořená plnohodnotná dokumentace nové sběrnice je k~dispozici na
+Nyní podrobně rozebereme návrh nové sběrnice \gls{mtbbus} v4. Autorem vytvořená
+plnohodnotná dokumentace nové sběrnice je k~dispozici na
 \url{https://github.com/kmzbrnoI/mtbbus-protocol}.
 
-Požadavky definované v~předchozích kapitolách vynucují razantní úpravy
-komunikačního protokolu sběrnice. Autor této práce se rozhodl sběrnici
-navrhnou celou od píky znovu. Sleduje tím především zajištění
-\textit{přehlednosti} komunikačního protokolu sběrnice a také vyřešení potíží
-s~licencováním protokolu. Nový protokol je autorským dílem autora této práce
-a tudíž si licenční podmínky může stanovovat sám.
+Podrobné požadavky definované v~\ref{sub:mtbbus-req-summary} vynucují razantní
+úpravy komunikačního protokolu sběrnice\footnote{Například umožnit odesílat
+delší zprávy (kvůli aktualizaci FW \gls{mtb} modulů), navrhnout protokol
+univerzálně pro libovolné typy modulů apod.}. Autor této práce se rozhodl
+sběrnici navrhnout od základů znovu. Sleduje tím především zajištění
+přehlednosti komunikačního protokolu a~také vyřešení potíží s~licencováním
+původního protokolu. Nový protokol je dílem autora této práce a~tudíž si autor
+může stanovit licenční podmínky sám.
 
 \subsubsection{Hardware}
 
-Jak již bylo zmíněno v~předchozí sekci, po hardwarové stránce bude zachován
-standard \textit{RS485} \cite{rs485}. Počet komunikačních bitů bude ponechán na 9.
-Devátý bit ve zprávách z~master to slave desky indikuje, že se jedná o~první
-byte zprávy. Ostatní bytes zprávy mají tento bit nastavený na 0. Devítibitová
-komunikace nám umožní na sběrnici zavést klíčový pojem \textit{zprávy}. Díky
-devátému bitu slave modul dokáže poznat, kdy zpráva začíná. Počet stop bitů
-ponecháme standardně na jednom bitu, paritní bit nepoužijeme.
+Jak již bylo zmíněno výše, po hardwarové stránce je zachován standard
+\textit{RS485}. Počet komunikačních bitů je ponechán na 9\footnote{
+V~dalším textu budeme o~jednotlivých devitibitových blocích dat mluvit jako
+o~bytech, přestože se fakticky jedná o~devítibitová slova. Pro účely datového
+využití zprávy je však relevantních jen 8 bitů – byte.}.
+Devátý bit ve zprávách z~\gls{mtbusb} to \gls{mtb} modulu indikuje, že
+se jedná o~první byte zprávy. Ostatní byty zprávy mají tento bit nastavený na
+0. Devítibitová komunikace je použita s~cílem na sběrnici zavést klíčový pojem
+\textit{zpráva}. Díky devátému bitu \gls{mtb} modul dokáže poznat, kdy zpráva
+začíná. Počet stop bitů je ponechán standardně na jednom bitu, kontrola
+konzistence dat paritou není použita.
 
-Aktuální specifikace sběrnice \gls{mtbbus} podporuje různé rychlost sběrnice –
-38400 Bd, 57600 Bd a 115200 Bd. Komunikace vždy začíná na 38400 Bd a jeden
-z~prvních příkazů je příkaz na změnu rychlost sběrnice. Při výpadků a opětovném
-oživení modulu musí modul postupně vyzkoušet ony 3 rychlost a sledovat, na které
-rychlosti přijímá korektní data.
+Současná sběrnice \gls{mtbbus} podporuje různé rychlosti sběrnice –
+$38400~Bd$, $57600~Bd$ a $115200~Bd$. Komunikace vždy začíná na
+$38400~Bd$, jedna z~prvních zpráv sběrnice je příkaz na změnu rychlosti
+sběrnice. Při výpadků a~opětovném oživení modulu musí modul postupně vyzkoušet
+všechny 3~rychlosti a~sledovat, na které rychlosti přijímá korektní data
+\cite{mtbbus-specs}.
 
-Možnost různých rychlostí by autor chtěl ponechat – některé kolejiště se
-spletitou sběrnicí, dlouhou sběrnicí nebo sběrnicí se špatnými elektrickými
-vlastnostmi mohou vyžadovat nižší rychlosti. Rchlost nižší než 38400 Bd by
-neměla být třeba – tuto. rychlost by měla zvládat každá sběrnice. Při rychlosti
-115200 Bd dojde průměrně k~10 skenům jednoho modulu při počtu 50 modulů.
-Tato hodnota je poměrně malá, ale pro účely zabezpečovacího softwaru kolejiště
-dostatečná. V~budoucnu možná dojde k~dalšímu zvýšení rychlosti sběrnice.
+Možnost volby rychlosti sběrnice by autor chtěl ponechat – některá kolejiště se
+spletitým zapojením sběrnice, dlouhou sběrnicí nebo sběrnicí se špatnými elektrickými
+vlastnostmi mohou vyžadovat nižší rychlosti. Bude stačit ponechat volbu mezi
+třemi rychlostmi.
+Rychlost nižší než $38400~Bd$ by neměla být třeba – tuto rychlost by měla
+zvládat každá sběrnice. Při rychlosti $115200~Bd$ dojde ke $20$ skenům
+jednoho modulu za sekundu při počtu $50$ modulů na sběrnici. Tato hodnota je
+pro účely zabezpečovacího softwaru kolejiště dostatečná, takže není
+třeba umožnit vyšší rychlosti.
 
 
 \subsubsection{Princip komunikace}
 
-Sběrnice bude fungovat v~režimu \textit{single master, multiple slaves}. Chod
-na sběrnice bude řídit \textit{master} module – \textit{MTB-USB}. Master modul
-bude periodicky dotazovat všechny moduly sběrnice s~výjimkami zpráv pro konkrétní
-moduly odeslané z~počítače. Modul na každou zprávu pro něj odpoví právě jednou
-zprávou. Proto není nutné ve směru \textit{slave $\rightarrow$ master} používat
-devátý bit.
-
-Modul na periodické výzvy o~odpověď (\textit{Module Inquiry}) vždy odpoví daty
-k~odeslání. Pokud modul nemá žádná data k~odeslání, odpoví zprávou
-\textit{Acknowledgement}. Tím \textit{MTB-USB} modulu potvrdí, že zprávu přijal
-a že komunikuje. \textit{MTB-USB} modul tka může monitorovat aktivní moduly
-sběrnice a dokonce detekovat moduly nové.
+Sběrnice \gls{mtbbus} v4 funguje v~režimu \textit{single master, multiple
+slaves}. Chod sběrnice řídí \textit{master} modul – \gls{mtbusb}.
+Master modul periodicky dotazuje všechny ostatní moduly sběrnice (pomocí zprávy
+\textit{Module Inquiry}). \gls{mtb} modul na každý dotaz odpoví právě jednou
+zprávou\footnote{Proto není nutné ve směru \textit{slave $\rightarrow$ master}
+nastavovat devátý bit.}.  Pokud \gls{mtb} modul nemá žádná data k~odeslání,
+odpoví zprávou \textit{Acknowledgement}. Tím \gls{mtbusb} modulu potvrdí, že
+zprávu přijal a~že komunikuje. \gls{mtbusb} tak může monitorovat aktivní moduly
+sběrnice a~dokonce detekovat moduly nové.
 
 Příklad komunikace po sběrnici:
 
 \begin{verbatim}
 > Module 1 Inquiry
-< Acknowledgement  # Module 1 žije a nemá žádná data k~odeslání
+< Acknowledgement  # Modul 1 žije a nemá žádná data k~odeslání
 > Module 2 Inquiry
 # Timeout – modul 2 nežije
 > Module 3 Inquiry
@@ -343,50 +349,53 @@ Příklad komunikace po sběrnici:
 ...
 \end{verbatim}
 
-Všimněte si, že v~příkladu probíhá polling pouze některých adres – pro zmenšení
-latencí je vhodné často dotazovat aktivní moduly a neaktivní moduly skenovat
-jen čas od času (aby se dalo poznat, že moduly ožily). Dále si všimněte, že
-příkazy pro moduly chodí nezávisle na tom, která adresa je právě dotazována.
+Všimněte si, že probíhá polling pouze některých adres – pro zmenšení latencí je
+vhodné často dotazovat aktivní moduly a~neaktivní moduly dotazovat jen čas od
+času (aby se dalo poznat, že moduly ožily). Dále si všimněte, že příkazy pro
+moduly (\textit{Change outputs}) se posílají nezávisle na tom, který modul je
+právě dotazován.
 
 \subsubsection{Komunikační protokol} \label{subsub:mtbbus-proto-strucure}
 
-Každá \textit{zpráva} má následující strukturu:
+Každá \textit{zpráva} se skládá z~následujících bytů:
 
 \begin{enumerate}
 \item \textbf{Adresa modulu.}
 
 Tento byte má jako jediný nastavený svůj 9. bit na hodnotu 1.
-Adresa modulu je 8bitové číslo. Adresa 0 znamená, že příkaz se posílá
-jako \textit{broadcast} a mají ho číst všechny moduly na sběrnici. Typickým
-příkazem typu \textit{broadcast} je požadavek na reset výstupů všech modulů.
+Adresa modulu je 8bitové číslo. Adresa 0 znamená, že zpráva se posílá
+jako \textit{broadcast}, tedy ji mají číst všechny moduly na sběrnici. Typickou
+zprávou typu \textit{broadcast} je požadavek na reset výstupů všech modulů.
 
 Adresní prostor 255 modulů byl vyhodnocen jako dostatečně velký.
 
 \item \textbf{Délka zprávy.}
 
-Tento byte obsahuje počet datových bytů zprávy plus jedna. Pro univerzálnost bylo
-rozhodnuto protokol navrhnout tak, aby délka zpráv nebyla součástí definice
-jednotlivých příkazů, ale aby byla ve zprávě obsažena explicitně. Toto
-rozhodnutí umožňuje například \textit{MTB-USB} modulu přeposílat zprávy mezi
-\gls{mtbbus} a počítačem, aniž by \textit{MTB-USB} muselo dekódovat obsah
-zpráv, případně mít velkou tabulku \textit{typ zprávy, délka}. Některé zprávy
+Tento byte obsahuje počet \textit{datových bytů zprávy} plus jedna (pro
+\textit{kód zprávy}).
+
+Pro univerzálnost protokolu bylo rozhodnuto jej navrhnout tak, aby délka zpráv
+nebyla součástí definice jednotlivých zpráv, ale aby byla ve zprávě obsažena
+explicitně. Toto rozhodnutí umožňuje například \gls{mtbusb} modulu
+přeposílat zprávy mezi \gls{mtbbus} a~počítačem, aniž by musel dekódovat obsah
+zpráv, případně mít uloženou tabulku \textit{typ zprávy, délka}. Některé zprávy
 navíc mohou mít variabilní délku ze své podstaty.
 
 Maximální hodnota tohoto bytu je 121, což umožňuje zprávy skládat do bufferů
-o~délce 128 bytes. Maximální délka zprávy byla zvolena s~ohledem na nevelké
-kapacity \textit{SRAM} mikrokontrolérů a časovou efektivitu případné
+o~délce 128 bytů. Maximální délka zprávy byla zvolena s~ohledem na nevelké
+kapacity \textit{SRAM} mikrokontrolérů a~časovou efektivitu případné
 retransmise.
 
-Původní verze protokolu \gls{mtbbus} umožňovala zprávy o~délce nejvýše 7 bytů.
-Tato hodnota byla zásadně navýšena zejména proto, aby bylo možné novým
-protokolem posílat firmware pro aktualizaci \gls{mtb} desek.
+Současná verze protokolu \gls{mtbbus} umožňuje zprávy o~délce nejvýše 7 bytů
+\cite{mtbbus-specs}.  Tato hodnota byla zásadně navýšena zejména proto, aby
+bylo možné novým protokolem posílat firmware pro aktualizaci \gls{mtb} modulů.
 
-\item \textbf{Kód příkazu}
+\item \textbf{Kód zprávy}
 
-Libovolné číslo v~rozsahu 0–255. Význam jednotlivých kódů definuje specifikace
-protokolu.
+Libovolné číslo v~rozsahu 0–255, definuje význam zprávy. Význam jednotlivých
+kódů definuje specifikace protokolu.
 
-\item \textbf{Data příkazu}
+\item \textbf{Data zprávy}
 
 Až 120 bytů.
 
@@ -401,29 +410,30 @@ mechanismu \texttt{xor}, kdy na jednotlivé byty zprávy byl aplikován bitový 
 a výsledná hodnota byla připojena na konec zprávy. Tento způsob je vhodný pro
 malé zprávy.
 
-Nová verze protokolu již umožňuje delší zprávy a tak byl navržen robustnější
+Nová verze protokolu umožňuje delší zprávy a~tak byl navržen robustnější
 způsob zabezpečení zprávy. Sběrnice \gls{mtbbus} v4 používá pro zabezpečení
-zprávy mechanismus \textit{CRC-16} \cite{crc16-modbus}. Tento mechanismus je
+zprávy standardní mechanismus \textit{CRC-16}. Tento mechanismus je
 založen na dělení polynomů se zbytkem. Konkrétně se používá verze
-\texttt{CRC-16-IBM}, inspirací autorovi byla průmyslová sběrnice \textit{ModBus}
-\cite{modbus}, která tento způsob zabezpečení zpráv používá také.
+\texttt{CRC-16-IBM}. Inspirací autorovi byla průmyslová sběrnice
+\textit{ModBus}, která tento způsob zabezpečení zpráv používá také
+\cite{modbus-specs}.
 
 \end{enumerate}
 
-Příklad zprávy: \texttt{0x101 0x001 0x001 0x091 0x090}.
+Příklad zprávy: \texttt{0x105 0x001 0x001 0x0D0 0x051}.
 
 \begin{compactenum}
-\item \texttt{0x101}: zpráva pro modul s~adresou 1.
+\item \texttt{0x105}: zpráva pro modul s~adresou 5.
 \item \texttt{0x001}: následuje 1 byte zprávy.
-\item \texttt{0x001}: příkaz \texttt{0x01}.
-\item \texttt{0x091}, \texttt{0x090}: kontrolní byty \textit{CRC-16}.
+\item \texttt{0x001}: kód zprávy \texttt{0x01}.
+\item \texttt{0x0D0}, \texttt{0x051}: kontrolní součet \textit{CRC-16}.
 \end{compactenum}
 
-Zpráva neobsahuje žádná data příkazu.
+Zpráva neobsahuje žádná \textit{data zprávy}.
 
 \subsubsection{Zprávy} \label{subsub:mtbbus-messages}
 
-Kompletní specifikace zpráv a jejich odpovědí je dostupná na
+Kompletní specifikace významů a kódů zpráv je dostupná na
 \url{https://github.com/kmzbrnoI/mtbbus-protocol}, zde uvedeme stručný přehled.
 
 Zprávy master $\rightarrow$ slave:
@@ -461,17 +471,19 @@ Zprávy slave $\rightarrow$ master:
 \item \textit{Module-specific command}
 \end{compactitem}
 
+Rozeberme nyní zprávy detailněji.
 
+\gls{mtbusb} průběžně skenuje aktivní i~neaktivní moduly (aktivní častěji)
+a~posílá modulům \textit{Module Inquiry}. Moduly odpovídají buď
+\textit{Ack\-now\-led\-ge\-ment} nebo \textit{Input Changed}.
 
-Rozeberme nyní, proč zprávy vypadají tak, jak vypadají.
+Pomocí zpráv \textit{Module Information Request} a~\textit{Module Information}
+lze zjistit základní informace o~\gls{mtb} modulu: jeho typ, verzi firmwaru,
+podporovanou verzi protokolu a~jestli je modul v~bootloaderu.
 
-Jak již bylo zmíněno, \textit{MTB-USB} deska průběžně skenuje aktivní
-i neaktivní moduly (aktivní častěji) a posílá modulům \textit{Module Inquiry}.
-Moduly odpovídají buď \textit{Acknowledgement} nebo \textit{Input Changed}.
-
-Zpráva \textit{Set Output} slouží k~nastavení stavu výstupů modulu, zpráv
-\textit{Reset Outputs} slouží k~navrácení výstupů do bezpečného stavu.
-Tato zpráva je typicky odesílána \textit{MTB-USB} modulem při ukončení komunikace
+Zpráva \textit{Set Output} slouží k~nastavení stavu výstupů modulu, zpráva
+\textit{Reset Outputs} slouží k~navrácení výstupů do základního stavu.
+Tato zpráva je typicky odesílána \gls{mtbusb} modulem při ukončení komunikace
 s~počítačem jako broadcast.
 
 Počítač může zapisovat nebo vyčítat konfiguraci modulů pomocí zpráv
@@ -486,64 +498,65 @@ adresu pomocí zprávy \textit{Change Address}.
 
 Plánovaná změna rychlosti sběrnice se modulům ohlašuje pomocí zprávy
 \textit{Change Speed}, která je typicky odesílána jako broadcast. Každý modul
-si ukládá rychlost sběrnice do volatilní paměti a tuto rychlost použije při
-zapnutí. Očekává se, že budoucí typy procesorů v~modulech \gls{mtb} budou
-schopny detekovat rychlost sběrnice automaticky. Aktuálně není na sběrnici
-\gls{mtbbus} implementován žádný mechanismus pro automatickou detekci rychlosti.
-V~situaci, kdy je například do sběrnice doplněn nový modul, který je ale
-z~výroby nastaven na jinou rychlost, než aktuálně sběrnice používá, se očekává,
-že operátor přenastaví rychlost sběrnice na rychlost nového modulu, odešle
-novému modulu příkaz na změnu rychlosti a vrátí rychlost sběrnice zpět.
-Tento mechanismus je přímočarý a lze provést za plného chodu sběrnice.
+si ukládá rychlost sběrnice do nevolatilní paměti, uloženou rychlost použije při
+zapnutí modulu. Očekává se, že budoucí typy procesorů v~modulech \gls{mtb} budou
+schopny detekovat rychlost sběrnice automaticky.
 
-Vysvětlení procesoru aktualizace firmwaru modulů se budeme věnovat v~samostatné
+V~současnosti není na sběrnici \gls{mtbbus} implementován žádný mechanismus pro
+automatickou detekci rychlosti.  V~situaci, kdy je například do sběrnice
+doplněn nový modul, který je ale z~výroby nastaven na jinou rychlost, než
+aktuálně sběrnice používá, se očekává, že operátor přenastaví rychlost sběrnice
+na rychlost nového modulu, odešle novému modulu příkaz na změnu rychlosti
+a~vrátí rychlost sběrnice zpět. Tyto kroky lze provést za plného chodu sběrnice.
+
+Popisu procesu aktualizace firmwaru modulů se budeme věnovat v~samostatné
 kapitole.
 
 Poslední zajímavou zprávou je \textit{Module-specific command}. Tato zpráva
-umožňuje tunelovat pro modul libovolná data. Pokud typ modulu podporuje nějaké
-speciální operace, může tento typ zprávy využít k~řízení těchto operací.
+umožňuje odeslat \gls{mtb} modulu libovolná data (a~modul může odpovědět
+libovolnými daty). \textit{Module-specific command} se používá například pro
+řízení specializovaných operací modulů, viz \ref{sec:mtb-2-avr}.
 
 
 \subsubsection{Dvouvrstvost protokolu}
 
-Specifikace protokolu je tzv. \textit{dvouvrstvá}. Protokol specifikuje typy
-zpráv, ale specifikace obsahu některých zpráv může být různá pro různé typy
-modulů. Specifickými vlastnostmi modulů jsou:
+Specifikace \gls{mtbbus} v4 je tzv. \textit{dvouvrstvá}. Protokol definuje
+typy zpráv, ale data některých zpráv specifikují až konkrétní typy \gls{mtb}
+modulů. Typ modulu definuje:
 
 \begin{enumerate}
-\item Formát dat vstupů, formát dat výstupů
+\item \textbf{Formát dat vstupů, formát dat výstupů}
 
-Protokol je navržený tak, aby moduly mohly mít libovolné vstupy i výstupy
-i jejich počty. Obsah datových bytů zpráv \textit{Set Output}, \textit{Input
-Changed} a \textit{Input State} je proto specifikovaný ve specifikaci modulů.
+Protokol je navržený tak, aby moduly mohly mít libovolné typy a počty vstupů
+i~výstupů. Obsah datových bytů zpráv \textit{Set Output}, \textit{Input
+Changed} a~\textit{Input State} je proto specifikovaný až ve specifikaci modulů.
 
-Například modul \gls{mtbuni} má 16 analogových a 16 digitálních výstupů.
-Protože počet vstupů i výstupů je malý, posílá se v~protokolu vždy celý stav
-vstupů a výstupů. Protokol počítá s~tím, že jiné moduly mohou mít vstupy a
-výstupy například s~větším rozsahem hodnot. V~takovém případě protokol umožňuje
-to, aby se neposílal celý stav vstupů a výstupů, ale jen relevantní část.
-Například příkaz \textit{Set Output} může poslat jen ty výstupy, jejichž
-stav je třeba změnit. To je také důvodem, proč existují 2 různé zprávy
-\textit{Input Changed} (ve které se posílá jen stav změněných vstupů) a
-\textit{Input State} (ve které se posílá stav všech vstupů).
-\footnote{Všimněte si, že tento mechanismus umožňuje také provádět polling
+Například modul \gls{mtbuni} má 16~digitálních vstupů a~16~digitálních výstupů.
+Protože počet vstupů i výstupů je malý, posílá se vždy celý stav
+vstupů i~výstupů.
+
+Protokol počítá s~tím, že jiné moduly mohou mít vstupy a~výstupy například
+s~větším rozsahem hodnot (analogové vstupy). V~takovém případě protokol
+umožňuje například neposílat celý stav vstupů a~výstupů, ale jen relevantní
+část. To je také důvodem, proč existují 2 různé zprávy
+\textit{Input Changed} (ve které se posílá jen stav změněných vstupů)
+a~\textit{Input State} (ve které se posílá stav všech vstupů).
+\footnote{Všimněte si, že tento mechanismus umožňuje provádět polling
 vstupů místo událostního hlášení změn stavů vstupů. To je zcela záměrný prvek
-protokolu. Tento prvek se využije například u~budoucích modulů s~analogovými
-vstupy.}
+\gls{mtbbus} v4. Využije se například u~budoucích modulů s~analogovými vstupy.}
 
-\item Formát konfigurace
+\item \textbf{Formát konfigurace}
 
 Konfigurace různých typů modulů se mohou zásadně lišit v~počtu
 konfigurovatelných hodnot.
 
-Například modul \gls{mtbuni} ma 24 nebo 26 konfiguračních bytů
-\ref{uni:proto}. Proto se celá konfigurace modulu posílá najednou.  Protokol
-však umožňuje libovolný způsob zasílá konfigurace: počítač například u~modulů
-s~větším množstvím konfigurace může poslat rozsah adres, jejichž hodnoty chce
-znát. Nebo naopak poslat rozsah adres a hodnoty na těchto adresách, které
-nastavuje.
+Například modul \gls{mtbuni} ma 26 konfiguračních bytů. Proto se celá
+konfigurace posílá najednou. Protokol však umožňuje libovolný způsob
+zasílání konfigurace: počítač si například u~modulů s~větším množstvím konfiguračních
+bytů může vyžádat pouze podmnožinu konfiguračních hodnot. Nebo naopak poslat
+podmnožinu konfiguračních adres a~hodnoty na těchto adresách k~nastavení.
 
-\item Adresování a data paměti pro aktualizaci firmware
+\item \textbf{Adresování a data paměti pro aktualizaci firmwaru}
 
 Různé typy modulů typicky obsahují různé procesory, které jinak adresují paměť.
 Liší se například šířka slova nebo velikost paměti. Význam datových bytů
@@ -554,25 +567,25 @@ konkrétní typy modulů.
 
 \subsubsection{Typické fungování sběrnice}
 
-Následující kroky popisují typické fungování systému \gls{mtb} (srovnejte
+Následující kroky popisují typické fungování systému \gls{mtb} v4 (srovnejte
 s~postupem definovaným na konci \ref{sec:mtbbus}).
 
 \begin{compactenum}
 \item Je zapnut řídicí počítač kolejiště.
-\item Je připojeno napájení \textit{MTB-USB} desky a všech \gls{mtb} modulů.
-\item \gls{mtb} moduly z~paměti načtou konfiguraci, aplikují bezpečný stav
+\item Je zapnuto napájení \gls{mtbusb} modulu a~všech \gls{mtb} modulů.
+\item \gls{mtb} moduly z~paměti načtou konfiguraci, aplikují základní stav
 výstupů, začnou poslouchat na sběrnici.
-\item \textit{MTB-USB} deska detekuje připojené moduly a zapamatuje si je.
-\item Počítačová aplikace se připojí k~\textit{MTB-USB} desce.
-\item Počítačová aplikace vyčte z~\textit{MTB-USB} desky seznam aktivních modulů.
+\item \gls{mtbusb} detekuje připojené moduly a zapamatuje si je.
+\item Počítačová aplikace se připojí k~\gls{mtbusb}.
+\item Počítačová aplikace vyčte z~\gls{mtbusb} seznam aktivních modulů.
 \item Aplikace vyčte typ připojených modulů, zkonfiguruje je.
 \item Řídicí SW kolejiště používá sběrnici – čte vstupy, nastavuje výstupy.
 \item Při odpojení řídicího SW kolejiště je \gls{mtb} modulům poslán příkaz
-	k~resetování stavu výstupů, čímž je zajištěno, že při odpojení nebo pádu
+	k~resetu stavu výstupů, čímž je zajištěno, že při odpojení nebo pádu
 	řídicího softwaru se budou nacházet výstupy v~definovaném stavu.
 \end{compactenum}
 
-Systém \gls{mtb} však nevyžaduje striktní pořadí těchto kroků. Napájení
+\gls{mtb} v4 však nevyžaduje striktní pořadí těchto kroků. Napájení
 komponent může být zapnuto v~libovolném pořadí, systém dokáže detekovat výpadky
 jednotlivých prvků a obnovovat je. Pro ilustraci uveďme několik příkladů situací,
 které v~systému \gls{mtb} mohou nastat.
@@ -580,81 +593,84 @@ které v~systému \gls{mtb} mohou nastat.
 \begin{itemize}
 \item Jiné pořadí zapnutí prvků.
 
-Pokud je \textit{MTB-USB} zapnut až po zapnutí počítače, počítač tento stav
-korektně detekuje (chybí CDC USB zařízení) a po připojení \textit{MTB-USB} jej
-korektně inicializuje.
+Pokud je \gls{mtbusb} zapnut až po zapnutí počítače, počítač tento stav
+korektně detekuje (chybí zařízení) a~po připojení \gls{mtbusb} jej korektně
+inicializuje.
 
 Sken všech adres sběrnice \gls{mtbbus} (255 adres) probíhá neustále, takže
-pokud jsou moduly sběrnice zapnuty až po zapnutí napájení \textit{MTB-USB} desky,
-jsou i tak korektně detekovány.
+pokud jsou moduly sběrnice zapnuty až po zapnutí \gls{mtbusb}, jsou korektně
+detekovány.
 
 \item Výpadek \gls{mtb} modulu.
 
-Pokud \gls{mtb} modul neodpovídá na požadavky, \textit{MTB-USB} to detekuje, nahlásí
-situaci do počítače a počítač se podle toho zachová.
+Pokud \gls{mtb} modul neodpovídá na zprávy, \gls{mtbusb} situaci detekuje,
+nahlásí ji do počítače a~počítač zareaguje.
 
-Pokud \textit{MTB-USB} deska detekuje nový \gls{mtb} modul, opět o~tom zpraví
-počítač, ten provede vyčtení typu desky a zkonfiguruuje ji.
+Pokud \gls{mtbusb} detekuje nový \gls{mtb} modul, opět o~tom zpraví
+počítač, ten vyčte typ desky a~zkonfiguruje ji.
 
-\item Výměna modulu za chodu sběrnice
+\item Výměna modulu za chodu sběrnice.
 
-Starý modul je při odpojení napájení nahlášen jako neaktivní, po výměně modulu
-je aktivován nový modul.
+Vyňatý modul je při odpojení napájení nahlášen jako neaktivní, po výměně je
+aktivován nový modul.
 
-\item Změna adresy modulu za chodu sběrnice
+\item Změna adresy modulu za chodu sběrnice.
 
-Původní adresa je prohlášena za neaktivní (neodpovídá na požadavky), nová adresa
+Původní adresa se stane neaktivní (neodpovídá na požadavky), nová adresa
 je nalezena a zkonfigurována.
 
 \end{itemize}
 
 
-\subsubsection{Aktualizace firmwaru \gls{mtb} modulů}
+\subsubsection{Aktualizace firmwaru \gls{mtb} modulů} \label{subsub:fw_uprage}
 
 Sběrnice \gls{mtbbus} je navržena tak, aby skrze ní mohl být aktualizován
 firmware \gls{mtb} modulů. Při návrhu mechanismu aktualizace firmwaru bylo
-zvažováno, jestli proces aktualizace firmwaru nevést úplně jiným protokolem,
-než \gls{mtbbus}. \gls{mtbbus} Je dostatečně obecný a navíc je třeba, aby
+zvažováno, jestli aktualizaci nevést úplně jiným protokolem.
+\gls{mtbbus} je však dostatečně obecný a navíc je třeba, aby
 při aktualizaci jednoho modulu ostatní moduly sběrnice aktualizační příkazy
 ignorovaly a nerušily tak aktualizaci. Tyto argumenty vedly k~implementaci
 mechanismu aktualizace firmwaru přímo do sběrnice \gls{mtbbus}. Výhodou tohoto
 řešení je, že zbylé moduly sběrnice mohou při aktualizaci firmwaru jednoho
-modulu nadále komunikovat, aktualizace tedy může probíhat za plného provozu.
+modulu nadále komunikovat, aktualizace může probíhat za plného provozu.
 
-Protokol počítá s~tím, že přepis flash paměti v~\gls{mtb} deskách může
-probíhat pouze z~bootloaderu \gls{mtb} desky. Aktualizační protokol proto
-podporuje reboot procesoru do bootloaderu. Procedůra aktualizace firmwaru
-probíhá následovně \footnote{Procedůra je podrobně popsaná v~dokumentaci protokolu
+Protokol počítá s~tím, že přepis flash paměti procesorů \gls{mtb} modulů může
+probíhat pouze z~bootloaderu. Aktualizační protokol proto podporuje reboot
+procesoru do bootloaderu. Procedůra aktualizace firmwaru probíhá následovně
+\footnote{Procedůra je podrobně popsaná v~dokumentaci protokolu
 \gls{mtbbus} na
 \url{https://github.com/kmzbrnoI/mtbbus-protocol/blob/master/workflows.md}.}.
 
 \begin{compactenum}
-\item Master deska vyšle \textit{Firmware Upgrade Request}. Tím informuje \gls{mtb}
+\item \gls{mtbusb} vyšle \textit{Firmware Upgrade Request}. Tím informuje \gls{mtb}
 	modul, že má rebootovat do bootloaderu.
-\item \gls{mtb} deska odpoví \textit{Acknowldgement} a rebootuje do bootloaderu.
-\item \gls{mtbusb} deska pošle \gls{mtb} desce žádost o~její obecné informace.
-\item \gls{mtb} deska odpoví obecnými informacemi, ve kterých je mj. zaznačeno,
+\item \gls{mtb} odpoví \textit{Acknowldgement} a~rebootuje do bootloaderu.
+\item \gls{mtbusb} pošle \gls{mtb} modulu žádost o~jeho obecné informace.
+\item \gls{mtb} odpoví obecnými informacemi, ve kterých je mj. zaznačeno,
 	že je v~bootloaderu.
-\item \gls{mtbusb} deska vyšle příkaz \textit{Firmware Write Flash}, ve kterém pošle
-	blok flash paměti k~zapsání a její adresu. Slave deska tuto paměť zapisuje.
-\item \gls{mtbusb} modul se ptá \gls{mtb} modulu příkazem \textit{Firmware Write
-	Flash Status Request}, jestli již byl zápis dokončen. Jakmile je zápis bloku
-	paměti dokončen, přesouvá se na krok (5).
-\item Jakmile je zapsána celá paměť, master deska pošle příkaz \textit{Reboot},
-	\gls{mtb} modul provede kontrolu konzistence paměti a zapne se do hlavního
+\item \gls{mtbusb} vyšle příkaz \textit{Firmware Write Flash}, ve kterém pošle
+	blok flash paměti k~zapsání a její adresu. \gls{mtb} zapíše data do své flash
+	paměti.
+\item \gls{mtbusb} se zeptá \gls{mtb} modulu příkazem \textit{Firmware Write
+	Flash Status Request}, jestli již byl zápis do flash paměti dokončen.
+	Jakmile je zápis dokončen, přesouvá se na zápis dalšího bloku paměti (krok~5).
+\item Po zapsání celého firmwaru \gls{mtbusb} pošle příkaz \textit{Reboot}.
+	\gls{mtb} modul provede kontrolu konzistence paměti a~naběhne do hlavního
 	programu.
 \end{compactenum}
 
-Jak bylo zmíněno v~posledním kroku, je doporučeno (a nový firmware
-\gls{mtbuni} modulů toto doporučení dodržuje), aby při každém náběhu
-procesoru modulu proběhla kontrola konzistence paměti. Kontrola konzistence
-paměti je implementována pomocí uloženého kontrolního součtu (\textit{CRC-16})
-na konkrétních adresách paměti. Protokol \gls{mtbbus} implementuje atribut,
-kterým může \gls{mtb} modul oznámit, že sice poslouchá, ale je v~bootloaderu
-a odmítá nabootovat, protože nesedí kontrolní součet paměti programu.
+Je doporučeno (a nový firmware \gls{mtbuni} modulů toto doporučení dodržuje),
+aby při každém startu procesoru \gls{mtb} modulu proběhla kontrola konzistence
+paměti programu.
+
+Kontrola konzistence v~\gls{mtbuni} v4 modulech je implementována pomocí
+uloženého kontrolního součtu (\textit{CRC-16}) na konkrétních adresách paměti.
+Protokol \gls{mtbbus} obsahuje atribut, kterým může \gls{mtb} modul oznámit, že
+sice poslouchá, ale je v~bootloaderu a~odmítá nabootovat, protože nesedí
+kontrolní součet hlavního programu.
 
 Aktualizace bootloaderu přes sběrnici \gls{mtbbus} není možná, protože vlivem
-výpadku napájení při aktualizaci programu by mohlo dojít k~situaci, kdy se modul
-stane nepoužitelným. Bootloader by měl být malý a odzkoušený kus firmwaru, který
-se nahraje jednou a nikdy ho nebude třeba přehrávat. Přehrání bootloaderu by
-vyžadovalo ruční obcházení modulů s~programátorem.
+výpadku napájení při aktualizaci by mohlo dojít k~situaci, kdy se modul stane
+nepoužitelným. Bootloader by měl být malý a~odzkoušený kus firmwaru, který se
+nahraje jednou a~nikdy ho nebude třeba přehrávat. Přehrání bootloaderu vyžaduje
+ruční obcházení modulů s~programátorem.
