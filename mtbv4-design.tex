@@ -330,7 +330,8 @@ zprávou\footnote{Proto není nutné ve směru \textit{slave $\rightarrow$ maste
 nastavovat devátý bit.}.  Pokud \gls{mtb} modul nemá žádná data k~odeslání,
 odpoví zprávou \textit{Acknowledgement}. Tím \gls{mtbusb} modulu potvrdí, že
 zprávu přijal a~že komunikuje. \gls{mtbusb} tak může monitorovat aktivní moduly
-sběrnice a~dokonce detekovat moduly nové.
+sběrnice a~dokonce detekovat moduly nové. Mechanismus pravidelného dotazování
+modulů nazýváme \textit{polling}.
 
 Příklad komunikace po sběrnici:
 
