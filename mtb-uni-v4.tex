@@ -10,9 +10,9 @@ a rozšiřovat současné instalace o~nové moduly.
 	\begin{tabularx}{\textwidth}{lX}
 		\toprule
 		Vstupy & 16 digitálních vstupů \\
-		Výstupy & 16 výstupů v režimu otevřeného kolektoru, všechny umožňují
+		Výstupy & 16 výstupů v~režimu otevřeného kolektoru, všechny umožňují
 		kmitání a generování \gls{scom} signálu \\
-		Napájení & 7–17 V DC \\
+		Napájení & 7–17 V~DC \\
 		Adresování & pomocí jumperů \\
 		Procesor & ATmega128 \\
 		\bottomrule
@@ -30,7 +30,7 @@ Modul \gls{mtbuni} v4 umožňuje variantní osazení jak svorkovnic, tak konekto
 \texttt{PSH}. Tím modul slučuje současné moduly \gls{mtbuni} a MTB-TTL do jediné
 desky plošných spojů, což zjednodušuje údržbu a vývoj.
 
-Hardwarové řešení výstupů je ponecháno: výstupy jsou v režimu otevřených
+Hardwarové řešení výstupů je ponecháno: výstupy jsou v~režimu otevřených
 kolektorů. Výstupy jsou řízení skrze obvody \texttt{ULN2803}, které umožňují
 dostatečný výstupní proud až 0.5~A~/~8 výstupů. Všechny výstupy umožní kmitání
 i zasílání signálu \gls{scom} \ref{scom}.
@@ -41,14 +41,14 @@ deska, viz \ref{}.
 Deska plošných spojů je navrhnuta tak, aby byly zachovány rozměry a umístění
 upevňovacích otvorů se současným nejmenším modulem – MTB-TTL.
 
-Návrh této desky vznikal ve spolupráci s \textit{Mendelovou univerzitou v Brně},
+Návrh této desky vznikal ve spolupráci s~\textit{Mendelovou univerzitou v~Brně},
 schéma vytvořil Robert Čížek, deska plošných spojů, firmware a koncepční návrh
 modulu je dílem autora této práce.
 
 
 \subsection{Hardware}
 
-Při návrhu modulu připadaly v úvahu dva zásadní přístupy:
+Při návrhu modulu připadaly v~úvahu dva zásadní přístupy:
 
 \begin{compactenum}
 \item malý proces, posuvné registry na vstupy a výstupy;
@@ -56,15 +56,15 @@ Při návrhu modulu připadaly v úvahu dva zásadní přístupy:
 \end{compactenum}
 
 Autor této práce zvolil přístup (2), protože chtěl minimalizovat počet
-součástek na desce a protože v dnešní době není problém sehnat fyzicky malý
+součástek na desce a protože v~dnešní době není problém sehnat fyzicky malý
 procesor s~40 piny.
 
 Schéma i deska plošných spojů jsou openhardware projekt, dostupné na
-\url{https://github.com/kmzbrnoI/mtb-uni-4-ele}, schéma také v příloze
+\url{https://github.com/kmzbrnoI/mtb-uni-4-ele}, schéma také v~příloze
 \ref{}. Zmiňme nyní zajímavé prvky schématu a desky plošných spojů.
 
 Jádrem desky je procesor \texttt{ATmega128A}. Autor této práce si zvolil
-procesor architektury \textit{AVR}, protože s používáním těchto procesorů má
+procesor architektury \textit{AVR}, protože s~používáním těchto procesorů má
 dlouholeté zkušenosti. Model \textit{ATmge128a} byl pak zvolen proto, že je to
 nejmenší model rodiny \textit{ATmega}, který obsahuje požadované množství pinů.
 
@@ -82,21 +82,21 @@ Petrilaka a Roberta Čížka. Zapojení jednoho vstupu je demonstrováno na obr�
 \end{figure}
 
 Schéma \ref{fig:mtbuni-input} je rozděleno na 2 části schottkyho diodou
-\texttt{D1}. Horní část včetně diody \texttt{D1} je pro každý z 16 vstupních
+\texttt{D1}. Horní část včetně diody \texttt{D1} je pro každý z~16 vstupních
 pinů zvlášť, spodní je vždy pro osmici pinů společná.
 
-Očekává se, že periferie připojená k pinu (\texttt{INPUT}) bude tento pin
-uzemňovat, případně že bude pin v režimu \gls{ttl}. Každý vstup obsahuje
+Očekává se, že periferie připojená k~pinu (\texttt{INPUT}) bude tento pin
+uzemňovat, případně že bude pin v~režimu \gls{ttl}. Každý vstup obsahuje
 pull-up rezistor \texttt{R1}, aby měl vstupní signál vždy definovanou napěťovou
 úroveň. Pull-up rezistor je relativně tvrdý, aby se zabránilo ovlivňování
 vstupů okolním rušením, které signál \gls{dcc} při přenášení větších proudů
 bohužel generuje.
 
-K procesoru vede signál přes ochrannou pojistku \texttt{F1} (význam vysvětlíme
+K~procesoru vede signál přes ochrannou pojistku \texttt{F1} (význam vysvětlíme
 niže) a ochranný rezistor \texttt{R2}. Tento rezistor zabraňuje naproudu do pinu
 procesoru a tím jeho zničení.
 
-Funkcí celého obvodu od \texttt{D1} níže je vyzkratovat vstup na zem v momentě,
+Funkcí celého obvodu od \texttt{D1} níže je vyzkratovat vstup na zem v~momentě,
 kdy je na něj přivedené vyšší než dovolené napětí. Pin procesoru povoluje
 napětí nejvýše $5.5~V$ \cite{atmega128-datasheet}. Jakmile se vstupní napětí
 začne blížit $5.4~V$ ($5.1~V$ zenerova dioda \texttt{D2} + $0.3~V$ schottkyho
@@ -109,11 +109,11 @@ Tyristor \texttt{Q1} dimenzován jako výkonový, protože do něj může téct 
 proud všemi 8 piny, navíc chování polymerové pojistky umožňuje krátkodobé řádově
 větší proudy, které musí tyristor zvládnout \cite{polyfuse-behavior}.
 
-V praxi se často používá zapojení \textit{vstup – ochranný rezistor – pull-up –
-pin procesoru}. V zapojení \gls{mtbuni} desky za oproti tomu používá zapojení
+V~praxi se často používá zapojení \textit{vstup – ochranný rezistor – pull-up –
+pin procesoru}. V~zapojení \gls{mtbuni} desky za oproti tomu používá zapojení
 \textit{vstup – pull-up – ochranný rezistor – pin procesoru}. Výhodou zapojení,
 které bylo implementováno do \gls{mtbuni} modulu, je, že na vstupu procesoru
-není napěťový dělič. V případě, že vstup má například napětí $0.7~V$ (což se
+není napěťový dělič. V~případě, že vstup má například napětí $0.7~V$ (což se
 snadno stane například tehdy, když periferie používá výstupy typu otevřené
 kolektory), je toto napětí přivedeno přímo na pin procesoru a tedy spolehlivě
 detekováno jako logická nula\footnote{V~\gls{mtbuni} desce je detekováno
@@ -128,7 +128,7 @@ je vřazena polymerová pojistka. Protože obvod \texttt{ULN2803} specifikuje
 proudové omezení $0.5~A$ / všechny výstupy \cite{uln2803-datasheet}, nemohou
 samostatné pojistky zajistit nepřetížení modulu a zároveň umožnit využití
 maximálního proudu. Proto jsou na desce plošných spojů \gls{mtbuni} v4 obvody
-\texttt{ULN2803} jako jedny z mála osazeny v paticích v \textit{DIL} provedení.
+\texttt{ULN2803} jako jedny z~mála osazeny v~paticích v~\textit{DIL} provedení.
 
 Výstupy obsahují ochranu proti přivedení vysokého napětí, kterou realizuje
 stejný obvod, jako na obrázku \ref{fig:mtbuni-input} (obvod pod diodou
@@ -142,7 +142,7 @@ vyvstala diskuze, jaký je nejlepší způsob adresování modulů, přičemž s
 přístupy
 
 \begin{compactenum}
-\item modul má adresu uloženou v EEPROM, adresu je možné změnit přes \gls{mtbbus}
+\item modul má adresu uloženou v~EEPROM, adresu je možné změnit přes \gls{mtbbus}
 \item adresa se konfiguruje přímo jumpery na modulu.
 \end{compactenum}
 
@@ -151,7 +151,7 @@ Autor si však stojí za tím, že snadná a především vždy pravdivá identi
 adresy modulu prostým pohledem na něj stojí za 8 vstupních pinů procesoru navíc.
 
 Pro elegantní řešení přístupu (1) je třeba mít na desce tlačítko. Tlačítko se
-na desce nachází, takže pokud by byla v budoucnu snaha přejít na přístup (1),
+na desce nachází, takže pokud by byla v~budoucnu snaha přejít na přístup (1),
 je změna otázkou změny firmwaru.
 
 \subsection{Deska plošných spojů}
@@ -172,7 +172,7 @@ některé chyby prototypu.
 
 \subsection{Firmware}
 
-Firmware pro procesor \textit{ATmega128A} je psán v jazyce C a je dostupný
+Firmware pro procesor \textit{ATmega128A} je psán v~jazyce C a je dostupný
 pod opensource licencí na \url{https://github.com/kmzbrnoI/mtb-uni-4-fw}.
 
 Zajímavým prvkem firmwaru je podpora jeho aktualizace přímo přes sběrnici
@@ -185,7 +185,7 @@ Zajímavým prvkem firmwaru je podpora jeho aktualizace přímo přes sběrnici
 
 Bootloader je nahraný ve speciální části paměti (na konci) a zajišťuje
 aktualizaci hlavního programu. Bootloader je měnitelný pouze přímým
-programování procesoru, nikoliv přes \gls{mtbbus}. Firmware tak v zásadě
+programování procesoru, nikoliv přes \gls{mtbbus}. Firmware tak v~zásadě
 obsahuje 2 samostatné programy, které se po zkompilování slinkují dohromady.
 
 Bootloader umí pouze aktualizovat firmware a kontrolovat jeho konzistenci.
