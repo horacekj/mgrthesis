@@ -234,15 +234,15 @@ obsluhy, reakce pojistky na přetížení, poruchy apod.
 
 \subsubsection{LocoNET}
 
-Poslední z~analyzovaných sběrnic je \textit{LocoNET}. \textit{LocoNET} je
+Poslední z~analyzovaných sběrnic je \textit{LocoNET}. LocoNET je
 proprietární sběrnice společnosti \textit{Digitrax} \cite{loconet:web}, jejíž
 plná specifikace není volně dostupná \cite{loconet_license:web}.  Plné použití
 této sběrnice podléhá licenčním poplatkům \cite{loconet_license:web}.
 Zajímavou vlastnosti sběrnice je, že slučuje sběrnici \textit{throttle bus}
 a~\textit{feedback bus} (viz schéma \ref{fig:dcc-overview}). Řídicí software
 v~počítači tak může přímo dotazovat moduly zpětného hlášení a~úplně tak obejít
-\gls{dcc} centrálu. Sběrnice \textit{LocoNET} je navíc obousměrná,
-\textit{LocoNET} moduly jsou vstupně-výstupní, takže počítač může přímo
+\gls{dcc} centrálu. Sběrnice LocoNET je navíc obousměrná,
+LocoNET moduly jsou vstupně-výstupní, takže počítač může přímo
 povelovat periferie \cite{loconet:web}. Viz \ref{fig:loconet-topology}.
 
 \begin{figure}[ht!]
@@ -251,31 +251,47 @@ povelovat periferie \cite{loconet:web}. Viz \ref{fig:loconet-topology}.
 \label{fig:loconet-topology}
 \end{figure}
 
-Protokol sběrnice \textit{LocoNET} umožňuje dotazovat moduly na jejich stav
+Protokol sběrnice LocoNET umožňuje dotazovat moduly na jejich stav
 \cite{loconet-specs}, což umožňuje počítači přímo rozpoznat, které moduly jsou
 na sběrnici přítomny, výpadek modulu a~oživení modulu po výpadku.
 
-Sběrnice \textit{LocoNET} splňuje požadavky na bezpečné řízení periferií
+Sběrnice LocoNET splňuje požadavky na bezpečné řízení periferií
 definované v~\ref{subsec:gen_requirements}. Při bližší inspekci však
 zjišťujeme, že nasazení této sběrnice by znamenalo nakoupit a~vyměnit cca 100
-modulů v~kolejišti. Výměna by navíc musela být rozsáhlejší, \textit{LocoNET}
+modulů v~kolejišti. Výměna by navíc musela být rozsáhlejší, LocoNET
 moduly přímo nepodporují například generování signálu \textit{\gls{scom}}. Pro
-nasazení sběrnice \textit{LocoNET} by musely být instalovány přídavné moduly
+nasazení sběrnice LocoNET by musely být instalovány přídavné moduly
 pro řízení návěstidel.
 
 \section{BiDiB}
 
-TODO
+Zajímavou alternativou k~systému \gls{dcc} je sběrnice \textit{\gls{bidib}}
+\footnote{\url{http://bidib.org/}} (\textit{BiDirectional Bus}). \gls{bidib}
+je komunitní sběrnice s~otevřeným protokolem, která do velké míry splňuje
+všechny požadavky definované v~\ref{subsec:gen_requirements}. Systém \gls{bidib}
+lze provozovat na více komunikačních médiích (RS485, Ethernet, sériový port),
+návrh systému je podobný návrhu \gls{usb} – na sběrnici je jeden \textit{master},
+až 32 \textit{slave} v~každém segmentu, přičemž jedním ze \textit{slave} může
+být \textit{hub} vedoucí do dalšího segmentu.
 
+Autoři \gls{bidib} si dali za cíl, podobně jako autor této práce, vytvořit
+bezpečný systém pro řízení modelových kolejišť. Systém tak podporuje potvrzování
+příkazů, aktualizaci firmwaru modulů apod.
+
+Pro nasazení \gls{bidib} by bylo třeba provést netriviální úpravy
+aktuálních modulů kolejiště – \gls{bidib} například definuje standardní
+konektory pro propojení modulů. Dále by bylo třeba vyřešit, jak naložit
+s~limitem 32 desek v~jednom segmentu sběrnice (protože \gls{mtbbus} je navržen
+až pro 255 modulů) a~s~jiným způsobem adresování modulů sběrnice.
 \section{Závěr}
 
 V~této kapitole byly popsány základní přístupy k~řízení moderní digitální
 modelové železnice. Bylo zkoumáno, jestli komerční produkty splní požadavky
 definované v~\ref{subsec:gen_requirements}. Po vyloučení technicky
-nezpůsobilých řešení zbyla sběrnice \textit{LocoNET} s~poznámkou, že její
-nasazení by bylo finančně náročné a~pracné.
+nezpůsobilých řešení zbyly sběrnice LocoNET (s~poznámkou,
+že její nasazení by bylo finančně náročné a~pracné) a \textit{\gls{bidib}}.
 
-Při uvažování sběrnice \textit{LocoNET} vyvstal problém s~integrací ovládání
+Při uvažování sběrnice LocoNET vyvstal problém s~integrací ovládání
 návěstidel. Tento problém je obecnějšího rázu – jakékoliv komerční řešení není
 schopné nabídnout takovou flexibilitu, jakou bychom v~\gls{kmz} potřebovali.
 Je nutné integrovat systém řízení kolejiště se současnými periferiemi, ale
@@ -285,6 +301,8 @@ periferie, které se objeví například za 10 let.
 Uvažme také aspekt zpětné kompatibility – vlastní systém nám umožní co možná
 nejrozumněji zachovat kompatibilitu se stávajícím systémem řízení kolejiště
 a~minimalizovat tak finanční náklady a čas nutný pro aktualizaci systému.
+Nutnost rozumné zpětné kompatibility tak fakticky vylučuje i~nasazení
+\gls{bidib}.
 
 Vnímejme tuto kapitolu tedy především jako přehled technologií, které se
 při řízení současné digitální modelové železnice používají. Přistupme k~návrhu,
