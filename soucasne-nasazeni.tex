@@ -7,7 +7,7 @@ současnými komerčními systémy řízení modelových kolejišť, viz dále.}
 
 \textit{Digital Command Control} (\gls{dcc}), dnes pravděpodobně
 nejrozšířenější\footnotemark\\mezinárodně standardizovaný systém pro digitální
-řízení modelové železnice \cite{dcc_intro:web} tehdy ještě nebyl v~České Republice
+řízení modelové železnice \cite{dcc_intro:web}, tehdy ještě nebyl v~České republice
 rozšířený. Navíc přirozeně vyvstal požadavek na minimalizaci nákladů
 a maximalizaci nezávislosti na komerčních produktech jediného výrobce. Vznikl
 tedy systém \gls{mtb}, který se pro řízení modelových kolejišť v \gls{kmz}
@@ -108,10 +108,10 @@ komunikace a driver k~RS485.
 	MTB-TTL je zjednodušením modulu \gls{mtbuni}. Oproti \gls{mtbuni}
 	nemá podporu IR čidel a~výstupy má v~režimu \gls{ttl}. Od tohoto typu
 	modulu se v~současnosti ustupuje, neboť \gls{ttl} výstupy nejsou vhodné pro
-	spínání vyšších napětí\footnote{např. pokud periferie na výstupu obashuje
-	pull-up do +12~V} a~proto, že v~případě neaktivního výstupu (neaktivní =
+	spínání vyšších napětí\footnote{Např. pokud periferie na výstupu obsahuje
+	pull-up do +12~V.}, a~proto, že v~případě neaktivního výstupu (neaktivní =
 	+5~V; inverzní logika) aktivně napájí výstupní port, což způsobuje nechtěné
-	chování, například pokud je ne výstupním portu záměrně vypnutá periferie.
+	chování, například pokud je na výstupním portu záměrně vypnutá periferie.
 	V~krajním případě může dojít až k~přetížení TTL výstupu a jeho zničení. Na
 	všechny nasazené moduly typu MTB-TTL byly postupně instalovány dodatečné
 	obvody s~otevřenými kolektory na výstupy.
@@ -147,7 +147,7 @@ příkazy pro moduly, odpovědi modulů, časování apod \cite{mtbbus-specs}.
 Práce se sběrnicí z~pohledu aplikace v~počítači probíhá následovně:
 
 \begin{compactenum}
-\item Aplikace se připojí se k~MTB-USB modulu.
+\item Aplikace se připojí k~MTB-USB modulu.
 \item Aplikace provede sken aktivních modulů sběrnice.
 \item Aplikace nahraje do všech aktivních modulů konfiguraci.
 \item Aplikace přečte stav vstupů.
@@ -227,7 +227,7 @@ hračce, než bezpečnému a~spolehlivému systému pro řízení modelů.
 Poslední část schématu \ref{fig:control-topology} je část zelená, která
 reprezentuje interakci s~uživatelem. \textit{Řídicí SW kolejiště} běží na
 samostatném serveru, ke kterému se připojují všichni uživatelé systému –
-dispečeři ze svých stanic, strojvedoucí ze svých ovladačů ale také třeba
+dispečeři ze svých stanic, strojvedoucí ze svých ovladačů, ale také třeba
 technikové se svými diagnostickými nástroji nebo externí programy využívající
 API serveru. Server kontroluje identitu uživatelů a umožňuje jim řídit ty
 systémy, ke kterým mají uživatelé práva.

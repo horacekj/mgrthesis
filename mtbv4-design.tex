@@ -1,11 +1,11 @@
 V~této kapitole představíme návrh vlastního \gls{plc} systému, který
 splňuje požadavky definované v~\ref{subsec:gen_requirements}. Návrh systému
-vychází z~přirozeného požadavku na minimální změny v~aktuálním harwaru
+vychází z~přirozeného požadavku na minimální změny v~aktuálním hardwaru
 a~softwaru kolejiště. Nový systém je navržen jako iterace současného systému
-\gls{mtb}, jmenuje se \textit{MTB v4}.
+\gls{mtb}; jmenuje se \textit{MTB v4}.
 
 \gls{mtb} v4 řeší všechny problémy aktuálního systému \gls{mtb} popsané
-v~kapitole \ref{sec:mtb_fail}. Při návrhu byly vzány v~potaz aktuální
+v~kapitole \ref{sec:mtb_fail}. Při návrhu byly vzaty v~potaz aktuální
 technologie v~oblasti \gls{plc} obvodů, přičemž byla zvážena vhodnost jejich
 implementace do systému \gls{mtb} v4. Tyto úvahy popíšeme. Detailně rozebereme
 současnou implementaci protokolu \gls{mtbbus} a~u~každé položky budeme
@@ -28,7 +28,7 @@ v~\ref{sec:dcc}. Všechny v~současnosti na kolejišti používané vstupy jsou
 digitálního charakteru (binární vstupy), výstupy jsou buď digitální binární
 nebo \textit{\gls{scom}}. \gls{scom} výstupy jsou ve skutečnosti digitální
 výstupy, do kterých \gls{mtb} deska moduluje \gls{scom} signál. \gls{scom}
-signál je záměrně jednoduchý pomalý signál, který lze s~přehledem vytvářet
+signál je záměrně jednoduchý, pomalý signál, který lze s~přehledem vytvářet
 běžným výstupním pinem procesoru nebo posuvného registru \cite{scom-specs}.
 
 Oproti současnému \gls{mtb} by nové \gls{mtb} mělo podporovat tzv. \textit{kmitavý
@@ -52,7 +52,7 @@ mohl být v~jednom z~režimů
 \item kmitavý.
 \end{compactenum}
 
-Co se týče vstupně-výstupních požadavků periferií kolejiště, \textit{MTB v4} by
+Co se týče vstupně-výstupních požadavků periferií kolejiště, \gls{mtb} v4 by
 si vystačilo pouze s~moduly typu \gls{mtbuni}. Na kolejištích \gls{kmz}
 v~současnosti není žádný prvek, který by vyžadoval například analogový vstup,
 analogový výstup nebo třeba \textit{PWM} výstup. Na kolejištích se sice hojně
@@ -95,7 +95,7 @@ kolejištích \gls{kmz} se v současné době využívá řídicí software
 hJOP\footnote{\url{https://hjop.kmz-brno.cz/}}. Tento software běží na
 operačním systému Windows a s~hardwarem kolejiště komunikuje pomocí dynamicky
 linkované knihovny, která musí dodržet specifikované API \cite{hjop:rcs:web}.
-Na straně řídícího softwaru jsou tedy pro návrh \gls{mtb} v4 takřka neomezené
+Na straně řídicího softwaru jsou tedy pro návrh \gls{mtb} v4 takřka neomezené
 možnosti.
 
 Princip řízení kolejiště počítačem však definuje zásadní požadavek na
@@ -121,16 +121,16 @@ Jednou z~hlavních přidaných hodnot \gls{mtb} v4 je, že umožní popsané
 \subsection{Další požadavky}
 
 Uveďme nyní některé méně důležité požadavky na \gls{mtb} v4, jejichž naplnění
-nám však výrazně zpříjemní její používání. Již teď předejmněme, že všechny tyto
+nám však výrazně zpříjemní používání systému. Již teď předejměme, že všechny tyto
 požadavky se v~implementaci podařilo naplnit.
 
 \begin{enumerate}
-\item \textbf{Umožnit nalezení \gls{mtb} modulů i~po startu sběrnice.}
+\item \textbf{Bude možné nalézt \gls{mtb} moduly i~po startu sběrnice.}
 
 	V~kapitole \ref{sec:mtbbus} byl popsán striktní proces používání
 	sběrnice – od vyhledání modulů až po ukončení práce se sběrnicí. Současná
 	implementace tohoto procesu neumožňuje, aby počítač detekoval moduly, které
-	na sběrnici přibudou za jejího chodu. Taková situace může nastat například
+	na sběrnici přibudou za jejího chodu. Taková situace může nastat, například
 	když je prvně zapnut řídicí počítač a~až pak napájení sběrnice. Je
 	nepříjemné muset v~takovém případě manuálně spouštět proces skenování
 	\gls{mtb} modulů znovu.
@@ -167,17 +167,17 @@ Shrňme stručně všechny požadavky na systém \gls{mtb} v4.
 \item Systém \gls{mtb} v4 musí být navržený univerzálně pro nejrůznější typy
 	modulů. Jedinou společnou vlastností modulů je, že snímají vstupy a nastavují
 	výstupy.
-\item Je třeba vyřešit zpětnou kompatibilitu se stávajícími \gls{mtb} deskami
+\item Je třeba vyřešit zpětnou kompatibilitu se stávajícími \gls{mtb} moduly
 	v~kolejišti.
 \item Celé řešení by mělo být psáno opensource a openhardware.
-\item Desky sběrnice \gls{mtbbus} v4 by mělo být možné průběžně vyhledávat
+\item Moduly sběrnice \gls{mtbbus} v4 by mělo být možné průběžně vyhledávat
 	a detekovat nefunkční.
 \item Implementace \gls{mtb} v4 by měla využívat osvědčené komponenty, u~nichž
 	je dlouhodobý výhled dostupnosti.
 \item \gls{mtb} moduly potvrzují příkazy, lze monitorovat jejich správnou funkčnost.
 \item Z~počítače bude možné na každém \gls{mtb} modulu zapnout identifikační LED.
-\item Moduly \gls{mtbuni} budou nově podporovat kmitavé výstupy.
-\item Moduly \gls{mtbuni} budou nově podporovat \gls{scom} výstupy na všech
+\item \gls{mtbuni} budou nově podporovat kmitavé výstupy.
+\item \gls{mtbuni} budou nově podporovat \gls{scom} výstupy na všech
 	výstupních pinech.
 \end{compactenum}
 
