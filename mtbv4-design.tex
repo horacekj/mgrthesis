@@ -336,7 +336,7 @@ Příklad komunikace po sběrnici:
 
 \begin{verbatim}
 > Module 1 Inquiry
-< Acknowledgement  # Modul 1 žije a nemá žádná data k odeslání
+< Acknowledgement  # Modul 1 žije, žádná data k odeslání
 > Module 2 Inquiry
 # Timeout – modul 2 nežije
 > Module 3 Inquiry
@@ -527,7 +527,7 @@ modulů. Typ modulu definuje:
 \begin{enumerate}
 \item \textbf{Formát dat vstupů, formát dat výstupů}
 
-Protokol je navržený tak, aby moduly mohly mít libovolné typy a počty vstupů
+Protokol je navržený tak, aby moduly mohly mít libovolné typy a~počty vstupů
 i~výstupů. Obsah datových bytů zpráv \textit{Set Output}, \textit{Input
 Changed} a~\textit{Input State} je proto specifikovaný až ve specifikaci modulů.
 
@@ -537,7 +537,7 @@ Protože počet vstupů i~výstupů je malý, posílá se vždy celý stav.
 Protokol počítá s~tím, že jiné moduly mohou mít vstupy a~výstupy například
 s~větším rozsahem hodnot (analogové vstupy). V~takovém případě protokol
 umožňuje například neposílat celý stav, ale jen relevantní část. To je také
-důvodem, proč existují 2 různé zprávy
+důvodem, proč existují 2~různé zprávy
 \textit{Input Changed} (ve které se posílá jen stav změněných vstupů)
 a~\textit{Input State} (ve které se posílá stav všech vstupů).
 \footnote{Všimněte si, že tento mechanismus umožňuje provádět polling
