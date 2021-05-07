@@ -40,21 +40,21 @@ Popišme nyní stručně návrh protokolu.
 
 Mezi počítačem a \gls{mtbusb} deskou se komunikuje po virtuálním sériovém portu
 (tzv. \textit{\gls{cdc}}) tunelovaným skrze \gls{usb} rozhraní. Toto řešení
-bylo vybráno, protože je prakticky standardem pro připojením speciálních
-periferií k~počítači.  Zvažován byl také například \textit{HID}. Samotná
-sběrnice \gls{usb} nepodoporuje pojem zprávy tak, jak bychom ho
+bylo vybráno, protože je prakticky standardem pro připojení speciálních
+periferií k~počítači.  Zvažován byl také například \textit{\gls{hid}}.
+\gls{usb} nezná pojem zprávy tak, jak bychom
 vyžadovali\footnote{Při užití třídy \gls{cdc} se data posílají nejčastěji
 každou milisekundu a to v~bloku o~nejvýše 64 bytech.  Počítačová aplikace díky
 bufferování operačního systému není schopna tyto bloky spolehlivě rozlišit.}.
 Protože USB podporuje pouze 8bitový sériový port, začátek zprávy je třeba
 označit jiným způsobem než pomocí 9. bitu. V~navrženém protokolu je začátek
-zprávy označen speciální sekvencí dvou bytů \texttt{0x2A 0x42}. Tato sekvence
+zprávy označen speciální sekvencí dvou bytů \texttt{0x2A} a \texttt{0x42}. Tato sekvence
 se sice ve zprávě může objevit, ale pravděpodobnost, že dojde k~tolika chybám,
-aby tato sekvence uprostřed zprávy byla považovaná za začátek zprávy, je
+aby tato sekvence uprostřed zprávy byla považována za začátek zprávy, je
 malá.\footnote{Rozdělování dat do zpráv na straně přijímače se
 nemusí řídit jen detekcí sekvence \texttt{0x2A 0x42}. Pokud zprávy nechodí moc
 často, lze po delší době nepřijímání dat (řádově jednotky milisekund) vyprázdnit
-vstupní buffer a~očekávat tedy, že další příchozivší data budou novou zprávou.
+vstupní buffer a~očekávat tedy, že další příchozí data budou novou zprávou.
 Odesílatel zprávy nesmí posílat jednotlivé části zprávy s~velkou prodlevou, to
 je ale splnitelný požadavek.}
 
@@ -79,8 +79,7 @@ Zprávy z~počítače pro \gls{mtbusb} jsou:
 \begin{itemize}
 \item \textbf{Forward packet to \gls{mtbbus}}
 
-V~\textit{datech} zprávy následuje zpráva pro \gls{mtb} modul a~adresa modulu,
-kterému má být zpráva poslána.
+V~\textit{datech zprávy} následují adresa a~zpráva pro \gls{mtb} modul.
 
 \item \textbf{MTB-USB Information Request}
 
@@ -96,7 +95,7 @@ Odpovědí na tento příkaz je seznam aktivních \gls{mtb} modulů.
 
 \end{itemize}
 
-Zprávy z~\gls{mtbusb} pro počítač json:
+Zprávy z~\gls{mtbusb} pro počítač jsou:
 
 \begin{itemize}
 \item \textbf{Acknowledgement}
@@ -142,8 +141,8 @@ odpověď přijata (u~asynchronních událostí $0$). Toto číslo bylo do proto
 vloženo opět se záměrem, aby bylo možné v~počítači monitorovat chod sběrnice.
 
 Na dalších příkazech protokolu není vcelku nic zajímavého, pokud je čtenář chce
-prostudovat, je mu k~dispozici plná specifikace protokolu na
-\url{https://github.com/kmzbrnoI/mtbbus-protocol/tree/master/pc}.
+prostudovat, je mu k~dispozici plná specifikace protokolu\footnote{
+\url{https://github.com/kmzbrnoI/mtbbus-protocol/tree/master/pc}}.
 
 \subsection{Hardware} \label{subsec:mtbusb:hardware}
 
@@ -159,7 +158,7 @@ mikrokontrolér architektury \textit{ARM}. Autor jej zvolil z~několika důvodů
 \begin{compactenum}
 \item Procesor \texttt{STM32F103} má hardwarovou podporu \gls{usb}.
 \item Procesory \texttt{STM32} nabízí velké velikosti pamětí a výpočetní výkon.
-\item Procesory \texttt{STM32} se stávají standardy ve vestavěných systémech.
+\item Procesory \texttt{STM32} se stávají standardy v~embedded systémech.
 \item Procesory \texttt{STM32} se dají velice snadno debugovat.
 \item Procesor \texttt{STM32F103} je jako jeden z~mála \texttt{STM} součástí
 	\textit{basic} součástek na \url{https://jlcpcb.com/}.
@@ -167,7 +166,7 @@ mikrokontrolér architektury \textit{ARM}. Autor jej zvolil z~několika důvodů
 \end{compactenum}
 
 Hardwarová podpora \gls{usb} umožňuje výrazně vyšší flexibilitu komunikace
-s~počítačem, než použití historicky zaužívaných převodních obvodů mezi
+s~počítačem než použití historicky zaužívaných převodních obvodů mezi
 \gls{usb} a~sériovou linkou. V~programu procesoru je tak například
 možné definovat, že procesor má více \gls{cdc} linek – druhá se využije například
 pro ladění programu. Procesor může v~budoucnu používat libovolnou třídu
@@ -198,7 +197,7 @@ které jsou na desce plošných spojů (\textit{\gls{dps}}) galvanicky oddělen�
 \gls{usb} část (vlevo) a~\gls{mtbbus} část (vpravo). \gls{usb} část obsahuje
 procesor a je napájena přímo z~\gls{usb}. \gls{mtbbus} část obsahuje rozhraní
 sběrnice \gls{mtbbus} a je napájena buď z~externího zdroje (ze stejného jako
-zbytek sběrnice \gls{mtbbus}) nebo přes galvanicky oddělený měnič \texttt{PS1}.
+zbytek sběrnice \gls{mtbbus}), nebo přes galvanicky oddělený měnič \texttt{PS1}.
 Osazením nebo neosazením součástek se zvolí, která varianta se bude používat.
 
 Hlavním prvkem \gls{usb} části schématu je již zmíněný procesor
@@ -207,7 +206,7 @@ rozhraní (\texttt{J2}, \texttt{J3}). Celá \gls{usb} část je napájena z~\gls
 portu, přičemž je využito moderního konektoru \gls{usb}-C.
 
 Rozhraní \gls{usb} a \gls{mtbbus} části schématu tvoří galvanicky oddělený
-budič sběrnice RS485 typu \texttt{ADM2483}. \texttt{ADM2483} je o~osvědčený budič,
+budič sběrnice RS485 typu \texttt{ADM2483}. \texttt{ADM2483} je osvědčený budič,
 který zvládá proudy sběrnice až do $250~mA$ \cite{adm2483-datasheet} a je tedy
 vhodný pro komunikaci s~větším počtem \gls{mtb} modulů.
 
@@ -223,7 +222,7 @@ Při návrhu desky plošných spojů bylo třeba vyřešit především to, do j
 krabičky desku vložit. \gls{mtbusb} modul totiž typicky není pevnou součástí
 kolejiště, je umístěn vedle kolejiště u~řídicího serveru. Vyvstal tak požadavek
 modul zavřít do krabičky, ideálně s~možností uchycení na zeď. Po rešerši byla
-zvolena krabička firmy \textit{Digikeijs}, jejíž zásadní výhodou je to, že pro
+zvolena krabička firmy \textit{Digikeijs}, jejíž zásadní výhodou je, že pro
 vyvedení konektorů a indikačních LED není třeba do krabičky frézovat. Navíc lze
 na krabičku velice elegantně nalepit potisk, který vysvětluje použití
 jednotlivých konektorů a~význam LED. Celé řešení je zobrazeno na
