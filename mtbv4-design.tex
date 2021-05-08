@@ -96,7 +96,7 @@ Druhým \uv{uživatelem} systému \gls{mtb} je řídicí software kolejiště. N
 kolejištích \gls{kmz} se v~současné době využívá řídicí software
 hJOP\footnote{\url{https://hjop.kmz-brno.cz/}}. Tento software běží na
 operačním systému Windows a s~hardwarem kolejiště komunikuje pomocí dynamicky
-linkované knihovny, která musí dodržet specifikované API \cite{hjop:rcs:web}.
+linkované knihovny, která musí dodržet specifikované \gls{api} \cite{hjop:rcs:web}.
 Na straně řídicího softwaru jsou tedy pro návrh \gls{mtb} v4 takřka neomezené
 možnosti.
 
@@ -140,11 +140,11 @@ požadavky se v~implementaci podařilo naplnit.
 	Obecně se celý postup práce se sběrnicí popsaný v~kapitole \ref{sec:mtbbus}
 	zdá být zbytečně striktním. \gls{mtb} v4 by mělo tento proces zjednodušit.
 
-\item \textbf{Z~počítače bude možné na každém modulu zapnout identifikační LED.}
+\item \textbf{Z~počítače bude možné na každém modulu zapnout identifikační \gls{led}.}
 
 	Pro snadnou identifikaci konkrétního modulu v~kolejišti, například při
 	diagnostice závady, by operátor měl mít možnost z~počítače na libovolném
-	modulu zapnout indikační LED. Při diagnostice pod kolejištěm tak snadno
+	modulu zapnout indikační \gls{led}. Při diagnostice pod kolejištěm tak snadno
 	identifikuje konkrétní modul.
 
 \item \textbf{Firmware \gls{mtb} modulů by mělo být možné aktualizovat přímo
@@ -177,7 +177,7 @@ Shrňme stručně všechny požadavky na systém \gls{mtb} v4.
 \item Implementace \gls{mtb} v4 by měla využívat osvědčené komponenty, u~nichž
 	je dlouhodobý výhled dostupnosti.
 \item \gls{mtb} moduly potvrzují příkazy, lze monitorovat jejich správnou funkčnost.
-\item Z~počítače bude možné na každém \gls{mtb} modulu zapnout identifikační LED.
+\item Z~počítače bude možné na každém \gls{mtb} modulu zapnout identifikační \gls{led}.
 \item \gls{mtbuni} budou nově podporovat kmitavé výstupy.
 \item \gls{mtbuni} budou nově podporovat \gls{scom} výstupy na všech
 	výstupních pinech.
@@ -263,9 +263,9 @@ vysokoúrovňovější nástroje. Proto se autor vydal cestou, kdy se
 umožňuje připojení jen jedné počítačové aplikace.
 
 V~počítači vznikne nová aplikace \textit{MTB Daemon}, která se na jedné
-straně připojí k~\gls{mtbusb} a~na straně druhé vystaví JSON TCP
-server s~jednoduchým API, které umožní povelovat \gls{mtb} moduly z~více
-počítačových programů. Získá se tím mj. hezké programové API, které
+straně připojí k~\gls{mtbusb} a~na straně druhé vystaví JSON \gls{tcp}
+server s~jednoduchým \gls{api}, které umožní povelovat \gls{mtb} moduly z~více
+počítačových programů. Získá se tím mj. hezké programové \gls{api}, které
 umožní snadné připojení z~nejrůznějších programovacích jazyků.
 Tím se systém \gls{mtb} zpřístupní širšímu spektru programátorů.
 
@@ -490,7 +490,7 @@ Počítač může zapisovat nebo číst konfiguraci modulů pomocí zpráv
 \textit{Get Configuration}, \textit{Set Configuration} a odpovědi
 \textit{Module Configuration}.
 
-Počítač může zapínat a vypínat indikační LED na \gls{mtb} modulech pomocí
+Počítač může zapínat a vypínat indikační \gls{led} na \gls{mtb} modulech pomocí
 zprávy \textit{Beacon}.
 
 Modulům, které si ukládají adresu softwarově, může operátor z~počítače změnit

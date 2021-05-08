@@ -1,31 +1,30 @@
 \newpage
-\section{MTB daemon}
+\section{MTB Daemon}
 
-\gls{mtb} daemon je první ze dvou počítačových aplikací, která v~rámci této
-práce vznikla. Jejím hlavním úkolem je připojit se k~\gls{mtbusb} modulu
-a umožnit jeho ovládání více různým aplikacím. K~tomuto účelu aplikace vystavuje
-TCP server, ke kterému se řídicí programy mohou připojit.
+\textit{\gls{mtb} Daemon} je první ze dvou počítačových aplikací, která v~rámci
+této práce vznikla. Jejím hlavním úkolem je připojit se k~\gls{mtbusb} modulu a
+umožnit jeho ovládání více různým aplikacím. K~tomuto účelu vystavuje \gls{mtb}
+Daemon \gls{tcp} server, ke kterému se řídicí programy mohou připojit.
 
-\subsection{Protokol TCP serveru} \label{sec:daemon:proto}
+\subsection{Protokol \gls{tcp} serveru} \label{sec:daemon:proto}
 
-TCP server musí umožňovat oboustrannou komunikaci – jak od klienta k~serveru
+\gls{tcp} server musí umožňovat oboustrannou komunikaci – jak od klienta k~serveru
 (\textit{požadavek, odpověď}), tak od serveru ke klientovi (\textit{asynchronní
-události}). Například protokol \textit{http} v~kombinaci s~\textit{REST API}
-tedy není možné použít. Z~běžné používaných technologií byly zvažovány
-\textit{websockets}, tyto ale nebyly využity kvůli zbytečně složité inicializaci,
-která probíhá přes protokol \textit{http}.
+události}). Například protokol \textit{http} v~kombinaci s~\textit{REST \gls{api}}
+tedy není možné použít. Z~běžně používaných technologií byly zvažovány
+\textit{websockets}, ty ale kvůli složitější inicializaci nebyly využity.
 
-Autor zvolil snad nejjednodušší možný komunikační protokol – TCP spojení se udržuje trvale
-otevřené, posílají se textová data, každý řádek je jedna zpráva. Textová data
-jsou ve formátu \textit{json}.
+Autor zvolil snad nejjednodušší možný komunikační protokol: \gls{tcp} spojení
+je udržováno trvale otevřené, posílají se textová data, každý řádek je jedna
+zpráva. Textová data jsou ve formátu \textit{json}.
 
-Textový protokol byl zvolen, aby bylo možné data snadno číst lidským okem
-(snadná diagnostika).  Očekává že, že řídicí aplikace se bude připojovat
-převážně ze stejného počítače, na kterém běží \textit{\gls{mtb} daemon}, šetřit
-\uv{kapacitu linky} binárním protokolem tedy nemá příliš velký smysl. Formát
-\textit{json} byl zvolen proto, že je dnes moderním standardem pro výměnu dat
-mezi aplikacemi. Snad všechny majoritní programování jazyky obsahují ve svých
-standardních knihovnách podporu pro práci s~\textit{json}.
+Textový protokol byl zvolen, aby bylo možné data číst lidským okem
+(snadná diagnostika). Očekává se, že řídicí aplikace se bude připojovat
+převážně ze stejného počítače, na kterém běží \gls{mtb} Daemon, nemá tedy smysl
+šetřit \uv{kapacitu linky} binárním protokolem.
+Formát \textit{json} byl zvolen proto, že je dnes moderním standardem pro
+výměnu dat mezi aplikacemi. Snad všechny majoritní programovací jazyky obsahují
+ve svých standardních knihovnách podporu pro práci s~\textit{json}.
 
 Zprávy se posílají v~kódování \textit{UTF-8}. Nyní uvedeme příklad
 dvou zpráv (pro přehlednost je každá zpráva rozdělena na více řádků, ve
@@ -38,7 +37,7 @@ skutečnosti se posílá na jednom řádku):
     "id": 42
 }
 \end{verbatim}
-
+\newpage
 \begin{verbatim}
 {
     "command": "mtbusb",
@@ -61,16 +60,16 @@ Zprávy jsou tří typů (\texttt{type}):
 \begin{compactenum}
 \item \texttt{request} (zpráva od klienta serveru),
 \item \texttt{response} (odpověď na \texttt{request}),
-\item \texttt{event} (asynchronní událost – od serveru ke klientovi).
+\item \texttt{event} (asynchronní událost – od serveru klientovi).
 \end{compactenum}
 
 Aby klient věděl, která odpověď patří kterému požadavku (klient může posílat
 více požadavků rychle za sebou), lze u~každého požadavku uvést \texttt{id}
 (číslo). Příslušná odpověď pak obsahuje stejné \texttt{id}.
 
-Klient se může zaregistrovat ke konkrétním modulům zprávou \\
-\texttt{module\_subscribe} (a odregistrovat zprávou
-\texttt{module\_ubsubscribe}). Pokud je klient zaregistovaný k~nějakému modulu,
+Klient se může zaregistrovat ke konkrétním modulům příkazem \\
+\texttt{module\_subscribe} (a odregistrovat příkazem
+\texttt{module\_unsubscribe}). Pokud je klient zaregistrovaný k~nějakému modulu,
 chodí mu asynchronní události o~změně stavu modulu (např. změna stavu vstupu).
 Klienti si tak mohou volit, o~data kterých \gls{mtb} modulů mají zájem.
 
@@ -79,7 +78,7 @@ online\footnote{\url{https://github.com/kmzbrnoI/mtb-daemon/tree/master/tcp-prot
 
 \subsection{Volba nástrojů} \label{sec:daemon:tools}
 
-\gls{mtb} daemon je klíčová aplikace infrastruktury řízení kolejiště. Proto se
+\gls{mtb} Daemon je klíčová aplikace infrastruktury řízení kolejiště. Proto se
 autor rozhodl ji programovat v~programovacím jazyce se silným statickým typovým
 systémem.
 
@@ -87,28 +86,28 @@ Jako programovací jazyk bylo zvoleno \texttt{C++} (\texttt{C++17})
 s~frameworkem \texttt{Qt}, který nabízí přímočaré knihovny pro komunikaci se
 sériovým portem a pro síťovou komunikaci. U~knihoven zejména není třeba
 složitěji řešit vlákna. \texttt{C++} a \texttt{Qt} umožňují multiplatformní
-řešešení aplikace – \textit{\gls{mtb} daemon} lze zkompilovat a spustit jak na
+řešení aplikace – \gls{mtb} Daemon lze zkompilovat a spustit jak na
 OS Linux, tak OS Windows.
 
 \subsection{Implementace} \label{sec:daemon:impl}
 
-Aplikace \textit{\gls{mtb} daemon} je psána jako jednovláknová konzolová aplikace.
+Aplikace \gls{mtb} Daemon je psána jako jednovláknová konzolová aplikace.
 Při návrhu byla zvažována i~možnost implementovat aplikaci jako okenní
-(operátor obsluhy by přes aplikaci konfiguroval \gls{mtb} desky a~měl by
-přehled o~stavu sběrnice), nakonec byla však zvolen přístup, kdy aplikace pouze
-vystavuje API. Konfigurace se načítá ze souboru. V~případě zájmu o~vytvoření
+(operátor obsluhy by přes aplikaci konfiguroval \gls{mtb} moduly a~měl by
+přehled o~stavu sběrnice), nakonec však byl zvolen přístup, kdy aplikace pouze
+vystavuje \gls{api}. Konfigurace se načítá ze souboru. V~případě zájmu o~vytvoření
 grafického nástroje pro interakci se systémem \gls{mtb} bude tento systém
-vytvořen jako další z~klientů aplikace \textit{\gls{mtb} daemon} nebo jako
+vytvořen jako další z~klientů aplikace \gls{mtb} Daemon nebo jako
 nástroj pro přímou úpravu konfiguračního souboru.
 
 Při implementaci bylo třeba vyřešit, jak zaručit, aby sběrnici nemohli ovládat
 neautorizovaní klienti. V~současnosti je implementován pouze velice hrubý
-autorizační mechanismus – server poslouchá pouze na specifických rozhraních,
-typicky pouze \textit{localhost}. Očekává se, že lokální stroj je server
-kolejiště, na kterém by měly běžet pouze bezpečné aplikace. V~budoucnu možná
+autorizační mechanismus – server poslouchá na specifických rozhraních,
+typicky jenom \textit{localhost}. Očekává se, že lokální stroj je server
+kolejiště, na kterém by měly běžet výhradně bezpečné aplikace. V~budoucnu možná
 autor přistoupí k~implementaci autentizace založené na povolení konkrétních
-IP adres klientů. Očekává se, že klienti aplikace \gls{mtb} daemon jsou trvale
-připojená nemigrující síťová zařízení, která řídí nějaký konkrétní systém
+IP adres klientů. Očekává se, že klienti aplikace \gls{mtb} Daemon jsou trvale
+připojená, nemigrující síťová zařízení, která řídí nějaký konkrétní systém
 kolejiště, proto není nutné implementovat žádný složitější autentizační
 mechanismus.
 
@@ -117,22 +116,22 @@ modulů.  Při návrhu aplikace vyvstala otázka, zda by v~konfiguraci nemělo b
 specifikováno, který klient může ovládat který výstup (kterého modulu). Po
 uvážení však bylo od tohoto nápadu upuštěno, protože by vyžadoval netriviální
 (ručně psanou) konfiguraci navíc a identifikaci klientů. Očekává se, že klienti
-připojující se k~\textit{\gls{mtb} daemon} jsou buď autonomní aplikace, nebo
+připojující se k~\gls{mtb} Daemon jsou buď autonomní aplikace, nebo
 aplikace, které řízení přístupu svých uživatelů implementují na své vlastní
-úrovni. Pokud by nastala problematická situace, kdy 2~klienti chtějí ovládat
+úrovni. Pokud by nastala problematická situace, kdy dva klienti chtějí ovládat
 stejný výstup, jedná se o~chybu v~klientské aplikaci nebo její konfiguraci,
-nikoliv o~nekalý záměr, kterému by měl systém vší silnou zabránit. V~duchu
-tohoto tvrzení \textit{\gls{mtb} daemon} nastavení jednoho výstupu více klienty
-umožní, ale současně zaloguje varování. To umožňuje operátorovi takovou
-situaci rozpoznat a konfiguraci klientských aplikací opravit.
+nikoliv o~nekalý záměr, kterému by měl systém vší silnou zabránit. \gls{mtb}
+Daemon nastavení jednoho výstupu více klienty umožní, ale současně zaloguje
+varování. To umožňuje operátorovi takovou situaci rozpoznat a konfiguraci
+klientských aplikací opravit.
 
-\textit{\gls{mtb} daemon} si pamatuje, který klient nastavil který výstup a při
+\gls{mtb} Daemon si pamatuje, který klient nastavil který výstup a při
 odpojení klienta provede reset jím nastavených výstupů do základního stavu.
 
 Aplikace obsahuje hierarchii tříd (ve vztahu dědičnosti) reprezentujících
-jednotlivé typy \gls{mtb} modulů. TCP protokol také počítá s~různými typy
+jednotlivé typy \gls{mtb} modulů. \gls{tcp} protokol také počítá s~různými typy
 modulů. Aplikace je tak připravena na přidání budoucích nových typů \gls{mtb}
 modulů.
 
-\textit{MTB daemon} je pod opensource licencí dostupný
+MTB Daemon je pod opensource licencí dostupný
 online\footnote{\url{https://github.com/kmzbrnoI/mtb-daemon}}.

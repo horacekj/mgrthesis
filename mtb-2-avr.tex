@@ -3,17 +3,17 @@
 
 Aby nebylo nutné všechny současné \gls{mtbuni} desky vyměňovat za desky nové,
 je třeba staré desky povýšit tak, aby podporovaly nový protokol \gls{mtbbus} v4.
-Díky omezenosti procesoru v~současných modulech \gls{mtbuni} není možné tuto
+Kvůli omezenosti procesoru v~současných modulech \gls{mtbuni} není možné tuto
 úpravu provést pouze změnou firmwaru, viz \ref{sec:mtb_fail}.
 
 Výhodou je, že procesory na současných \gls{mtbuni} modulech jsou
-v~\textit{DIL} patici. Nabízí se tedy přirozená cesta najít nový procesor
+v~\gls{dil} patici. Nabízí se tedy přirozená cesta najít nový procesor
 odpovídajícího rozložení pinů. Procesor, který by měl vyhovující rozložení pinů
-a požadované parametry bohužel neexistuje (uvažován byl například procesor
+a požadované parametry, bohužel neexistuje (uvažován byl například procesor
 \textit{ATtiny4313}). Proto se autor této práce vydal cestou výroby nástavné
-desky, která se zasune do \textit{DIL} patice současné \gls{mtbuni} desky a
-která na sobě bude mít \textit{smd} procesor. Správné napojení pinů se vyřeší
-dráhami nástavné desky plošných spojů.
+desky, která se zasune do \gls{dil} patice současné \gls{mtbuni} desky
+a~která na sobě bude mít \gls{smd} procesor. Správné napojení pinů se vyřeší
+dráhami nástavné \gls{dps}.
 
 Popsanou myšlenku realizuje deska \textit{MTB-2-AVR}, viz obrázek
 \ref{fig:mtb-2-avr-alone}.
@@ -34,15 +34,15 @@ Deska je navržena tak, aby se dala umístit místo procesoru libovolného z~mod
 \gls{mtbuni}, MTB-UNIm nebo MTB-TTL. Srdcem desky je procesor
 \textit{ATmega328p} autorovy oblíbené architektury \textit{AVR}.
 Konkrétně tento model byl zvolen, protože obsahuje dostatečnou kapacitu paměti
-na bootloader a protože jej \textit{JLCPCB} má mezi \textit{basic součástkami}
+na bootloader a protože jej \textit{JLCPCB} má mezi \textit{basic} součástkami
 (viz \ref{subsec:mtbusb:hardware}).
 
-Schéma a deska plošných spojů jsou vyvinuty jako openhardware projekt, dostupné
+Schéma a \gls{dps} jsou vyvinuty jako openhardware projekt, dostupné
 online\footnote{\url{https://github.com/kmzbrnoI/mtb-2-avr-pcb}} a~v~příloze
-\ref{fig:mtb-uni-2-avr-sch}. \gls{dps} obsahuje kromě procesoru LED, aby každá
-\gls{mtb} deska měla zelenou, modrou a červenou LED. Dále obsahuje krystal,
+\ref{fig:mtb-uni-2-avr-sch}. Nástavná \gls{dps} obsahuje také \gls{led}, aby každá
+\gls{mtb} deska měla zelenou, modrou a~červenou \gls{led}. Dále obsahuje krystal,
 protože původní krystal na \gls{mtbuni} má kmitočet mimo rozsah dovolených
-hodnot kmitočtů krystalu pro procesor \textit{ATmega328p}. Násuvná deska dále
+hodnot pro procesor \textit{ATmega328p}. Nástavná deska dále
 obsahuje tlačítko (pro unifikaci hardwaru všech \gls{mtbuni} modulů).
 
 Jak již bylo zmíněno, nástavná deska se osazuje do patic současných
@@ -50,13 +50,13 @@ Jak již bylo zmíněno, nástavná deska se osazuje do patic současných
 procesor podporovat IR čidla na vstupech, u~ostatních modulů ne. Deska \textit{MTB-2-AVR}
 a~firmware jsou proto navrženy tak, aby uměly detekovat, v~jaké desce se
 nachází (byl identifikován a využit HW rozdíl modulů). Podle detekovaného typu
-modulu procesor buď zapne nebo vypne podporu IR čidel. Do počítače pak přes
+modulu procesor buď zapne, nebo vypne podporu IR čidel. Do počítače pak přes
 \gls{mtbbus} protokol nahlásí, jestli modul IR čidla podporuje nebo ne.
 
 Zde mimochodem využijeme \textit{Module specific command}
 (\ref{subsub:mtbbus-messages}). Modulu \textit{MTB-2-AVR} lze poslat příkaz,
 aby znovu provedl autodetekci typu modulu, do kterého je vložen, případně
-nastavit typ modulu ručně.
+nastavit typ ručně.
 
 Firmware je pod opensource licencí dostupný
 online\footnote{\url{https://github.com/kmzbrnoI/mtb-2-avr-fw}}.

@@ -1,15 +1,14 @@
 \newpage
 \section{IRdet} \label{sec:irdet}
 
-V~rámci této práce a ve spolupráci s~\textit{Laboratoří řízení kolejových
-vozidel MENDELU} vznikla jednoduchá deska, která umožňuje připojení až 8 IR
+V~rámci této práce vznikla jednoduchá deska, která umožňuje připojení až 8~IR
 čidel (\ref{sec:ir}). Deska hlásí stav IR čidel pomocí opticky oddělených
 8~digitálních výstupů. Výstupy lze připojit na vstupy \gls{mtbuni}
-modulu, nebo například k~signalizačním diodám do pultu řízení obsluhy.
-Deska \textit{IRdet} není nijak závislá na systému \gls{mtb}. V~této práci ji
+modulu nebo například k~signalizačním diodám v~pultu řízení.
+Deska IRdet není závislá na systému \gls{mtb}. V~této práci ji
 však uvádíme, protože vznikla především proto, aby bylo možné plnohodnotně
 nahradit současné \gls{mtbuni} moduly (s~přímou podporou IR čidel) použitím
-nových modulů \gls{mtbuni} v4 a desek \textit{IRdet}.
+nových modulů \gls{mtbuni} v4 a desek IRdet.
 
 \begin{table}[h]
 	\begin{tabularx}{\textwidth}{lX}
@@ -30,20 +29,20 @@ nových modulů \gls{mtbuni} v4 a desek \textit{IRdet}.
 \label{fig:irdet}
 \end{figure}
 
-Schéma zapojení a deska plošných spojů jsou k~dispozici jako openhardware
+Schéma zapojení a~\gls{dps} jsou k~dispozici jako open\-hard\-ware
 projekt online\footnote{\url{https://github.com/kmzbrnoI/irdet-ele}}, firmware
-je psán jako opensource projekt a je dispozici
+je psán jako opensource projekt a je k~dispozici také
 online\footnote{\url{https://github.com/kmzbrnoI/irdet-fw}}.
-Schéma \gls{dps} je dostupné v~příloze \ref{fig:irdet-sch}.
+Schéma je dostupné v~příloze \ref{fig:irdet-sch}.
 
 Hlavní komponentou návrhu je procesor řady \textit{Atmega8*}. Lze osadit
 libovolný z~procesorů \textit{ATmega8a}, \textit{ATmega88}, \textit{ATmega328}
-a kompatibilní. Vstupy od fototranzistorů jsou zapojeny v~režimu kapacitní
-vazby, viz \ref{fig:cap-bind}. Vysílací IR diody jsou buzeny přes tranzistory.
-Proud do vysílacích diod je řízen omezovacím rezistorem na stabilizovaném
-napětí.
+nebo jiný kompatibilní procesor. Signály z~fototranzistorů jsou zapojeny
+v~režimu kapacitní vazby, viz \ref{fig:cap-bind}. Vysílací IR diody jsou buzeny
+přes tranzistory.  Proud do vysílacích diod je řízen omezovacím rezistorem na
+stabilizovaném napětí.
 
-Deska je tradičně navrhnuta především z~\textit{SMD} součástek (velikosti 0805)
-jako dvoustranná s~cílem osazovat součástky automaticky. Napájení se očekává
-ze stejného rozvodu jako je napájecí rozvod \gls{mtb} modulů (ačkoliv to díky
-optickému oddělení výstupů není nutné).
+Deska je navržena především z~\gls{smd} součástek (velikosti \textit{0805})
+jako dvouvrstvá s~cílem osazovat součástky automaticky. Napájení desky se
+očekává z~napájecího rozvodu \gls{mtb} modulů (ačkoliv to díky optickému
+oddělení výstupů není nutné).

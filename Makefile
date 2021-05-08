@@ -9,7 +9,7 @@ DATA=$(wildcard data/*)
 
 .PHONY: all clean wipe
 
-all: $(THESIS).pdf clean
+all: $(THESIS).pdf
 
 $(THESIS).pdf: $(THESIS).tex $(BIB) $(PARTS) $(GRAPHS) $(DATA)
 	$(PDFLATEX) -interaction=batchmode $< # The initial typesetting.
