@@ -1,4 +1,4 @@
-Sběrnice \gls{mtbbus} vznikla okolo roku 2000, kdy se hledal vhodný systém pro
+Systém \gls{mtb} vznikl okolo roku 2000, kdy se hledal vhodný systém pro
 programovatelné počítačové řízení modelové železnice, spoluprací nadšenců
 z~\textit{Klubu modelářů železnic Brno I} (dále jen \gls{kmz}) a \textit{Klubu
 železničních modelářů Praha 3} \footnote{Je překvapivé, že
@@ -9,7 +9,7 @@ současnými komerčními systémy řízení modelových kolejišť, viz dále.}
 nejrozšířenější\footnotemark\\mezinárodně standardizovaný systém pro digitální
 řízení modelové železnice \cite{dcc_intro:web}, tehdy ještě nebyl v~České republice
 rozšířený. Navíc přirozeně vyvstal požadavek na minimalizaci nákladů
-a maximalizaci nezávislosti na komerčních produktech jediného výrobce. Vznikl
+a maximalizaci nezávislosti na komerčních produktech rodiny jednoho výrobce. Vznikl
 tedy systém \gls{mtb}, který se pro řízení modelových kolejišť v \gls{kmz}
 používá doteď \cite{kmz_rizeni:web}. Podotkněme, že systém \gls{mtb} se
 do~dalších klubů po České Republice nerozšířil – nejspíš proto, že není
@@ -18,35 +18,43 @@ původní autor v~roce~2008 přestal podporovat.
 
 \footnotetext{Autor této práce by rád odstranil slovo
 \textit{pravděpodobně} a uvedl řádnou citaci. Bohužel neexistují studie, které
-by bylo možné mohli citovat. Rozšířenost \gls{dcc} se zakládá na autorových
+by bylo možné citovat. Rozšířenost \gls{dcc} se zakládá na autorových
 zkušenostech.}
 
-\section{Popis sběrnice \gls{mtbbus}} \label{sec:mtbbus}
+\section{Popis systému MTB} \label{sec:mtbbus}
+
+Systém \gls{mtb} se skládá z:
+
+\begin{compactenum}
+\item sběrnice \gls{mtbbus},
+\item \textit{\gls{mtb} modulů},
+\item \textit{\gls{mtbusb}} modulu,
+\item počítačových knihoven pro přístup k~\gls{mtbusb}.
+\end{compactenum}
 
 Každé kolejiště má svou vlastní sběrnici \gls{mtbbus}, ke které je připojený
-právě jeden \textit{\gls{mtbusb} modul} a až \textit{255 \gls{mtb} modulů}.
-\gls{mtbusb} modul řídí provoz sběrnice \gls{mtbbus} a~je připojen k~počítači.
+právě jeden \gls{mtbusb} modul a až 255 \gls{mtb} modulů.
+\gls{mtbusb} řídí provoz sběrnice \gls{mtbbus} a~je připojen k~počítači.
 \gls{mtb} moduly jsou pevně instalovány v~rámech kolejiště a~komunikují po
 sběrnici \gls{mtbbus} s~\gls{mtbusb} modulem. Říkáme, že sběrnice je tzv.
 \textit{single master, multiple slaves}. \gls{mtbusb} modul lze označit jako
 \textit{master modul}, \gls{mtb} moduly jsou tzv. \textit{slave moduly}.
 Celou situaci přehledně ilustruje obrázek \ref{fig:mtbbus-topology}.
 
-Každý \gls{mtb} modul má:
-
-\begin{compactenum}
-\item 8bitovou adresu, která se konfiguruje \textit{jumpery} přímo na modulu,
-\item konfiguraci (typ vstupů/výstupů, rychlost sběrnice, ...),
-\item vstupy (stav vstupů),
-\item výstupy (stav výstupů).
-\end{compactenum}
-
-
 \begin{figure}[ht]
 \includegraphics[width=0.7\textwidth]{data/mtb-topology.pdf}
 \caption{Topologie systému \gls{mtb}.}
 \label{fig:mtbbus-topology}
 \end{figure}
+
+Současná sběrnice \gls{mtbbus} je založena na elektrickém standardu
+\textit{RS485} \cite{mtbbus-specs}. Sběrnice RS485 je dvouvodičová (\textit{R+,
+R-, GND}) vícebodová sériová poloduplexní komunikační průmyslová sběrnice
+vyvinutá s~důrazem na odolnost vůči externímu rušení. Je vhodná pro přenos dat
+na větší vzdálenosti, řádově až stovky metrů \cite{rs485-specs}. Pro dosažení
+nejlepších elektrických vlastností by sběrnice měla být lineární. Sběrnice je
+na obou koncích terminována rezistorem \textit{200 R} a~pull-up a~pull-down
+rezistory pro držení definované úrovně signálu.
 
 \begin{table}[h]
 	\begin{tabularx}{\textwidth}{XX}
@@ -64,18 +72,23 @@ Každý \gls{mtb} modul má:
 	\label{tab:mtbbus-params}
 \end{table}
 
-Současná sběrnice \gls{mtbbus} je založena na elektrickém standardu
-\textit{RS485} \cite{mtbbus-specs}. Sběrnice RS485 je dvouvodičová (\textit{R+,
-R-, GND}) vícebodová sériová poloduplexní komunikační průmyslová sběrnice
-vyvinutá s~důrazem na odolnost vůči externímu rušení. Je vhodná pro přenos dat
-na větší vzdálenosti, řádově až stovky metrů \cite{rs485-specs}. Pro dosažení
-nejlepších elektrických vlastností by sběrnice měla být lineární. Sběrnice je
-na obou koncích termínována rezistorem \textit{200 R} a~pull-up a~pull-down
-rezistory pro držení definované úrovně signálu.
-
 RS485 je velice snadno implementovatelná do prakticky všech mikrokontrolérů –
 pro přístup ke sběrnici je třeba rozhraní UART, jeden pin pro řízení směru
 komunikace a driver k~RS485.
+
+Po sběrnici se komunikuje pevně definovaným protokolem. Protokol definuje
+příkazy pro moduly, odpovědi modulů, časování apod. \cite{mtbbus-specs}
+
+Základní parametry \gls{mtbbus} shrnuje tabulka \ref{tab:mtbbus-params}.
+
+Zaměřme se nyní na \gls{mtb} moduly. Každý \gls{mtb} modul má:
+
+\begin{compactenum}
+\item 8bitovou adresu, která se konfiguruje \textit{jumpery} přímo na modulu,
+\item konfiguraci (typ vstupů/výstupů, rychlost sběrnice, ...),
+\item vstupy (stav vstupů),
+\item výstupy (stav výstupů).
+\end{compactenum}
 
 \gls{mtb} moduly mohou být různého typu:
 
@@ -87,15 +100,17 @@ komunikace a driver k~RS485.
 	kódovat návěst protokolem \gls{scom}\footnote{\gls{scom} je jednoduchý jednosměrný
 	komunikační protokol, který umožňuje přenášet návěsti návěstidel
 	\cite{scom-specs}.}, což umožňuje připojení až 8 návěstidel k~jednomu
-	\gls{mtbuni}. Modul dále umožňuje připojení IR čidel na
-	vstupy\footnote{IR čidla jsou bodová čidla detekující průjezd vlaku, viz
+	\gls{mtbuni}. Modul dále umožňuje připojení \gls{ir} čidel na
+	vstupy\footnote{\gls{ir} čidla jsou bodová čidla detekující průjezd vlaku, viz
 	\ref{sec:ir}.}. Výstupy modulu jsou v~režimu otevřeného kolektoru
-	s~maximální zátěží až 0.5~A~/~8~výstupů.
+	s~maximální zátěží až 0.5~A~/~8~výstupů.\footnote{Na modulu jsou osazeny
+	2~budiče výstupů, přičemž každý z~budičů má celkový limit $0.5$~A.}
 
 \item \textbf{MTB-UNIm}
 
-	MTB-UNIm modul je zjednodušením \gls{mtbuni} modulu. Nemá podporu IR čidel,
-	ale má výstupy v~režimu otevřených kolektorů.
+	MTB-UNIm modul je zjednodušením \gls{mtbuni} modulu. Nemá podporu \gls{ir}
+	čidel, ale má výstupy v~režimu otevřených kolektorů. Umožňuje připojení až
+	8 S-COM návěstidel.
 
 \item \textbf{MTB-TTL}
 
@@ -106,15 +121,15 @@ komunikace a driver k~RS485.
 	\end{figure}
 
 	MTB-TTL je zjednodušením modulu \gls{mtbuni}. Oproti \gls{mtbuni}
-	nemá podporu IR čidel a~výstupy má v~režimu \gls{ttl}. Od tohoto typu
+	nemá podporu \gls{ir} čidel a~výstupy má v~režimu \gls{ttl}. Od tohoto typu
 	modulu se v~současnosti ustupuje, neboť \gls{ttl} výstupy nejsou vhodné pro
 	spínání vyšších napětí\footnote{Např. pokud periferie na výstupu obsahuje
 	pull-up do +12~V.}, a~proto, že v~případě neaktivního výstupu (neaktivní =
 	+5~V; inverzní logika) aktivně napájí výstupní port, což způsobuje nechtěné
 	chování, například pokud je na výstupním portu záměrně vypnutá periferie.
 	V~krajním případě může dojít až k~přetížení TTL výstupu a jeho zničení. Na
-	všechny nasazené moduly typu MTB-TTL byly postupně instalovány dodatečné
-	obvody s~otevřenými kolektory na výstupy.
+	výstupy všech nasazených moduly typu MTB-TTL byly postupně instalovány
+	dodatečné budiče s~otevřenými kolektory.
 
 \item \textbf{MTB-REG}
 
@@ -127,7 +142,7 @@ komunikace a driver k~RS485.
 	a mnohdy i~vagón v~sobě má mikroprocesor a~celý systém je řízen
 	digitálně \cite{dcc_intro:web}.
 
-	Modul MTB-REG je tedy již překonaným modulem a autor jej uvádí spíš pro
+	Modul MTB-REG je tedy již překonaným modulem a~autor jej uvádí především pro
 	úplnost popisu systému \gls{mtb}.
 
 \item \textbf{MTB-POT}
@@ -141,13 +156,10 @@ komunikace a driver k~RS485.
 
 \end{itemize}
 
-Po sběrnici se komunikuje pevně definovaným protokolem.  Protokol definuje
-příkazy pro moduly, odpovědi modulů, časování apod \cite{mtbbus-specs}.
-
 Práce se sběrnicí z~pohledu aplikace v~počítači probíhá následovně:
 
 \begin{compactenum}
-\item Aplikace se připojí k~MTB-USB modulu.
+\item Aplikace se připojí k~\gls{mtbusb} modulu.
 \item Aplikace provede sken aktivních modulů sběrnice.
 \item Aplikace nahraje do všech aktivních modulů konfiguraci.
 \item Aplikace přečte stav vstupů.
@@ -155,26 +167,31 @@ Práce se sběrnicí z~pohledu aplikace v~počítači probíhá následovně:
 	změny stavů vstupů.
 \item Aplikace čte vstupy, nastavuje výstupy a řídí provoz.
 \item Aplikace ukončí provoz sběrnice a vynuluje stav výstupů \gls{mtb} modulů.
-\item Aplikace uzavře spojení s~MTB-USB.
+\item Aplikace uzavře spojení s~\gls{mtbusb}.
 \end{compactenum}
 
 
 \section{IR čidla} \label{sec:ir}
 
-Nyní popíšeme princip fungování IR čidel v~kolejišti, protože bude v~dalších
+Nyní popíšeme princip fungování \gls{ir} čidel v~kolejišti, protože bude v~dalších
 kapitolách stěžejní.
 
-IR čidlo je bodový detektor průjezdu vlaku. Do kolejí se vedle sebe umístí
+\gls{ir} čidlo je bodový detektor průjezdu vlaku. Do kolejí se vedle sebe umístí
 opticky oddělená vysílací dioda a~fototranzistor, oba namířené vzhůru. Při
-průjezdu vlaku dojde k~odrazu signálu od spodku vozu nebo lokomotivy, čímž je
-detekován průjezd vlaku. Výhodou je nenápadná instalace mezi pražce, která
-neruší celkový dojem modelu.
+průjezdu vlaku dojde k~odrazu signálu od spodní části vozu nebo lokomotivy,
+čímž je detekován průjezd vlaku. Výhodou je nenápadná instalace mezi kolejové
+pražce, která neruší celkový dojem modelu.
 
 Pro spolehlivou detekci odrazu od matných černých povrchů podvozků je třeba
 budit vysílací diodu vysokým proudem (až 200~mA), což vyžaduje použití
-diody v~impulsním režimu. Současná \gls{mtbuni} deska podporuje IR čidla na
+diody v~impulsním režimu. Současná \gls{mtbuni} deska podporuje \gls{ir} čidla na
 všech svých 16 vstupech, diody jsou buzeny tranzistory ve skupinách po
 4~diodách.
+
+Aby bylo zajištěno spolehlivé vyhodnocení odraženého signálu, je vstup
+z~fototranzistoru zapojen na digitální vstup posuvného registru přes kapacitní
+vazbu (viz schéma \ref{fig:cap-bind}). Kapacitní vazba odstraňuje stejnosměrnou
+složku signálu, která vzniká vlivem okolního osvětlení.
 
 \begin{figure}[ht]
 \includegraphics[width=0.5\textwidth]{data/cap-bind/capacitive-bind-example.pdf}
@@ -182,12 +199,8 @@ všech svých 16 vstupech, diody jsou buzeny tranzistory ve skupinách po
 \label{fig:cap-bind}
 \end{figure}
 
-Aby bylo zajištěno spolehlivé vyhodnocení odraženého signálu, je vstup
-z~fototranzistoru zapojen na digitální vstup posuvného registru přes kapacitní
-vazbu.
-
 Vstupy \gls{mtbuni} desky se konfigurují osazením rezistorových lišt (běžný
-vstup) nebo kondenzátorů (vstup z IR čidla). Kromě toho musí o~režimu pinu
+vstup) nebo kondenzátorů (vstup z~\gls{ir} čidla). Kromě toho musí o~režimu pinu
 vědět i~procesor, aby adekvátním způsobem zpracovával vstupní signál
 \cite{mtbuni22-specs}.
 
@@ -202,15 +215,16 @@ Pro kontext uveďme, jak systém \gls{mtb} zapadá do celkové koncepce řízen�
 kolejiště. Viz schéma \ref{fig:control-topology}.
 
 \begin{figure}[ht]
-\includegraphics[width=\textwidth]{data/railroad-topology.pdf}
+\includegraphics[width=\textwidth]{data/railroad-diagram.pdf}
 \caption{Schéma komponent řízení kolejiště v~\gls{kmz}.}
 \label{fig:control-topology}
 \end{figure}
 
-Na první pohled je vidět, že kolejiště je řízeno dvěma různými systémy (modrá
-a~fialová část diagramu).  Vyvstává otázka, proč je neintegrovat do systému
+Na první pohled je vidět, že kolejiště je řízeno dvěma různými systémy:
+systémem pro řízení příslušenství (modrá část diagramu) a~systémem pro řízení
+jízdy (fialová část diagramu). Vyvstává otázka, proč je neintegrovat do systému
 jednoho. Integrovaná řešení nabízejí majoritní výrobci hardwaru pro digitální
-řízení modelové železnice.  Řízení jízdy i~trakce jedním systémem (\gls{dcc})
+řízení modelové železnice.  Řízení jízdy i~příslušenství jedním systémem (\gls{dcc})
 je rozšířeným přístupem jak v~Česku tak v~zahraničí. Všechna tato řešení jsou
 však o~kompromisech, jak se dozvíme v~\ref{sec:dcc}. U~tvorby a~nasazení
 systému \gls{mtb} stály osoby, které pracují na zabezpečení skutečné železnice.
@@ -250,9 +264,8 @@ o~záměru chtít systém \gls{mtb} nabízet mimo klub ani nemůže být řeč.
 \item \textbf{Hardware}
 
 Systém \gls{mtb} zaznamenal poslední aktualizaci hardwarových komponent v~roce
-2007. V~současné době jsou některé použité součástky bohužel prakticky
-nesehnatelné, což znemožňuje výstavbu dalších částí kolejiště. To je zcela
-zásadní problém.
+2007. V~současné době jsou některé použité součástky bohužel nedostupné, což
+znemožňuje výstavbu dalších částí kolejiště. To je zcela zásadní problém.
 
 \item \textbf{Software}
 

@@ -1,4 +1,4 @@
-\section{\gls{mtbusb} v4}
+\section{MTB-USB v4}
 
 \begin{figure}[ht]
 \includegraphics[width=0.7\textwidth]{data/usb-all.jpg}
@@ -10,7 +10,7 @@
 inspirace současným \gls{mtbusb} modulem je minimální. Vznikly hardware,
 firmware a~popisy komunikačních protokolů.
 
-Hlavním úkolem \gls{mtbusb} modulu je přeposílat data mezi sběrnici \gls{mtbbus}
+Hlavním úkolem \gls{mtbusb} modulu je přeposílat data mezi sběrnicí \gls{mtbbus}
 a~počítačem. \gls{mtbusb} provádí časově kritické operace sběrnice – například
 počítání timeoutu odpovědi na zprávu od \gls{mtb} modulů nebo pravidelné
 dotazování \gls{mtb} modulů. Počítač je o~dění na \gls{mtbbus} informován
@@ -41,7 +41,7 @@ Popišme nyní stručně návrh protokolu.
 Mezi počítačem a \gls{mtbusb} deskou se komunikuje po virtuálním sériovém portu
 (tzv. \textit{\gls{cdc}}) tunelovaným skrze \gls{usb} rozhraní. Toto řešení
 bylo vybráno, protože je prakticky standardem pro připojení speciálních
-periferií k~počítači.  Zvažován byl také například \textit{\gls{hid}}.
+periferií k~počítači (zvažován byl také například \textit{\gls{hid}}).
 \gls{usb} nezná pojem zprávy tak, jak bychom
 vyžadovali\footnote{Při užití třídy \gls{cdc} se data posílají nejčastěji
 každou milisekundu a to v~bloku o~nejvýše 64 bytech.  Počítačová aplikace díky
@@ -174,9 +174,9 @@ pro ladění programu. Procesor může v~budoucnu používat libovolnou třídu
 softwaru, což je méně pracné, než změna hardwaru.
 
 Všechny desky plošných spojů (\textit{\gls{dps}}) navržené v~rámci této práce
-jsou vytvořeny tak, aby se daly automaticky osazovat na
-JLCPCB\footnote{Aktuálně lze osazovat pouze jednu stranu
-desky a pouze \textit{SMD} součástky.}. Tato firma nabízí automatické osazování
+jsou vytvořeny tak, aby se daly automaticky osazovat (firmou
+\textit{JLCPCB}\footnote{Aktuálně lze osazovat pouze jednu stranu
+desky a pouze \gls{smd} součástky.}). \textit{JLCPCB} nabízí automatické osazování
 malých sérií \gls{dps} za dostupnou cenu, což výrazně zjednodušuje výrobu nových
 komponent. \textit{JLCPCB} rozlišuje tzv. \textit{basic} a~\textit{extended}
 součástky k~osazení, přičemž za \textit{basic} se neplatí režijní poplatek při
@@ -226,7 +226,7 @@ zvolena krabička firmy \textit{Digikeijs}, jejíž zásadní výhodou je, že p
 vyvedení konektorů a indikačních \gls{led} není třeba do krabičky frézovat. Navíc lze
 na krabičku velice elegantně nalepit potisk, který vysvětluje použití
 jednotlivých konektorů a~význam \gls{led}. Celé řešení je zobrazeno na
-obrázku \ref{fig:mtbusb-prototype}.
+obrázkcích \ref{fig:mtbusb-prototype} a \ref{fig:mtbusb-inside}.
 
 
 \subsection{Firmware}

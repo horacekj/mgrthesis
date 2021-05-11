@@ -40,7 +40,7 @@ která má 3 hlavní úkoly.
 \end{compactenum}
 
 Řízení dekodérů centrála provádí generováním \textit{DCC signálu} (červený
-a~bílý vodič ve schématu \ref{fig:dcc-overview}), do kterého centrála kóduje
+a~modrý vodič ve schématu \ref{fig:dcc-overview}), do kterého centrála kóduje
 operace požadované po dekodérech – např. \uv{dekodére číslo 541, zastav
 lokomotivu}, \uv{dekodére číslo 4741, aktivuj čelní světla}.
 
@@ -55,11 +55,10 @@ Centrála informuje uživatele skrze \textit{sběrnici ovladačů} o~změnách v
 stavech vstupů \textit{modulů zpětného hlášení}. Vstupy modulů zpětného hlášení
 jsou připojené například k~signalizacím obsazení \textit{kolejových obvodů},
 takže uživatel nebo řídicí SW pozná, že se na koleji nachází nebo nenachází
-vlak, dále například koncovým spínačům poloh výhybek, takže řídicí software je
+vlak, dále například ke koncovým spínačům poloh výhybek, takže řídicí software je
 schopen zabezpečit \textit{vlakovou cestu}.
 
-Pro úplnost uvedeme všechny typy vstupů a~výstupů, které se v~\gls{kmz}
-používají.
+V~\gls{kmz} se používají následující výstupy a~vstupy.
 
 Výstupy:
 
@@ -67,10 +66,10 @@ Výstupy:
 \item řízení jízdy lokomotiv,
 \item řízení osvětlení lokomotiv a vozů,
 \item řízení zvuků lokomotiv,
-\item nastavení polohy výhybky, výkolejky,
-\item rozpojovač,
-\item návěstidlo,
-\item přejezd,
+\item nastavení poloh výhybek, výkolejek,
+\item rozpojovače,
+\item návěstidla,
+\item přejezdy,
 \item statické pouliční nebo domovní osvětlení,
 \item indikace v~pultu obsluhy.
 \end{compactitem}
@@ -78,11 +77,11 @@ Výstupy:
 Vstupy:
 
 \begin{compactitem}
-\item indikace obsazení kolejového obvodu,
-\item indikace bodového průjezdu vlaku daným místem skrze infračervené čidlo
+\item indikace obsazení kolejových obvodů,
+\item indikace bodového průjezdu vlaku daným místem skrze \gls{ir} čidla
 	(viz \ref{sec:ir}),
-\item indikace koncové polohy výhybky,
-\item indikace stavu přejezdu,
+\item indikace koncových poloh výhybek, výkolejek,
+\item indikace stavů přejezdů,
 \item tlačítka v~pultu obsluhy.
 \end{compactitem}
 
@@ -103,12 +102,12 @@ dekodér skutečně přijme. Může se totiž snadno stát, že lokomotiva zrovn
 schopna přijímat signál – například jede po špinavých kolejích, ze kterých
 špatně sbírá. Problém s~přijímáním dat vlivem špatného kontaktu se netýká
 \textit{dekodérů příslušenství} (na obrázku \ref{fig:dcc-overview}
-\textit{switch decoder} a \textit{semaphore decoder}).  Tyto dekodéry jsou
-připojeny pevným kabelem ke kolejím, takže mají nejlepší předpoklady dekódovat
-\gls{dcc} signál korektně. Stále však platí, že dekodér neodpoví, že přijal
-a~provedl povel. Vykonání povelu mohlo být narušeno čímkoliv od
-elektromagnetického rušení signálu až po nepřijetí povelu vlivem chyby ve
-firmwaru dekodéru.
+\textit{switch decoder} a \textit{semaphore decoder}). Tyto dekodéry jsou
+připojeny pevným kabelem ke kolejím nebo přímo k~centrále, takže mají nejlepší
+předpoklady dekódovat \gls{dcc} signál korektně. Stále však platí, že dekodér
+neodpoví, že přijal a~provedl povel. Vykonání povelu mohlo být narušeno
+čímkoliv od elektromagnetického rušení signálu až po nepřijetí povelu vlivem
+chyby ve firmwaru dekodéru.
 
 Může se zdát, že samotný protokol \gls{dcc} nesplňuje požadavky popsané
 v~\ref{subsec:gen_requirements} a~proto jej nemá smysl uvažovat jako nástupce
@@ -130,7 +129,7 @@ způsoby.
 \item \textbf{Vlak stojí a~je nesprávně rozjet do místa, které pro něj není
 bezpečné.}
 
-	I~přes to, že dekodéry nepotvrzují přijetí signálu a~provedení akce, této
+	I~přes to, že dekodéry (příslušenství) nepotvrzují přijetí signálu a~provedení akce, této
 	situace se jsme schopni vyvarovat. Všechny klíčové komponenty kolejiště,
 	které řídí směr pohybu vlaku (výhybky, výkolejky) indikují svůj stav. To
 	znamená, že když se nepovede provést například přestavení výhybky vlivem
@@ -185,7 +184,7 @@ jsme schopni bezpečně indikovat stav všech prvků v~kolejišti (pomocí
 \cite{dcc_specs:web}, různí výrobci používají různé (vlastní) sběrnice
 \cite{dcc_feedbacks:web}. Analyzujme nejpoužívanější sběrnice.
 
-\subsubsection{S88}
+\subsubsection{\textbf{S88}}
 
 \textit{S88} je základní sběrnice zpětného hlášení. Její fungování lze v~zásadě
 charakterizovat jako \uv{vylepšené posuvné registry} \cite{s88:web}. Jednotlivé
@@ -202,16 +201,16 @@ připojen do \gls{dcc} centrály.
 faktorem je především napájení z~5~V, které není vhodné na delší rozvody,
 a~malá odolnost proti rušení \cite{s88:web}.
 
-Jak je patrné z~topologie sběrnice \ref{fig:s88-topology}, při výpadku
+Jak je patrné z~topologie sběrnice na obrázku \ref{fig:s88-topology}, při výpadku
 (napájení) jednoho modulu jsou ztracena data i~ze všech dalších modulů dále od
 centrály. Takové chování je pro profesionální \gls{plc} systém nevhodné.
 
-\subsubsection{RSbus}
+\subsubsection{\textbf{RSbus}}
 
 \textit{RSbus} je sběrnice firmy \textit{Lenz Elektronik}. Oproti \textit{S88}
-je organizována do topologie sběrnice. Jednotlivé moduly jsou napájeny
-samostatně, sběrnice je dimenzovaná až na 128 modulů, každý s~8 digitálními
-vstupy \cite{rs:web} \cite{rs_lib:web}.
+je organizována do topologie sběrnice (viz obr. \ref{fig:rs-topology}). Jednotlivé
+moduly jsou napájeny samostatně, sběrnice je dimenzovaná až na 128 modulů,
+každý s~8 digitálními vstupy \cite{rs:web} \cite{rs_lib:web}.
 
 \begin{figure}[ht!]
 \includegraphics[width=\textwidth]{data/rs.pdf}
@@ -233,7 +232,7 @@ by pak povolil vjezd vlaku na obsazenou kolej, čímž by způsobil srážku.
 K~výpadku RS modulu může dojít snadno například ztrátou napájení vlivem chybné
 obsluhy, reakce pojistky na přetížení, poruchy apod.
 
-\subsubsection{LocoNET}
+\subsubsection{\textbf{LocoNET}}
 
 Poslední z~analyzovaných sběrnic je \textit{LocoNET}. LocoNET je
 proprietární sběrnice společnosti \textit{Digitrax} \cite{loconet:web}, jejíž
@@ -244,7 +243,7 @@ a~\textit{feedback bus} (viz schéma \ref{fig:dcc-overview}). Řídicí software
 v~počítači tak může přímo dotazovat moduly zpětného hlášení a~úplně tak obejít
 \gls{dcc} centrálu. Sběrnice LocoNET je navíc obousměrná,
 LocoNET moduly jsou vstupně-výstupní, takže počítač může přímo
-povelovat periferie \cite{loconet:web}. Viz \ref{fig:loconet-topology}.
+povelovat periferie \cite{loconet:web}, viz \ref{fig:loconet-topology}.
 
 \begin{figure}[ht!]
 \includegraphics[width=\textwidth]{data/loconet.pdf}

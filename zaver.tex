@@ -5,12 +5,13 @@ počítačových aplikací a~knihoven. Autorovi se povedlo všechny tyto kroky
 úspěšně provést. Podařilo se mu vytvořit
 
 \begin{compactitem}
-\item nový master modul sběrnice \gls{mtbbus},
-\item nový univerzální \textit{slave} modul sběrnice \gls{mtbbus},
-\item nástavný modul do starších modulů \gls{mtbuni},
-\item počítačovou aplikaci pro přístup k~systému \gls{mtb},
+\item nový protokol \gls{mtbbus},
+\item nový master modul sběrnice \gls{mtbbus} (\gls{mtbusb} v4),
+\item nový univerzální \textit{slave} modul sběrnice \gls{mtbbus} (\gls{mtbuni} v4),
+\item nástavný modul do starších modulů \gls{mtbuni} (MTB-2-AVR),
+\item počítačovou aplikaci pro přístup k~systému \gls{mtb} (MTB Daemon),
 \item knihovnu pro integraci nového \gls{mtb} do současného řídicího systému
-	kolejiště.
+	kolejiště (hJOP MTB Network RCS Library)
 \end{compactitem}
 
 Komponenty vytvořené v~rámci této práce a~jejich interakce jsou přehledně
@@ -59,7 +60,7 @@ kolejišť.
 Dalším možným rozšířením je tak implementovat do majoritních komerčních
 softwarů pro řízení modelových kolejišť podporu pro \gls{mtb}. Některé softwary
 jsou však uzavřené. Pro takové softwary by bylo možné napsat alternativní
-firmware do \gls{mtbusb} desky, který by zajistil, že \gls{mtbusb} modul se pro
+firmware do \gls{mtbusb}, který by zajistil, že \gls{mtbusb} modul se pro
 počítač bude tvářit jako některý z~komerčních systémů pro řízení kolejišť.
 
 Dalším přirozeným způsobem rozšíření, který má autor této práce v~plánu

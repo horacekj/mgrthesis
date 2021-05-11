@@ -1,22 +1,22 @@
 \newpage
 \section{IRdet} \label{sec:irdet}
 
-V~rámci této práce vznikla jednoduchá deska, která umožňuje připojení až 8~IR
-čidel (\ref{sec:ir}). Deska hlásí stav IR čidel pomocí opticky oddělených
+V~rámci této práce vznikla jednoduchá deska, která umožňuje připojení až 8~\gls{ir}
+čidel (\ref{sec:ir}). Deska hlásí stav \gls{ir} čidel pomocí opticky oddělených
 8~digitálních výstupů. Výstupy lze připojit na vstupy \gls{mtbuni}
 modulu nebo například k~signalizačním diodám v~pultu řízení.
 Deska IRdet není závislá na systému \gls{mtb}. V~této práci ji
 však uvádíme, protože vznikla především proto, aby bylo možné plnohodnotně
-nahradit současné \gls{mtbuni} moduly (s~přímou podporou IR čidel) použitím
+nahradit současné \gls{mtbuni} moduly (s~přímou podporou \gls{ir} čidel) použitím
 nových modulů \gls{mtbuni} v4 a desek IRdet.
 
 \begin{table}[h]
 	\begin{tabularx}{\textwidth}{lX}
 		\toprule
-		Vstupy & Až 8 IR čidel \\
+		Vstupy & Až 8 \gls{ir} čidel \\
 		Výstupy & 8 digitálních opticky oddělených výstupů \\
 		Napájení & 10–17 V~DC \\
-		Proud IR diodami & nastavitelný osazením příslušného rezistoru \\
+		Proud \gls{ir} diodami & nastavitelný osazením příslušného rezistoru \\
 		\bottomrule
 	\end{tabularx}
 	\caption{Základní parametry desky \textit{IRdet}}
@@ -38,9 +38,9 @@ Schéma je dostupné v~příloze \ref{fig:irdet-sch}.
 Hlavní komponentou návrhu je procesor řady \textit{Atmega8*}. Lze osadit
 libovolný z~procesorů \textit{ATmega8a}, \textit{ATmega88}, \textit{ATmega328}
 nebo jiný kompatibilní procesor. Signály z~fototranzistorů jsou zapojeny
-v~režimu kapacitní vazby, viz \ref{fig:cap-bind}. Vysílací IR diody jsou buzeny
-přes tranzistory.  Proud do vysílacích diod je řízen omezovacím rezistorem na
-stabilizovaném napětí.
+v~režimu kapacitní vazby, viz \ref{fig:cap-bind}. Vysílací \gls{ir} diody jsou
+buzeny přes tranzistory.  Proud do vysílacích diod je řízen omezovacím
+rezistorem na stabilizovaném napětí.
 
 Deska je navržena především z~\gls{smd} součástek (velikosti \textit{0805})
 jako dvouvrstvá s~cílem osazovat součástky automaticky. Napájení desky se

@@ -73,17 +73,18 @@ Autor se rozhodl vydat cestou univerzálního
 kompaktního snadno sériově vyrobitelného modulu s~prostými digitálními vstupy
 a~výstupy.
 
-Připomeňme, že \gls{mtbuni} desky umožňují speciální typ vstupů – IR vstupy
+Připomeňme, že \gls{mtbuni} moduly umožňují speciální typ vstupů – \gls{ir} vstupy
 (viz \ref{sec:ir}). Tyto vstupy vyžadují další elektroniku navíc.  V~nových
-\gls{mtbuni} v4 deskách je přímá podpora pro IR čidla zrušena. Bude navržena
-samostatná deska pro buzení a vyhodnocování stavu IR čidel, která se bude
-připojovat přímo k~digitálním vstupům \gls{mtbuni} modulu. Ušetří se tak
-elektronika na \gls{mtbuni} modulech, na kterých se IR vstupy nevyužívají,
-zjednoduší se návrh desky plošných spojů \gls{mtbuni} v4 a umožní se využít IR
-čidla i~s~jinými moduly, než \gls{mtb} (např. pro přímou indikaci v~pultech).
+\gls{mtbuni} v4 je přímá podpora pro \gls{ir} čidla zrušena. Bude navržen
+samostatný přídavný modul pro buzení a vyhodnocování stavu \gls{ir} čidel,
+která se bude připojovat přímo k~digitálním vstupům \gls{mtbuni} modulu. Ušetří
+se tak elektronika na \gls{mtbuni} modulech, na kterých se \gls{ir} vstupy
+nevyužívají, zjednoduší se návrh desky plošných spojů \gls{mtbuni} v4 a umožní
+se využít \gls{ir} čidla i~s~jinými moduly, než \gls{mtb} (např. pro přímou
+indikaci v~pultech).
 
 V~novém systému \gls{mtb} tedy budou stačit pouze moduly typu \gls{mtbuni},
-které budou navíc ořezané o~přímou podporu IR čidel. I~přes to by bylo
+z~nichž bude navíc odstraněna přímá podpora \gls{ir} čidel. I~přes to by bylo
 neperspektivní si podporu jiných typů modulů zavřít volbou nevhodného
 komunikačního protokolu modulů. Nový protokol sběrnice \gls{mtbbus} by měl být
 navržený univerzálně pro nejrůznější možné typy desek, které v~budoucnu mohou
@@ -92,13 +93,14 @@ přijít.  Autor této práce má již v~záměru takové desky desky vytvořit,
 
 \subsection{Ovládání}
 
-Druhým \uv{uživatelem} systému \gls{mtb} je řídicí software kolejiště. Na
-kolejištích \gls{kmz} se v~současné době využívá řídicí software
-hJOP\footnote{\url{https://hjop.kmz-brno.cz/}}. Tento software běží na
-operačním systému Windows a s~hardwarem kolejiště komunikuje pomocí dynamicky
-linkované knihovny, která musí dodržet specifikované \gls{api} \cite{hjop:rcs:web}.
-Na straně řídicího softwaru jsou tedy pro návrh \gls{mtb} v4 takřka neomezené
-možnosti.
+Systém \gls{mtb} interaguje s~periferiemi v~kolejišti a~s~řídicím softwarem
+(viz \ref{fig:mtbbus-topology}).
+Na kolejištích \gls{kmz} se v~současné době využívá
+řídicí software hJOP\footnote{\url{https://hjop.kmz-brno.cz/}}. Tento software
+běží na operačním systému Windows a s~hardwarem kolejiště komunikuje pomocí
+dynamicky linkované knihovny, která musí dodržet specifikované \gls{api}
+\cite{hjop:rcs:web}.  Na straně řídicího softwaru jsou tedy pro návrh \gls{mtb}
+v4 takřka neomezené možnosti.
 
 Princip řízení kolejiště počítačem však definuje zásadní požadavek na
 organizaci sběrnice \gls{mtbbus} v4: jednotlivé prvky jsou řízeny počítačem
@@ -162,25 +164,26 @@ požadavky se v~implementaci podařilo naplnit.
 Shrňme stručně všechny požadavky na systém \gls{mtb} v4.
 
 \begin{compactenum}
-\item K~\gls{mtb} v4 se musí na straně počítače dát přistoupit skrze
-	\textit{hJOP RCS API}\footnote{\url{https://hjop.kmz-brno.cz/rcs}}.
-\item V~počítači může běžet více softwarů řídících výstupy a snímajících vstupy
-	modulů sběrnice \gls{mtbbus} v4.
+\item \gls{mtbuni} budou nově podporovat kmitavé výstupy.
+\item \gls{mtbuni} budou nově podporovat \gls{scom} výstupy na všech
+	výstupních pinech.
 \item Systém \gls{mtb} v4 musí být navržený univerzálně pro nejrůznější typy
 	modulů. Jedinou společnou vlastností modulů je, že snímají vstupy a nastavují
 	výstupy.
 \item Je třeba vyřešit zpětnou kompatibilitu se stávajícími \gls{mtb} moduly
 	v~kolejišti.
-\item Celé řešení by mělo být psáno opensource a openhardware.
+\item K~\gls{mtb} v4 se musí na straně počítače dát přistoupit skrze
+	\textit{hJOP RCS API}\footnote{\url{https://hjop.kmz-brno.cz/rcs}}.
+\item V~počítači může běžet více softwarů řídících výstupy a snímajících vstupy
+	modulů sběrnice \gls{mtbbus} v4.
 \item Moduly sběrnice \gls{mtbbus} v4 by mělo být možné průběžně vyhledávat
 	a detekovat nefunkční.
+\item Z~počítače bude možné na každém \gls{mtb} modulu zapnout identifikační \gls{led}.
+\item Firmware modulů bude možné aktualizovat přímo po \gls{mtbbus}.
 \item Implementace \gls{mtb} v4 by měla využívat osvědčené komponenty, u~nichž
 	je dlouhodobý výhled dostupnosti.
 \item \gls{mtb} moduly potvrzují příkazy, lze monitorovat jejich správnou funkčnost.
-\item Z~počítače bude možné na každém \gls{mtb} modulu zapnout identifikační \gls{led}.
-\item \gls{mtbuni} budou nově podporovat kmitavé výstupy.
-\item \gls{mtbuni} budou nově podporovat \gls{scom} výstupy na všech
-	výstupních pinech.
+\item Celé řešení by mělo být psáno opensource a openhardware.
 \end{compactenum}
 
 
@@ -205,19 +208,19 @@ naplnění cíle existence svobodné implementace systému \gls{mtb}. Nová desk
 umožní využití moderních procesorů a integrovaných obvodů, které usnadní
 implementaci. \gls{mtbusb} deska může být vytvořena jako úplně nová (bez nutnosti
 zpětné kompatibility se současným \gls{mtbusb}), protože je pouze jedna pro
-celé kolejiště a~tedy je její výměna levná.
+celé kolejiště a~tedy je její výměna levná a~snadná.
 
 Bude navržen nový \gls{mtbuni} modul, který splní všechny požadavky definované
 výše a~který bude založen na moderních, ale dlouhodobě dostupných součástkách.
 
 Nebude však nutné vyměnit všechny stávající \gls{mtbuni} moduly v~kolejišti.
-Stávajícím modulům se vymění procesor, starým deskám tudíž bude umožněno
+Stávajícím modulům se vymění pouze procesor, starým modulům tudíž bude umožněno
 fungovat na nové sběrnici.
 
-Autor navrhne a~popíše IR desku, která si využije při zapojení IR čidel
-k~novému modulu \gls{mtbuni} v4.
+Autor navrhne a~popíše \gls{ir} desku, která si využije při zapojení \gls{ir}
+čidel k~novému modulu \gls{mtbuni} v4.
 
-Zachování většiny stávajícího hardwaru současných \gls{mtbuni} a snaha
+Zachování většiny stávajícího hardwaru současných \gls{mtbuni} modulů a~snaha
 o~zachování kabeláže sběrnice s~sebou nesou ponechání sběrnice \gls{mtbbus}
 na standardu RS485. RS485 nepřináší žádné zjevné nevýhody, takže není důvod
 ke změně hardwarové vrstvy sběrnice.
@@ -289,7 +292,7 @@ sběrnici navrhnout od základů znovu. Sleduje tím především zajištění
 přehlednosti komunikačního protokolu a~také vyřešení potíží s~licencováním
 původního protokolu.
 
-\subsubsection{Hardware}
+\subsubsection{\textbf{Hardware}}
 
 Jak již bylo zmíněno výše, po hardwarové stránce je zachován standard
 \textit{RS485}. Počet komunikačních bitů je ponechán na 9\footnote{
@@ -305,7 +308,7 @@ konzistence dat paritou není použita.
 
 Současná sběrnice \gls{mtbbus} podporuje různé rychlosti – $38400~Bd$,
 $57600~Bd$ a $115200~Bd$. Komunikace vždy začíná na $38400~Bd$, jedna z~prvních
-zpráv je příkaz na změnu rychlosti. Při výpadků a~opětovném oživení musí modul
+zpráv je příkaz na změnu rychlosti. Při výpadku a~opětovném oživení musí modul
 postupně vyzkoušet všechny 3~rychlosti a~sledovat, kdy přijímá korektní data
 \cite{mtbbus-specs}.
 
@@ -316,11 +319,11 @@ volbu mezi třemi rychlostmi.
 Rychlost nižší než $38400~Bd$ není třeba – tuto rychlost by měla
 zvládat každá sběrnice. Při rychlosti $115200~Bd$ dojde ke $20$ skenům
 jednoho modulu za sekundu při počtu $50$ modulů na sběrnici. Tato hodnota je
-pro účely zabezpečovacího softwaru kolejiště dostatečná, takže není
-třeba vyšších rychlosti.
+pro účely zabezpečovacího softwaru již poměrně rozsáhlého kolejiště dostatečná,
+takže není třeba vyšších rychlosti.
 
 
-\subsubsection{Princip komunikace}
+\subsubsection{\textbf{Princip komunikace}}
 
 Chod \gls{mtbbus} řídí \textit{master} deska – \gls{mtbusb},
 která periodicky dotazuje všechny moduly (pomocí zprávy
@@ -343,7 +346,7 @@ Příklad komunikace po sběrnici:
 < State of inputs changed, new state: 0b00001010 0b11110000
 > Module 6 Inquiry
 < Acknowledgement
-> Change outputs of module 1 to 0b00101010 0b01000101
+> Set Outputs of module 1 to 0b00101010 0b01000101
 > Module 10 Inquiry
 < Acknowledgement
 ...
@@ -352,10 +355,10 @@ Příklad komunikace po sběrnici:
 Všimněte si, že probíhá polling pouze některých adres – pro zmenšení latencí je
 vhodné často dotazovat aktivní moduly a~neaktivní moduly dotazovat jen čas od
 času (aby šlo poznat, že moduly ožily). Dále si všimněte, že příkazy pro
-moduly (\textit{Change outputs}) se posílají nezávisle na tom, který modul je
+moduly (\textit{Set Outputs}) se posílají nezávisle na tom, který modul je
 právě dotazován.
 
-\subsubsection{Komunikační protokol} \label{subsub:mtbbus-proto-strucure}
+\subsubsection{\textbf{Komunikační protokol}} \label{subsub:mtbbus-proto-strucure}
 
 Každá \textit{zpráva} se skládá z~následujících bytů:
 
@@ -430,45 +433,45 @@ Příklad zprávy: \texttt{0x105 0x001 0x001 0x0D0 0x051}.
 
 Zpráva neobsahuje žádná \textit{data zprávy}.
 
-\subsubsection{Zprávy} \label{subsub:mtbbus-messages}
+\subsubsection{\textbf{Zprávy}} \label{subsub:mtbbus-messages}
 
 Kompletní specifikace významů a kódů zpráv je dostupná
 online\footnote{\url{https://github.com/kmzbrnoI/mtbbus-protocol}}, zde uvedeme
 struč\-ný přehled.
 
-Zprávy master $\rightarrow$ slave:
+Zprávy master $\rightarrow$ slave spolu s~jejich \textit{kódy}:
 
 \begin{compactitem}
-\item \textit{Module Inquiry}
-\item \textit{Module Information Request}
-\item \textit{Set Configuration}
-\item \textit{Get Configuration}
-\item \textit{Beacon}
-\item \textit{Get Input}
-\item \textit{Set Output}
-\item \textit{Reset Outputs}
-\item \textit{Change Address}
-\item \textit{Change Speed}
-\item \textit{Firmware Upgrade Request}
-\item \textit{Firmware Write Flash}
-\item \textit{Firmware Write Flash Status Request}
-\item \textit{Module-specific Command}
-\item \textit{Reboot}
+\item \texttt{0x01} \textit{Module Inquiry}
+\item \texttt{0x02} \textit{Module Information Request}
+\item \texttt{0x03} \textit{Set Configuration}
+\item \texttt{0x04} \textit{Get Configuration}
+\item \texttt{0x05} \textit{Beacon}
+\item \texttt{0x10} \textit{Get Input}
+\item \texttt{0x11} \textit{Set Output}
+\item \texttt{0x12} \textit{Reset Outputs}
+\item \texttt{0x20} \textit{Change Address}
+\item \texttt{0xE0} \textit{Change Speed}
+\item \texttt{0xF0} \textit{Firmware Upgrade Request}
+\item \texttt{0xF1} \textit{Firmware Write Flash}
+\item \texttt{0xF2} \textit{Firmware Write Flash Status Request}
+\item \texttt{0xFE} \textit{Module-specific Command}
+\item \texttt{0xFF} \textit{Reboot}
 
 \end{compactitem}
 
-Zprávy slave $\rightarrow$ master:
+Zprávy slave $\rightarrow$ master spolu s~jejich \textit{kódy}:
 
 \begin{compactitem}
-\item \textit{Acknowledgement}
-\item \textit{Error}
-\item \textit{Module Information}
-\item \textit{Module Configuration}
-\item \textit{Input Changed}
-\item \textit{Input State}
-\item \textit{Output Set}
-\item \textit{Firmware Write Flash Status}
-\item \textit{Module-specific Command}
+\item \texttt{0x01} \textit{Acknowledgement}
+\item \texttt{0x02} \textit{Error}
+\item \texttt{0x03} \textit{Module Information}
+\item \texttt{0x04} \textit{Module Configuration}
+\item \texttt{0x10} \textit{Input Changed}
+\item \texttt{0x11} \textit{Input State}
+\item \texttt{0x12} \textit{Output Set}
+\item \texttt{0xF2} \textit{Firmware Write Flash Status}
+\item \texttt{0xFE} \textit{Module-specific Command}
 \end{compactitem}
 
 Rozeberme nyní zprávy detailněji.
@@ -518,7 +521,7 @@ libovolnými daty). \textit{Module-specific command} se používá například p
 řízení specializovaných operací modulů, viz \ref{sec:mtb-2-avr}.
 
 
-\subsubsection{Dvouvrstvost protokolu}
+\subsubsection{\textbf{Dvouvrstvost protokolu}}
 
 Specifikace \gls{mtbbus} v4 je tzv. \textit{dvouvrstvá}. Protokol definuje
 typy zpráv, ale data některých zpráv specifikují až konkrétní typy \gls{mtb}
@@ -538,8 +541,8 @@ Protokol počítá s~tím, že jiné moduly mohou mít vstupy a~výstupy napří
 s~větším rozsahem hodnot (analogové vstupy). V~takovém případě protokol
 umožňuje například neposílat celý stav, ale jen relevantní část. To je také
 důvodem, proč existují 2~různé zprávy
-\textit{Input Changed} (ve které se posílá jen stav změněných vstupů)
-a~\textit{Input State} (ve které se posílá stav všech vstupů).
+\textit{Input Changed} (posílá se jen stav změněných vstupů)
+a~\textit{Input State} (posílá se stav všech vstupů).
 \footnote{Všimněte si, že tento mechanismus umožňuje provádět polling
 vstupů místo událostního hlášení změn stavů vstupů. To je zcela záměrný prvek
 \gls{mtbbus} v4. Využije se například u~budoucích modulů s~analogovými vstupy.}
@@ -564,7 +567,7 @@ konkrétní typy modulů.
 
 \end{enumerate}
 
-\subsubsection{Typické fungování sběrnice}
+\subsubsection{\textbf{Typické fungování sběrnice}}
 
 Následující kroky popisují typické fungování systému \gls{mtb} v4 (srovnejte
 s~postupem definovaným na konci \ref{sec:mtbbus}).
@@ -590,7 +593,7 @@ jednotlivých prvků a obnovovat je. Pro ilustraci uveďme několik příkladů 
 které v~systému \gls{mtb} mohou nastat.
 
 \begin{itemize}
-\item Jiné pořadí zapnutí prvků.
+\item \textbf{Jiné pořadí zapnutí prvků.}
 
 Pokud je \gls{mtbusb} zapnut až po zapnutí počítače, počítač tento stav
 korektně detekuje (chybí zařízení) a~po připojení \gls{mtbusb} jej korektně
@@ -600,7 +603,7 @@ Sken všech adres sběrnice \gls{mtbbus} (255 adres) probíhá neustále, takže
 pokud jsou moduly sběrnice zapnuty až po zapnutí \gls{mtbusb}, jsou korektně
 detekovány.
 
-\item Výpadek \gls{mtb} modulu.
+\item \textbf{Výpadek \gls{mtb} modulu.}
 
 Pokud \gls{mtb} modul neodpovídá na zprávy, \gls{mtbusb} situaci detekuje,
 nahlásí ji do počítače a~počítač zareaguje.
@@ -608,12 +611,12 @@ nahlásí ji do počítače a~počítač zareaguje.
 Pokud \gls{mtbusb} detekuje nový \gls{mtb} modul, opět o~tom zpraví
 počítač, ten vyčte typ desky a~zkonfiguruje ji.
 
-\item Výměna modulu za chodu sběrnice.
+\item \textbf{Odpojení a~připojení modulu za chodu sběrnice (např. výměna).}
 
 Vyňatý modul je při odpojení napájení nahlášen jako neaktivní, po výměně je
 aktivován nový modul.
 
-\item Změna adresy modulu za chodu sběrnice.
+\item \textbf{Změna adresy modulu za chodu sběrnice.}
 
 Původní adresa se stane neaktivní (neodpovídá na požadavky), nová adresa
 je nalezena a zkonfigurována.
@@ -621,7 +624,7 @@ je nalezena a zkonfigurována.
 \end{itemize}
 
 
-\subsubsection{Aktualizace firmwaru \gls{mtb} modulů} \label{subsub:fw_uprage}
+\subsubsection{\textbf{Aktualizace firmwaru \gls{mtb} modulů}} \label{subsub:fw_uprage}
 
 Sběrnice \gls{mtbbus} je navržena tak, aby skrze ni mohl být aktualizován
 firmware \gls{mtb} modulů. Při návrhu mechanismu aktualizace firmwaru bylo
@@ -672,4 +675,4 @@ Aktualizace bootloaderu přes sběrnici \gls{mtbbus} není možná, protože vli
 výpadku napájení při aktualizaci by mohlo dojít k~situaci, kdy se modul stane
 nepoužitelným. Bootloader by měl být malý a~odzkoušený kus firmwaru, který se
 nahraje jednou a~nikdy ho nebude třeba přehrávat. Přehrání bootloaderu vyžaduje
-ruční obcházení modulů s~programátorem.
+přímé programování modulu.

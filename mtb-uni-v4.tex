@@ -1,5 +1,5 @@
 \newpage
-\section{\gls{mtbuni} v4}
+\section{MTB-UNI v4}
 
 Další komponentou nového systému \gls{mtb} je nový modul typu \gls{mtbuni}.
 Tento modul vznikl, aby bylo možné provádět nové instalace systému \gls{mtb}
@@ -24,8 +24,9 @@ a rozšiřovat současné instalace o~nové moduly.
 
 Aktuální modul \gls{mtbuni} má 16 digitálních vstupů a~16~digitálních výstupů.
 Tento počet se autor práce rozhodl zachovat, protože vhodně škáluje pro malé
-i~velké stanice. Současné \gls{mtbuni} a~MTB-TTL desky používají různé konektory
-pro připojení periferií: svorkovnice nebo nasouuvací konektory typu \texttt{PSH}
+i~velké železniční stanice na modelových kolejištích.
+Současné \gls{mtbuni} a~MTB-TTL moduly používají různé konektory
+pro připojení periferií: svorkovnice nebo nasouvací konektory typu \texttt{PSH}
 \footnote{Např. \url{https://www.gme.cz/konektor-se-zamkem-psh02-04pg}.}.
 Modul \gls{mtbuni} v4 umožňuje variantní osazení jak svorkovnic, tak konektorů
 \texttt{PSH}. Tím modul slučuje současné moduly \gls{mtbuni}, MTB-UNIm a
@@ -36,7 +37,7 @@ kolektorů, jsou řízeny skrze obvody \texttt{ULN2803}, které umožňují
 dostatečný výstupní proud až 0.5~A~/~8 výstupů. Všechny výstupy umožňují kmitání
 i~vysílání signálu \gls{scom}.
 
-Modul obsahuje 16 digitálních vstupů. Podporu IR čidel bude řešit samostatná
+Modul obsahuje 16 digitálních vstupů. Podporu \gls{ir} čidel bude řešit samostatná
 deska, viz \ref{sec:irdet}.
 
 Deska plošných spojů je navržena tak, aby byly zachovány rozměry a~umístění
@@ -57,19 +58,21 @@ Při návrhu modulu připadají v~úvahu dva přístupy:
 \end{compactenum}
 
 Autor této práce zvolil přístup (2), protože chtěl minimalizovat počet
-součástek na desce a~protože v~dnešní době není problém sehnat fyzicky malý
-procesor se 40 piny.
+součástek na desce a~protože v~dnešní době jsou malé procesory s~větším počtem
+IO pinů již běžně dostupné.
 
-Schéma i~\gls{dps} jsou openhardware projekt, dostupné
-online\footnote{\url{https://github.com/kmzbrnoI/mtb-uni-4-ele}}, schéma také v~příloze
-\ref{fig:mtb-uni-4-sch}. Okomentujme nyní zajímavé prvky schématu a~\gls{dps}.
+Schéma i~\gls{dps} jsou vytvořeny v~programu \textit{Eagle} jako openhardware
+projekt, dostupné
+online\footnote{\url{https://github.com/kmzbrnoI/mtb-uni-4-ele}}, schéma také
+v~příloze \ref{fig:mtb-uni-4-sch}. Okomentujme nyní zajímavé prvky schématu
+a~\gls{dps}.
 
 Jádrem modulu je procesor \textit{ATmega128A}. Autor této práce si zvolil
 procesor architektury \textit{AVR}, protože s~používáním těchto procesorů má
 dlouholeté zkušenosti. Model \textit{ATmega128} byl pak zvolen proto, že je to
 nejmenší model rodiny \textit{ATmega}, který obsahuje požadované množství pinů.
 
-\subsubsection{Vstupy}
+\subsubsection{\textbf{Vstupy}}
 
 \gls{mtbuni} v4 modul oproti modulu současnému obsahuje řádnou ochranu vstupů.
 Ochranný obvod vznikl ve spolupráci Jana Horáčka, Michala Petrilaka a~Roberta
@@ -89,23 +92,23 @@ Očekává se, že periferie připojená k~pinu (\texttt{INPUT}) bude tento pin
 uzemňovat, případně že bude pin v~režimu \gls{ttl}. Každý vstup obsahuje
 pull-up rezistor \texttt{R1}, aby měl vstupní signál vždy definovanou napěťovou
 úroveň. Pull-up rezistor je relativně tvrdý, aby se zabránilo ovlivňování
-vstupů okolním rušením, které signál \gls{dcc} při přenášení větších proudů
-bohužel generuje.
+vstupů okolním rušením, které generuje signál \gls{dcc} při přenášení větších
+proudů.
 
 K~procesoru vede signál přes ochrannou pojistku \texttt{F1} a~ochranný rezistor
 \texttt{R2}. Tento rezistor zabraňuje nadproudu do pinu procesoru a~tím jeho
 zničení.
 
-Funkcí celého obvodu od \texttt{D1} níže je vyzkratovat vstup na zem v~momentě,
+Funkcí celého obvodu od \texttt{D1} níže je vyzkratovat vstup na \textit{GND} v~momentě,
 kdy je na něj přivedené vyšší než dovolené napětí. Pin procesoru povoluje
 napětí nejvýše $5.5~V$ \cite{atmega128a-datasheet}. Jakmile se vstupní napětí
-začne blížit $5.4~V$ ($5.1~V$ zenerova dioda \texttt{D2} + $0.3~V$ schottkyho
-dioda \texttt{D1}), začne se dioda \texttt{D2} otevírat a~tím se začne otevírat
-i tyristor \texttt{Q1}.\footnote{V praxi tato situace nastává už při trochu
-nižším napětí, cca $5.3~V$, protože pro otevření \texttt{Q1} stačí, aby se
+začne blížit $5.4~V$ ($5.1~V$ zenerova dioda \texttt{D2} + $0.3~V$ Schottkyho
+dioda \texttt{D1}), začne se dioda \texttt{D2} otevírat a~tím začne spínat
+i~tyristor \texttt{Q1}.\footnote{V praxi tato situace nastává už při trochu
+nižším napětí, cca $5.3~V$, protože pro sepnutí \texttt{Q1} stačí, aby se
 \texttt{D2} otevřela jen nepatrně.} Vstupní proud proteče přes \texttt{Q1} do
-země a~tím je vstup zkratován (do země). Proud je limitován pojistkou \texttt{F1}.
-Tyristor \texttt{Q1} je dimenzován jako výkonový, protože do něj může téct zkratový
+\textit{GND} a~tím je vstup zkratován. Proud je limitován pojistkou \texttt{F1}.
+Tyristor \texttt{Q1} je dimenzován jako výkonový, protože přes něj může téct zkratový
 proud všemi 8~piny, navíc chování polymerové pojistky umožňuje krátkodobé řádově
 větší proudy, které musí tyristor zvládnout.
 
@@ -121,7 +124,7 @@ jako logická jednička, protože modul používá inverzní logiku.}. Při zapo
 prvního typu by na pinu procesoru vznikl napěťový dělič, který by mohl ohrozit
 spolehlivost čtení logického stavu pinu.
 
-\subsubsection{Výstupy}
+\subsubsection{\textbf{Výstupy}}
 
 Na výstupech se používají již zmíněné obvody \texttt{ULN2803}. Za obvody
 je vřazena polymerová pojistka. Protože obvod \texttt{ULN2803} specifikuje
@@ -136,7 +139,7 @@ stejný obvod, jako na obrázku \ref{fig:mtbuni-input} (obvod pod diodou
 \texttt{D1}). Obdobný obvod realizuje ochranu také proti vysokému napájecímu
 napětí celého modulu. Viz kompletní schéma \ref{fig:mtb-uni-4-sch}.
 
-\subsubsection{Adresování}
+\subsubsection{\textbf{Adresování}}
 
 Adresa modulu \gls{mtbuni} v4 je určena jumpery na modulu. Při návrhu modulu
 vznikla diskuze, jaký je nejlepší způsob adresování modulů, přičemž soupeřily
@@ -151,9 +154,9 @@ Druhý přístup, který zvolil autor této práce, si vysloužil mnohou kritiku
 Autor si však stojí za tím, že snadná a~především vždy pravdivá identifikace
 adresy modulu prostým pohledem stojí za 8~vstupních pinů procesoru navíc.
 
-Pro elegantní řešení přístupu (1) je třeba mít na desce tlačítko. Tlačítko se
-na desce nachází, takže pokud by byla v~budoucnu snaha přejít na přístup (1),
-je změna otázkou změny firmwaru.
+Pro elegantní řešení přístupu (1) je třeba mít na desce tlačítko, kterým se
+spouští změna adresy. Tlačítko se na desce nachází, takže pokud by byla
+v~budoucnu snaha přejít na přístup (1), je změna otázkou změny firmwaru.
 
 \subsection{Deska plošných spojů}
 
@@ -162,7 +165,7 @@ upevňovacích otvorů se současným nejmenším modulem – MTB-TTL. Deska je
 dvouvrstvá, používají se primárně SMD součástky velikosti \textit{0805} umístěné
 na spodní straně desky (aby bylo možné \gls{dps} automaticky osazovat). Na
 obrázku \ref{fig:mtb-uni-v4} lze vidět prototyp desky \gls{mtbuni} v4.0.
-Poslední verzí je v4.2, která oproti 4.0 obsahuje více \textit{SMD}
+Poslední verzí je v4.2, která oproti 4.0 obsahuje více \gls{smd}
 součástek a~opravuje chyby prototypu.
 
 \begin{figure}[ht]
