@@ -11,10 +11,10 @@ nejrozšířenější\footnotemark\\mezinárodně standardizovaný systém pro d
 rozšířený. Navíc přirozeně vyvstal požadavek na minimalizaci nákladů
 a maximalizaci nezávislosti na komerčních produktech rodiny jednoho výrobce. Vznikl
 tedy systém \gls{mtb}, který se pro řízení modelových kolejišť v \gls{kmz}
-používá doteď \cite{kmz_rizeni:web}. Podotkněme, že systém \gls{mtb} se
+používá doposud \cite{kmz_rizeni:web}. Podotkněme, že systém \gls{mtb} se
 do~dalších klubů po České Republice nerozšířil – nejspíš proto, že není
 podporovaný komerčními softwary pro řízení modelové železnice a~že jej jeho
-původní autor v~roce~2008 přestal podporovat.
+původní autor v~roce~2008 přestal udržovat.
 
 \footnotetext{Autor této práce by rád odstranil slovo
 \textit{pravděpodobně} a uvedl řádnou citaci. Bohužel neexistují studie, které
@@ -199,9 +199,9 @@ složku signálu, která vzniká vlivem okolního osvětlení.
 \label{fig:cap-bind}
 \end{figure}
 
-Vstupy \gls{mtbuni} desky se konfigurují osazením rezistorových lišt (běžný
-vstup) nebo kondenzátorů (vstup z~\gls{ir} čidla). Kromě toho musí o~režimu pinu
-vědět i~procesor, aby adekvátním způsobem zpracovával vstupní signál
+Vstupy \gls{mtbuni} desky se konfigurují osazením rezistorů (běžný
+vstup) nebo kondenzátorů (vstup z~\gls{ir} čidla). Režim pinu musí být
+uložený v~procesoru, aby se adekvátním způsobem zpracovával vstupní signál
 \cite{mtbuni22-specs}.
 
 
@@ -222,18 +222,20 @@ kolejiště. Viz schéma \ref{fig:control-topology}.
 
 Na první pohled je vidět, že kolejiště je řízeno dvěma různými systémy:
 systémem pro řízení příslušenství (modrá část diagramu) a~systémem pro řízení
-jízdy (fialová část diagramu). Vyvstává otázka, proč je neintegrovat do systému
+jízdy (fialová část diagramu). Vyvstává otázka, proč je nesloučit do systému
 jednoho. Integrovaná řešení nabízejí majoritní výrobci hardwaru pro digitální
-řízení modelové železnice.  Řízení jízdy i~příslušenství jedním systémem (\gls{dcc})
-je rozšířeným přístupem jak v~Česku tak v~zahraničí. Všechna tato řešení jsou
-však o~kompromisech, jak se dozvíme v~\ref{sec:dcc}. U~tvorby a~nasazení
-systému \gls{mtb} stály osoby, které pracují na zabezpečení skutečné železnice.
-Systém \gls{mtb} je tak oproti komerčně dostupným řešením řízení modelových
-kolejišť navrhován s~důrazem na spolehlivost a~především bezpečnost.
+řízení modelové železnice. Řízení jízdy i~příslušenství jedním systémem (\gls{dcc})
+je rozšířeným řešením jak v~Česku tak v~zahraničí. Všechna tato řešení jsou
+však o~kompromisech, jak se dozvíme v~\ref{sec:dcc}.
+
+U~tvorby a~nasazení systému \gls{mtb} stály osoby, které pracují na zabezpečení
+skutečné železnice. Systém \gls{mtb} je tak oproti komerčně dostupným řešením
+řízení modelových kolejišť navrhován s~důrazem na spolehlivost a~především
+bezpečnost.
 
 Uveďme dva příklady za všechny: komerčně využívaná sběrnice RS pro snímání
 stavu kolejiště nedokáže rozpoznat, že nějaký z~RS modulů (analogie \gls{mtb}
-modulů) přestal fungovat \cite{rs:web}. Dále výstupní moduly nijak nepotvrzují,
+modulů) přestal pracovat \cite{rs:web}. Dále výstupní moduly nijak nepotvrzují,
 že opravdu provedly akci, kterou počítač požaduje \cite{dcc_specs:web}. Tyto
 příklady ilustrují, že komerčně dostupná řešení jsou podle autorova názoru blíže
 hračce, než bezpečnému a~spolehlivému systému pro řízení modelů.
@@ -254,8 +256,8 @@ Systém \gls{mtb} s~sebou nese řadu problémů.
 \item \textbf{Licence, výrobní data}
 
 U~současné implementace systému \gls{mtb} bohužel nebyly řádně vyřešeny licenční
-podmínky mezi jeho autorem a~klubem. Souhrou událostí se \gls{kmz} dostal do
-situace, kdy nemáme zdrojová data schémat a~layoutů desek plošných spojů ani
+podmínky mezi jeho autorem a~Klubem. Souhrou událostí se \gls{kmz} dostal do
+situace, kdy nemá zdrojová data schémat a~layoutů desek plošných spojů ani
 zdrojové kódy firmwarů.
 
 Aktuální situace tak prakticky znemožňuje výrobu dalších \gls{mtb} desek,
@@ -271,10 +273,9 @@ znemožňuje výstavbu dalších částí kolejiště. To je zcela zásadní pro
 
 Současné MTB moduly využívají procesory \textit{AT89C2051} (2~kB FLASH,
 128~B SRAM). Tyto procesory svými parametry odpovídají době návrhu celého
-systému. Firmware v~procesorech naráží na jejich hardwarové limity – do
-procesoru se jednoduše nevejde další logika, což efektivně zabraňuje přidání
-nových funkcí. Procesorům navíc chybí některé klíčové periferie, například
-EEPROM paměť.
+systému. Firmware v~procesorech naráží na jejich hardwarové limity – paměť
+je plná, takže nelze přidávat nové funkce. Procesorům navíc chybí některé
+klíčové periferie, například EEPROM paměť.
 
 \end{enumerate}
 
@@ -295,7 +296,7 @@ požadavky.
 \item Systém musí být schopen potvrzovat akce řídicího počítače a~evidovat správnou
 	funkčnost modulů.
 \item Systém by měl být rozšiřitelný co se týče podporované funkcionality –
-	nové požadavky na funkcionalitu by mělo být možné implementovat.
+	nové požadavky by mělo být možné implementovat.
 \end{compactenum}
 
 K~naplnění těchto požadavků lze přistoupit dvěma různými způsoby: zakoupením

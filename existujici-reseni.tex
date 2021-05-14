@@ -9,7 +9,7 @@ naplňují požadavky definované v~předchozí kapitole.
 systém pro \textit{digitální}\footnote{\textit{Digitální} znamená, že mezi
 jednotlivými prvky řízení proudí digitální data.} řízení modelové železnice
 \cite{dcc_systems:web}. K~\gls{dcc} existují alternativy, které však v~Evropě
-nejsou rozšířené, proto alternativní systémy nebudeme uvažovat.\footnote{Toto
+nejsou rozšířené, proto je nebudeme uvažovat.\footnote{Toto
 tvrzení se zakládá na autorových zkušenostech, relevantní studie neexistují.}
 
 \gls{dcc} specifikuje, které komponenty se účastní řízení kolejiště a jak se
@@ -90,7 +90,7 @@ a~pro sběr informací z~kolejiště jsou použity 2~různé sběrnice: \textit{
 signál} a~\textit{sběrnice zpětného hlášení}. Platí totiž, že signál \gls{dcc}
 je pouze jednosměrný. Signál putuje z~\gls{dcc} centrály přes
 \textit{zesilovače} a přes koleje do lokomotiv a~vozů, které poveluje.
-Existují jen velice omezené prostředky jak dostat data z~lokomotivy zpět do
+Existují jen velice omezené prostředky k~poslání dat z~lokomotivy zpět do
 \gls{dcc} centrály\footnote{Takovému systému říkáme \textit{RailCom}
 \cite{railcom:web}.}. Tyto prostředky navíc vznikly až v~pozdějších verzích
 normy \gls{dcc}, takže dnes nejsou všeobecně zaužívané \cite{railcom:web}.
@@ -99,8 +99,8 @@ dekodérů na příkazy
 
 To znamená, že centrála musí DCC příkazy posílat opakovaně, aby zaručila, že je
 dekodér skutečně přijme. Může se totiž snadno stát, že lokomotiva zrovna není
-schopna přijímat signál – například jede po špinavých kolejích, ze kterých
-špatně sbírá. Problém s~přijímáním dat vlivem špatného kontaktu se netýká
+schopna přijímat signál – například se pohybuje po znečištěných kolejích.
+Problém s~přijímáním dat vlivem špatného kontaktu se netýká
 \textit{dekodérů příslušenství} (na obrázku \ref{fig:dcc-overview}
 \textit{switch decoder} a \textit{semaphore decoder}). Tyto dekodéry jsou
 připojeny pevným kabelem ke kolejím nebo přímo k~centrále, takže mají nejlepší
@@ -114,16 +114,16 @@ v~\ref{subsec:gen_requirements} a~proto jej nemá smysl uvažovat jako nástupce
 současného systému \gls{mtb}. Ačkoliv striktně vzato je tento závěr
 správný, je nutné si uvědomit širší souvislosti.
 
-Pří řízení provozu na modelovém kolejišti sledujeme mnohé cíle, z~nichž na
+Při řízení provozu na modelovém kolejišti sledujeme mnohé cíle, z~nichž na
 prvním místě stojí bezpečnost. Na skutečné železnici je bezpečnost samozřejmě
 mnohem důležitější než na železnici modelové. Přesto například materiální škody
 vzniklé projetím návěsti zakazující jízdu, vykolejením soupravy, srážky nebo
-následného pádu modelu na zem jsou tak markantní, že bezpečnost provozu je
-třeba řešit.
+následného pádu modelu na zem jsou tak markantní, že je třeba bezpečnost
+provozu řešit.
 
 Bezpečnost řízení provozu železnice skutečné i~modelové stojí na tom, že
-nepustíme vlak do míst, kde by mu hrozila nehoda. K~nehodě může dojít dvěma
-způsoby.
+vlak nevjede do míst, kde by mu hrozila nehoda. K~nehodě může dojít
+dvěma způsoby.
 
 \begin{enumerate}
 \item \textbf{Vlak stojí a~je nesprávně rozjet do místa, které pro něj není
@@ -164,14 +164,14 @@ bezpečné.}
 	specifikuje \uv{pokud dekodér nedekóduje signál, zůstává ve stejném stavu}.
 	Tedy například lokomotiva se pořád pohybuje vpřed.
 
-	Popsaná situace v~praxi nastává, ale není v~záběru této práce s~ní naložit.
+	Ačkoliv popsaná situace v~praxi nastává, není v~záběru této práce s~ní naložit.
 	Tato práce se zaměřuje především na řízení příslušenství a~snímání stavu
 	kolejiště, nikoliv na systém řízení jízdy hnacích vozidel.
 
 \end{enumerate}
 
 Závěrem uveďme, že z~dosavadního popisu systému \gls{dcc} plyne, že tento
-systém je pro řízení příslušenství vhodný, i~když s~drobnými nedokonalostmi.
+systém je pro řízení příslušenství vhodný, i~když s~drobnými výhradami.
 
 \subsection{Sběrnice zpětného hlášení}
 
@@ -182,7 +182,7 @@ jsme schopni bezpečně indikovat stav všech prvků v~kolejišti (pomocí
 
 \gls{nmra} nedefinuje jednotný standard pro \textit{sběrnici zpětného hlášení}
 \cite{dcc_specs:web}, různí výrobci používají různé (vlastní) sběrnice
-\cite{dcc_feedbacks:web}. Analyzujme nejpoužívanější sběrnice.
+\cite{dcc_feedbacks:web}. Analyzujme tedy nejpoužívanější sběrnice.
 
 \subsubsection{\textbf{S88}}
 
@@ -214,7 +214,7 @@ každý s~8 digitálními vstupy \cite{rs:web} \cite{rs_lib:web}.
 
 \begin{figure}[ht!]
 \includegraphics[width=\textwidth]{data/rs.pdf}
-\caption{Topologic sběrnice RSbus.}
+\caption{Topologie sběrnice RSbus.}
 \label{fig:rs-topology}
 \end{figure}
 
@@ -247,7 +247,7 @@ povelovat periferie \cite{loconet:web}, viz \ref{fig:loconet-topology}.
 
 \begin{figure}[ht!]
 \includegraphics[width=\textwidth]{data/loconet.pdf}
-\caption{Topologic sběrnice LocoNET.}
+\caption{Topologie sběrnice LocoNET.}
 \label{fig:loconet-topology}
 \end{figure}
 
@@ -305,5 +305,5 @@ Nutnost rozumné zpětné kompatibility tak fakticky vylučuje i~nasazení
 \gls{bidib}.
 
 Vnímejme tuto kapitolu tedy především jako přehled technologií, které se
-při řízení současné digitální modelové železnice používají. Přistupme k~návrhu,
-jak povýšit systém \gls{mtb} výrobou vlastních komponent.
+při řízení současné digitální modelové železnice používají. Přistupme
+k~návrhu nástupce současného systému \gls{mtb} výrobou vlastních komponent.

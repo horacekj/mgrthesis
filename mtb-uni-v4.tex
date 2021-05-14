@@ -37,7 +37,7 @@ kolektorů, jsou řízeny skrze obvody \texttt{ULN2803}, které umožňují
 dostatečný výstupní proud až 0.5~A~/~8 výstupů. Všechny výstupy umožňují kmitání
 i~vysílání signálu \gls{scom}.
 
-Modul obsahuje 16 digitálních vstupů. Podporu \gls{ir} čidel bude řešit samostatná
+Modul obsahuje 16 digitálních vstupů. Podporu \gls{ir} čidel řeší samostatná
 deska, viz \ref{sec:irdet}.
 
 Deska plošných spojů je navržena tak, aby byly zachovány rozměry a~umístění
@@ -102,7 +102,7 @@ zničení.
 Funkcí celého obvodu od \texttt{D1} níže je vyzkratovat vstup na \textit{GND} v~momentě,
 kdy je na něj přivedené vyšší než dovolené napětí. Pin procesoru povoluje
 napětí nejvýše $5.5~V$ \cite{atmega128a-datasheet}. Jakmile se vstupní napětí
-začne blížit $5.4~V$ ($5.1~V$ zenerova dioda \texttt{D2} + $0.3~V$ Schottkyho
+začne blížit $5.4~V$ ($5.1~V$ Zenerova dioda \texttt{D2} + $0.3~V$ Schottkyho
 dioda \texttt{D1}), začne se dioda \texttt{D2} otevírat a~tím začne spínat
 i~tyristor \texttt{Q1}.\footnote{V praxi tato situace nastává už při trochu
 nižším napětí, cca $5.3~V$, protože pro sepnutí \texttt{Q1} stačí, aby se

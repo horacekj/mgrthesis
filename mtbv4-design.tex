@@ -33,7 +33,7 @@ běžným výstupním pinem procesoru nebo posuvného registru \cite{scom-specs}
 
 Oproti současnému \gls{mtb} by nové \gls{mtb} mělo podporovat tzv. \textit{kmitavý
 výstup} s~počítačově definovanou frekvencí kmitání a~pevnou střídou. Frekvence
-kmitání stačí v~řádu jednotek \textit{Hz}. Kmitavý výstup se využije pro
+kmitání postačí v~řádu jednotek \textit{Hz}. Kmitavý výstup se využije pro
 indikace v~pultech a~k~ovládání rozpojovačů\footnote{Rozpojovač je mechanické
 zařízení pevně spojené s~kolejištěm, jehož účelem je rozpojit modelové spřáhlo
 bez ručního zásahu obsluhy do kolejiště.}. I~kmitavý výstup je však z~pohledu
@@ -55,7 +55,7 @@ mohl být v~jednom z~režimů
 Co se týče vstupně-výstupních požadavků periferií kolejiště, \gls{mtb} v4 by
 si vystačilo pouze s~moduly typu \gls{mtbuni}. Na kolejištích \gls{kmz}
 v~současnosti není žádný prvek, který by vyžadoval například analogový vstup,
-analogový výstup nebo třeba \textit{PWM} výstup. Na kolejištích se sice hojně
+analogový výstup nebo \textit{PWM} výstup. Na kolejištích se sice hojně
 používají servomotory, ale vždy pro řízení dvoupolohových prvků: výhybka,
 výkolejka, mechanické návěstidlo. Všechny tyto prvky k~sobě mají řídicí
 elektroniku, která interaguje se systémem \gls{mtb} pouze digitálními piny.
@@ -237,10 +237,10 @@ v~počítači.}
 \gls{mtb} moduly budou skrze \gls{mtbusb} komunikovat s~počítačem po portu
 \gls{usb}, kterým se tuneluje \textit{USB \gls{cdc}} protokol. V~počítači tak bude
 \gls{mtbusb} modul dostupný jako sériový port. Počítač nemůže komunikovat po
-sběrnici RS485 přímo, protože na to nemá hardwarové periferie. Proto bude
-komunikovat s~modulem \gls{mtbusb}, který řeší časově kritické operace
-sběrnice \gls{mtbbus}\footnote{Například kontrola odpovědi modulu v~časovém
-limitu cca $250~us$.}.
+sběrnici RS485 přímo, protože není vybaven potřebnými hardwarovými periferiemi.
+Proto bude komunikovat s~modulem \gls{mtbusb}, který řeší časově kritické
+operace sběrnice \gls{mtbbus}\footnote{Například kontrola odpovědi modulu
+v~časovém limitu cca $250~us$.}.
 
 Otázkou zůstává, kde naplnit požadavek na \textit{multi-master} řízení celého
 systému. Existují 2~možné přístupy:
@@ -254,7 +254,7 @@ systému. Existují 2~možné přístupy:
 \end{compactenum}
 
 Oba přístupy se v~komerčních systémech pro digitální řízení modelové železnice
-používají\footnote{Viz např. rozhraní \textit{Lenz LI-USB-Ethernet}, centrála
+běžně používají\footnote{Viz např. rozhraní \textit{Lenz LI-USB-Ethernet}, centrála
 \textit{Digikeijs DR5000} aj.}.
 Ať bude podpora více řídicích systému implementována kdekoliv, oproti jednomu
 řídicímu systému vyžaduje tato podpora netriviální softwarovou logiku navíc.
@@ -268,7 +268,7 @@ umožňuje připojení jen jedné počítačové aplikace.
 V~počítači vznikne nová aplikace \textit{MTB Daemon}, která se na jedné
 straně připojí k~\gls{mtbusb} a~na straně druhé vystaví JSON \gls{tcp}
 server s~jednoduchým \gls{api}, které umožní povelovat \gls{mtb} moduly z~více
-počítačových programů. Získá se tím mj. hezké programové \gls{api}, které
+počítačových programů. Získá se tím mj. přehledné programové \gls{api}, které
 umožní snadné připojení z~nejrůznějších programovacích jazyků.
 Tím se systém \gls{mtb} zpřístupní širšímu spektru programátorů.
 
@@ -418,7 +418,7 @@ způsob zabezpečení. Sběrnice \gls{mtbbus} v4 používá k~zabezpečení
 integrity zprávy standardní mechanismus \textit{CRC-16}. Tento mechanismus je
 založen na dělení polynomů se zbytkem. Konkrétně se používá verze
 \texttt{CRC-16-IBM}. Autor se inspiroval průmyslovou sběrnicí
-\textit{ModBus}, která používá přesně tento způsob \cite{modbus-specs}.
+\textit{ModBus}, která používá právě tento způsob \cite{modbus-specs}.
 
 \end{enumerate}
 
@@ -554,9 +554,10 @@ konfigurovatelných hodnot.
 
 Například modul \gls{mtbuni} ma 26 konfiguračních bytů. Proto se celá
 konfigurace posílá najednou. Protokol však umožňuje libovolný způsob
-zasílání konfigurace: počítač si například u~modulů s~větším množstvím konfiguračních
-bytů může vyžádat pouze podmnožinu konfiguračních hodnot. Nebo naopak poslat
-podmnožinu konfiguračních adres a~hodnoty na těchto adresách k~nastavení.
+zasílání konfigurace – počítač si například u~modulů s~větším množstvím
+konfiguračních bytů může vyžádat pouze podmnožinu konfiguračních hodnot. Nebo
+naopak poslat podmnožinu konfiguračních adres a~hodnoty na těchto adresách
+k~nastavení.
 
 \item \textbf{Adresování a data paměti pro aktualizaci firmwaru}
 
@@ -633,7 +634,7 @@ zvažováno, jestli aktualizaci nevést úplně jiným protokolem.
 při aktualizaci jednoho modulu ostatní moduly sběrnice aktualizační příkazy
 ignorovaly. Tyto argumenty vedly k~implementaci
 mechanismu aktualizace firmwaru přímo do sběrnice \gls{mtbbus}. Výhodou tohoto
-řešení je, že zbylé moduly sběrnice mohou při změně firmwaru jednoho
+řešení je, že ostatní moduly sběrnice mohou při změně firmwaru jednoho
 modulu nadále komunikovat, aktualizace může probíhat za plného provozu.
 
 Protokol počítá s~tím, že přepis flash paměti procesorů \gls{mtb} modulů může
