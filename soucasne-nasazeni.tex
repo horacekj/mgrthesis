@@ -1,6 +1,6 @@
 Systém \gls{mtb} vznikl okolo roku 2000, kdy se hledal vhodný systém pro
 programovatelné počítačové řízení modelové železnice, spoluprací nadšenců
-z~\textit{Klubu modelářů železnic Brno I} (dále jen \gls{kmz}) a \textit{Klubu
+z~\textit{Klubu modelářů železnic Brno I} (dále jen \gls{kmz}) a~\textit{Klubu
 železničních modelářů Praha 3} \footnote{Je překvapivé, že
 skupina nadšenců tehdy dokázala vytvořit systém, který by se mohl poměřovat se
 současnými komerčními systémy řízení modelových kolejišť, viz dále.} \cite{mtb:web}.
@@ -10,14 +10,14 @@ nejrozšířenější\footnotemark\\mezinárodně standardizovaný systém pro d
 řízení modelové železnice \cite{dcc_intro:web}, tehdy ještě nebyl v~České republice
 rozšířený. Navíc přirozeně vyvstal požadavek na minimalizaci nákladů
 a maximalizaci nezávislosti na komerčních produktech rodiny jednoho výrobce. Vznikl
-tedy systém \gls{mtb}, který se pro řízení modelových kolejišť v \gls{kmz}
+tedy systém \gls{mtb}, který se pro řízení modelových kolejišť v~\gls{kmz}
 používá doposud \cite{kmz_rizeni:web}. Podotkněme, že systém \gls{mtb} se
 do~dalších klubů po České Republice nerozšířil – nejspíš proto, že není
 podporovaný komerčními softwary pro řízení modelové železnice a~že jej jeho
 původní autor v~roce~2008 přestal udržovat.
 
 \footnotetext{Autor této práce by rád odstranil slovo
-\textit{pravděpodobně} a uvedl řádnou citaci. Bohužel neexistují studie, které
+\textit{pravděpodobně} a~uvedl řádnou citaci. Bohužel neexistují studie, které
 by bylo možné citovat. Rozšířenost \gls{dcc} se zakládá na autorových
 zkušenostech.}
 
@@ -33,7 +33,7 @@ Systém \gls{mtb} se skládá z:
 \end{compactenum}
 
 Každé kolejiště má svou vlastní sběrnici \gls{mtbbus}, ke které je připojený
-právě jeden \gls{mtbusb} modul a až 255 \gls{mtb} modulů.
+právě jeden \gls{mtbusb} modul a~až 255 \gls{mtb} modulů.
 \gls{mtbusb} řídí provoz sběrnice \gls{mtbbus} a~je připojen k~počítači.
 \gls{mtb} moduly jsou pevně instalovány v~rámech kolejiště a~komunikují po
 sběrnici \gls{mtbbus} s~\gls{mtbusb} modulem. Říkáme, že sběrnice je tzv.
@@ -74,7 +74,7 @@ rezistory pro držení definované úrovně signálu.
 
 RS485 je velice snadno implementovatelná do prakticky všech mikrokontrolérů –
 pro přístup ke sběrnici je třeba rozhraní UART, jeden pin pro řízení směru
-komunikace a driver k~RS485.
+komunikace a~driver k~RS485.
 
 Po sběrnici se komunikuje pevně definovaným protokolem. Protokol definuje
 příkazy pro moduly, odpovědi modulů, časování apod. \cite{mtbbus-specs}
@@ -127,14 +127,14 @@ Zaměřme se nyní na \gls{mtb} moduly. Každý \gls{mtb} modul má:
 	pull-up do +12~V.}, a~proto, že v~případě neaktivního výstupu (neaktivní =
 	+5~V; inverzní logika) aktivně napájí výstupní port, což způsobuje nechtěné
 	chování, například pokud je na výstupním portu záměrně vypnutá periferie.
-	V~krajním případě může dojít až k~přetížení TTL výstupu a jeho zničení. Na
+	V~krajním případě může dojít až k~přetížení TTL výstupu a~jeho zničení. Na
 	výstupy všech nasazených moduly typu MTB-TTL byly postupně instalovány
 	dodatečné budiče s~otevřenými kolektory.
 
 \item \textbf{MTB-REG}
 
 	MTB-REG je modul umožňující generovat analogový výkonový výstup. Modul se
-	připojí ke kolejím a řídí rychlost a~směr lokomotivy v~řízeném úseku kolejí.
+	připojí ke kolejím a~řídí rychlost a~směr lokomotivy v~řízeném úseku kolejí.
 
 	Tento způsob řízení jízdy (tzv. \textit{analogový}) je dnes již překonaný.
 	V~současnosti se pro řízení jízdy lokomotiv na kolejišti používá tzv. systém
@@ -147,7 +147,7 @@ Zaměřme se nyní na \gls{mtb} moduly. Každý \gls{mtb} modul má:
 
 \item \textbf{MTB-POT}
 
-	Modul MTB-POT obsahuje 4 analogové vstupy a 4 digitální vstupy. Jeho
+	Modul MTB-POT obsahuje 4 analogové vstupy a~4~digitální vstupy. Jeho
 	původním účelem bylo, aby se připojil k~potenciometru v~pultu obsluhy
 	kolejiště, kterým obsluha reguluje jízdu vlaku. Po sběrnici přepošle data
 	modulu MTB-REG a~tím dojde ke kýžené jízdě vlaku. Tento způsob řízení jízdy
@@ -165,8 +165,8 @@ Práce se sběrnicí z~pohledu aplikace v~počítači probíhá následovně:
 \item Aplikace přečte stav vstupů.
 \item Aplikace zahájí provoz sběrnice – od této chvíle všechny moduly nahlašují
 	změny stavů vstupů.
-\item Aplikace čte vstupy, nastavuje výstupy a řídí provoz.
-\item Aplikace ukončí provoz sběrnice a vynuluje stav výstupů \gls{mtb} modulů.
+\item Aplikace čte vstupy, nastavuje výstupy a~řídí provoz.
+\item Aplikace ukončí provoz sběrnice a~vynuluje stav výstupů \gls{mtb} modulů.
 \item Aplikace uzavře spojení s~\gls{mtbusb}.
 \end{compactenum}
 
@@ -245,7 +245,7 @@ reprezentuje interakci s~uživatelem. \textit{Řídicí SW kolejiště} běží 
 samostatném serveru, ke kterému se připojují všichni uživatelé systému –
 dispečeři ze svých stanic, strojvedoucí ze svých ovladačů, ale také třeba
 technikové se svými diagnostickými nástroji nebo externí programy využívající
-\gls{api} serveru. Server kontroluje identitu uživatelů a umožňuje jim řídit ty
+\gls{api} serveru. Server kontroluje identitu uživatelů a~umožňuje jim řídit ty
 systémy, ke kterým mají uživatelé práva.
 
 \section{Proč současný systém \gls{mtb} nedostačuje} \label{sec:mtb_fail}
@@ -259,7 +259,6 @@ U~současné implementace systému \gls{mtb} bohužel nebyly řádně vyřešeny
 podmínky mezi jeho autorem a~Klubem. Souhrou událostí se \gls{kmz} dostal do
 situace, kdy nemá zdrojová data schémat a~layoutů desek plošných spojů ani
 zdrojové kódy firmwarů.
-
 Aktuální situace tak prakticky znemožňuje výrobu dalších \gls{mtb} desek,
 o~záměru chtít systém \gls{mtb} nabízet mimo klub ani nemůže být řeč.
 
