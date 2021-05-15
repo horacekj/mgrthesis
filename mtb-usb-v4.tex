@@ -28,20 +28,19 @@ míry nezávislý na protokolu sběrnice \gls{mtbbus}. Nejdůležitější zprá
 počítačem a~\gls{mtbusb} je požadavek o~přeposlání zprávy mezi \gls{usb}
 a~\gls{mtbbus}. Tato zpráva umožňuje počítačovému programu poslat libovolnou
 zprávu libovolnému \gls{mtb} modulu (a~naopak), aniž by \gls{mtbusb} deska
-musela znát sémantiku této zprávy. Protokol sběrnice \gls{mtbbus} byl
-vytvářen přesně s~tímto cílem.
+musela znát sémantiku této zprávy.
 
 Na \gls{mtbusb} desku můžeme tedy pohlížet v~zásadě jako na tenkého
 přeposílatele mezi dvěma různými sběrnicemi – tzv. \textit{gateway}.
 
 Plnohodnotná specifikace protokolu mezi počítačem a \gls{mtbusb} je
-k~dispozici na \url{https://github.com/kmzbrnoI/mtbbus-protocol/tree/master/pc}.
+k~dispozici online\footnote{\url{https://github.com/kmzbrnoI/mtbbus-protocol/tree/master/pc}}.
 Popišme nyní stručně návrh protokolu.
 
-Mezi počítačem a \gls{mtbusb} deskou se komunikuje po virtuálním sériovém portu
-(tzv. \textit{\gls{cdc}}) tunelovaným skrze \gls{usb} rozhraní. Toto řešení
+Mezi počítačem a \gls{mtbusb} se komunikuje po virtuálním sériovém portu
+(\gls{cdc}) tunelovaným skrze \gls{usb}. Toto řešení
 bylo vybráno, protože je prakticky standardem pro připojení speciálních
-periferií k~počítači (zvažován byl také například \textit{\gls{hid}}).
+periferií k~počítači (zvažován byl také \textit{\gls{hid}}).
 \gls{usb} nezná pojem zprávy tak, jak bychom
 vyžadovali\footnote{Při užití třídy \gls{cdc} se data posílají nejčastěji
 každou milisekundu a to v~bloku o~nejvýše 64 bytech.  Počítačová aplikace díky
@@ -93,6 +92,8 @@ broadcastem všem \gls{mtb} modulům.
 
 Odpovědí na tento příkaz je seznam aktivních \gls{mtb} modulů.
 
+\item \textbf{Ping}
+
 \end{itemize}
 
 Zprávy z~\gls{mtbusb} pro počítač jsou:
@@ -105,7 +106,7 @@ Zprávy z~\gls{mtbusb} pro počítač jsou:
 Zpráva je odeslána počítači při odpovědi \gls{mtb} modulu na zprávu z~počítače
 nebo na pravidelný sken \gls{mtb} modulů. Z~pohledu počítače tak přichází jak
 odpovědi na příkazy pro \gls{mtb} modul, které poslal počítač, tak asynchronní
-události – například informace o~změně stavu vstupů.
+události – informace o~změně stavu vstupů.
 
 \item \textbf{\gls{mtbusb} Information}
 
@@ -133,7 +134,7 @@ Občasné neodpovídání modulů na výzvy je dobrým indikátorem problémů s
 Vlastností \gls{mtbbus} je, že každý \gls{mtb} modul musí vždy
 odpovědět na každou zprávu, kterou přijme\footnote{Výjimkou jsou pouze
 \textit{broadcast} zprávy.}. Protože \gls{mtbbus} je potenciálně nespolehlivé
-médium, na kterém integritu příkazů kontrolujeme vlastními mechanismy, provádí
+médium, na kterém integritu příkazů zajišťujeme vlastními mechanismy, provádí
 modul \gls{mtbusb} retransmisi zpráv \gls{mtb} modulům v~případě, že na zprávu
 nepřijde žádná odpověď, a~to až třikrát. Proto je součástí zprávy \textit{Packet
 from \gls{mtbbus}} také počítadlo, které říká, na kolikátý pokus byla
@@ -155,6 +156,7 @@ prostudovat, je mu k~dispozici plná specifikace protokolu\footnote{
 Srdcem \gls{mtbusb} modulu je procesor \texttt{STM32F103}, což je moderní
 mikrokontrolér architektury \textit{ARM}. Autor jej zvolil z~několika důvodů.
 
+\newpage
 \begin{compactenum}
 \item Procesor \texttt{STM32F103} má hardwarovou podporu \gls{usb}.
 \item Procesory \texttt{STM32} nabízí velké velikosti pamětí a výpočetní výkon.
@@ -226,7 +228,7 @@ zvolena krabička firmy \textit{Digikeijs}, jejíž zásadní výhodou je, že p
 vyvedení konektorů a indikačních \gls{led} není třeba do krabičky frézovat. Navíc lze
 na krabičku velice elegantně nalepit potisk, který vysvětluje použití
 jednotlivých konektorů a~význam \gls{led}. Celé řešení je zobrazeno na
-obrázkcích \ref{fig:mtbusb-prototype} a \ref{fig:mtbusb-inside}.
+obrázcích \ref{fig:mtbusb-prototype} a \ref{fig:mtbusb-inside}.
 
 
 \subsection{Firmware}

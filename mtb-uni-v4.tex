@@ -26,8 +26,8 @@ Aktuální modul \gls{mtbuni} má 16 digitálních vstupů a~16~digitálních v�
 Tento počet se autor práce rozhodl zachovat, protože vhodně škáluje pro malé
 i~velké železniční stanice na modelových kolejištích.
 Současné \gls{mtbuni} a~MTB-TTL moduly používají různé konektory
-pro připojení periferií: svorkovnice nebo nasouvací konektory typu \texttt{PSH}
-\footnote{Např. \url{https://www.gme.cz/konektor-se-zamkem-psh02-04pg}.}.
+pro připojení periferií: svorkovnice nebo nasouvací konektory typu
+\texttt{PSH}\footnote{Např. \url{https://www.gme.cz/konektor-se-zamkem-psh02-04pg}.}.
 Modul \gls{mtbuni} v4 umožňuje variantní osazení jak svorkovnic, tak konektorů
 \texttt{PSH}. Tím modul slučuje současné moduly \gls{mtbuni}, MTB-UNIm a
 MTB-TTL do jediné \gls{dps}, což zjednodušuje údržbu a~vývoj.
@@ -43,9 +43,8 @@ deska, viz \ref{sec:irdet}.
 Deska plošných spojů je navržena tak, aby byly zachovány rozměry a~umístění
 upevňovacích otvorů se současným nejmenším modulem – MTB-TTL.
 
-Návrh této desky vznikal ve spolupráci s~\textit{Mendelovou univerzitou
-v~Brně}, (\textit{MENDELU}). Schéma vytvořil Robert Čížek, \gls{dps},
-firmware a~koncepční návrh modulu jsou dílem autora této práce.
+Návrh této desky vznikal ve spolupráci s~MENDELU. Schéma vytvořil Robert Čížek,
+\gls{dps}, firmware a~koncepční návrh modulu jsou dílem autora této práce.
 
 
 \subsection{Hardware}
@@ -67,7 +66,7 @@ online\footnote{\url{https://github.com/kmzbrnoI/mtb-uni-4-ele}}, schéma také
 v~příloze \ref{fig:mtb-uni-4-sch}. Okomentujme nyní zajímavé prvky schématu
 a~\gls{dps}.
 
-Jádrem modulu je procesor \textit{ATmega128A}. Autor této práce si zvolil
+Jádrem modulu je procesor \textit{ATmega128}. Autor této práce si zvolil
 procesor architektury \textit{AVR}, protože s~používáním těchto procesorů má
 dlouholeté zkušenosti. Model \textit{ATmega128} byl pak zvolen proto, že je to
 nejmenší model rodiny \textit{ATmega}, který obsahuje požadované množství pinů.
@@ -136,7 +135,7 @@ v~\textit{\gls{dil}} provedení.
 
 Výstupy obsahují ochranu proti přivedení vysokého napětí, kterou realizuje
 stejný obvod, jako na obrázku \ref{fig:mtbuni-input} (obvod pod diodou
-\texttt{D1}). Obdobný obvod realizuje ochranu také proti vysokému napájecímu
+\texttt{D1}). Obdobný obvod realizuje také ochranu proti vysokému napájecímu
 napětí celého modulu. Viz kompletní schéma \ref{fig:mtb-uni-4-sch}.
 
 \subsubsection{\textbf{Adresování}}

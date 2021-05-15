@@ -73,7 +73,7 @@ rezistory pro držení definované úrovně signálu.
 \end{table}
 
 RS485 je velice snadno implementovatelná do prakticky všech mikrokontrolérů –
-pro přístup ke sběrnici je třeba rozhraní UART, jeden pin pro řízení směru
+pro přístup ke sběrnici je třeba rozhraní \textit{UART}, jeden pin pro řízení směru
 komunikace a~driver k~RS485.
 
 Po sběrnici se komunikuje pevně definovaným protokolem. Protokol definuje
@@ -150,8 +150,8 @@ Zaměřme se nyní na \gls{mtb} moduly. Každý \gls{mtb} modul má:
 	Modul MTB-POT obsahuje 4 analogové vstupy a~4~digitální vstupy. Jeho
 	původním účelem bylo, aby se připojil k~potenciometru v~pultu obsluhy
 	kolejiště, kterým obsluha reguluje jízdu vlaku. Po sběrnici přepošle data
-	modulu MTB-REG a~tím dojde ke kýžené jízdě vlaku. Tento způsob řízení jízdy
-	na kolejištích se již nepoužívá, proto i~modul MTB-POT na moderních
+	modulu MTB-REG a~tím dojde ke kýžené jízdě vlaku. Tento způsob řízení
+	kolejišť se již nepoužívá, proto i~modul MTB-POT na moderních
 	kolejištích pozbývá svého smyslu.
 
 \end{itemize}
@@ -166,7 +166,7 @@ Práce se sběrnicí z~pohledu aplikace v~počítači probíhá následovně:
 \item Aplikace zahájí provoz sběrnice – od této chvíle všechny moduly nahlašují
 	změny stavů vstupů.
 \item Aplikace čte vstupy, nastavuje výstupy a~řídí provoz.
-\item Aplikace ukončí provoz sběrnice a~vynuluje stav výstupů \gls{mtb} modulů.
+\item Aplikace ukončí provoz sběrnice a~uvede výstupy \gls{mtb} modulů do základního stavu.
 \item Aplikace uzavře spojení s~\gls{mtbusb}.
 \end{compactenum}
 
@@ -176,7 +176,7 @@ Práce se sběrnicí z~pohledu aplikace v~počítači probíhá následovně:
 Nyní popíšeme princip fungování \gls{ir} čidel v~kolejišti, protože bude v~dalších
 kapitolách stěžejní.
 
-\gls{ir} čidlo je bodový detektor průjezdu vlaku. Do kolejí se vedle sebe umístí
+\gls{ir} čidlo je bodový detektor průjezdu vlaku. Mezi kolejnice se vedle sebe umístí
 opticky oddělená vysílací dioda a~fototranzistor, oba namířené vzhůru. Při
 průjezdu vlaku dojde k~odrazu signálu od spodní části vozu nebo lokomotivy,
 čímž je detekován průjezd vlaku. Výhodou je nenápadná instalace mezi kolejové
@@ -208,15 +208,16 @@ uložený v~procesoru, aby se adekvátním způsobem zpracovával vstupní sign�
 \section{Systém \gls{mtb} v~kontextu řízení modelového kolejiště} \label{sec:mtb_context}
 
 V~\gls{kmz} je aktuálně systém \gls{mtb} nasazen na dvou kolejištích, další
-nasazení je na modulovém kolejišti Mendelovy univerzity v~Brně, s~kterou klub
-spolupracuje. Na těchto kolejištích je aktuálně nasazeno 99 \gls{mtb} desek.
+nasazení je na modulovém kolejišti Mendelovy univerzity v~Brně (MENDELU),
+s~kterou klub spolupracuje. Na těchto kolejištích je aktuálně nasazeno
+dohromady 99~\gls{mtb} modulů.
 
 Pro kontext uveďme, jak systém \gls{mtb} zapadá do celkové koncepce řízení
-kolejiště. Viz schéma \ref{fig:control-topology}.
+kolejiště. Viz diagram \ref{fig:control-topology}.
 
 \begin{figure}[ht]
 \includegraphics[width=\textwidth]{data/railroad-diagram.pdf}
-\caption{Schéma komponent řízení kolejiště v~\gls{kmz}.}
+\caption{Diagram komponent řízení kolejišť \gls{kmz}.}
 \label{fig:control-topology}
 \end{figure}
 
@@ -240,7 +241,7 @@ modulů) přestal pracovat \cite{rs:web}. Dále výstupní moduly nijak nepotvrz
 příklady ilustrují, že komerčně dostupná řešení jsou podle autorova názoru blíže
 hračce, než bezpečnému a~spolehlivému systému pro řízení modelů.
 
-Poslední část schématu \ref{fig:control-topology} je část zelená, která
+Poslední část diagramu \ref{fig:control-topology} je část zelená, která
 reprezentuje interakci s~uživatelem. \textit{Řídicí SW kolejiště} běží na
 samostatném serveru, ke kterému se připojují všichni uživatelé systému –
 dispečeři ze svých stanic, strojvedoucí ze svých ovladačů, ale také třeba
@@ -279,7 +280,7 @@ klíčové periferie, například EEPROM paměť.
 \end{enumerate}
 
 Současný systém \gls{mtb} byl vyhodnocen jako celkově nedostatečný, je potřeba
-ho buď aktualizovat nebo nahradit za systém jiný.
+ho buď aktualizovat nebo nahradit systémem jiným.
 
 \subsection{Všeobecné požadavky na nový systém \gls{mtb}} \label{subsec:gen_requirements}
 

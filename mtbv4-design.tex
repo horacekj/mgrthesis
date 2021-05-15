@@ -26,8 +26,8 @@ které jej užívají.
 K~\gls{mtb} se na straně kolejiště připojují jednotlivé periferie popsané
 v~\ref{sec:dcc}. Všechny v~současnosti na kolejišti používané vstupy jsou
 digitálního charakteru (binární vstupy), výstupy jsou buď digitální binární
-nebo \textit{\gls{scom}}. \gls{scom} výstupy jsou ve skutečnosti digitální
-výstupy, do kterých \gls{mtb} deska moduluje \gls{scom} signál. \gls{scom}
+nebo \gls{scom}. \gls{scom} výstupy jsou ve skutečnosti digitální
+výstupy, do kterých \gls{mtb} modul moduluje \gls{scom} signál. \gls{scom}
 signál je záměrně jednoduchý, pomalý signál, který lze s~přehledem vytvářet
 běžným výstupním pinem procesoru nebo posuvného registru \cite{scom-specs}.
 
@@ -76,8 +76,8 @@ a~výstupy.
 Připomeňme, že \gls{mtbuni} moduly umožňují speciální typ vstupů – \gls{ir} vstupy
 (viz \ref{sec:ir}). Tyto vstupy vyžadují další elektroniku navíc.  V~nových
 \gls{mtbuni} v4 je přímá podpora pro \gls{ir} čidla zrušena. Bude navržen
-samostatný přídavný modul pro buzení a vyhodnocování stavu \gls{ir} čidel,
-která se bude připojovat přímo k~digitálním vstupům \gls{mtbuni} modulu. Ušetří
+samostatný přídavný modul pro buzení a~vyhodnocování stavu \gls{ir} čidel,
+který se bude připojovat přímo k~digitálním vstupům \gls{mtbuni} modulu. Ušetří
 se tak elektronika na \gls{mtbuni} modulech, na kterých se \gls{ir} vstupy
 nevyužívají, zjednoduší se návrh desky plošných spojů \gls{mtbuni} v4 a umožní
 se využít \gls{ir} čidla i~s~jinými moduly, než \gls{mtb} (např. pro přímou
@@ -146,8 +146,7 @@ požadavky se v~implementaci podařilo naplnit.
 
 	Pro snadnou identifikaci konkrétního modulu v~kolejišti, například při
 	diagnostice závady, by operátor měl mít možnost z~počítače na libovolném
-	modulu zapnout indikační \gls{led}. Při diagnostice pod kolejištěm tak snadno
-	identifikuje konkrétní modul.
+	modulu zapnout indikační \gls{led}.
 
 \item \textbf{Firmware \gls{mtb} modulů by mělo být možné aktualizovat přímo
 	po sběrnici \gls{mtbbus}.}
@@ -347,6 +346,7 @@ Příklad komunikace po sběrnici:
 > Module 6 Inquiry
 < Acknowledgement
 > Set Outputs of module 1 to 0b00101010 0b01000101
+< Outputs Set to 0b00101010 0b01000101
 > Module 10 Inquiry
 < Acknowledgement
 ...
@@ -591,7 +591,7 @@ výstupů, začnou poslouchat na sběrnici.
 \gls{mtb} v4 však nevyžaduje striktní pořadí těchto kroků. Napájení
 komponent může být zapnuto v~libovolném pořadí, systém dokáže detekovat výpadky
 jednotlivých prvků a obnovovat je. Pro ilustraci uveďme několik příkladů situací,
-které v~systému \gls{mtb} mohou nastat.
+které v~systému \gls{mtb} v4 mohou nastat.
 
 \begin{itemize}
 \item \textbf{Jiné pořadí zapnutí prvků.}
@@ -610,9 +610,9 @@ Pokud \gls{mtb} modul neodpovídá na zprávy, \gls{mtbusb} situaci detekuje,
 nahlásí ji do počítače a~počítač zareaguje.
 
 Pokud \gls{mtbusb} detekuje nový \gls{mtb} modul, opět o~tom zpraví
-počítač, ten vyčte typ desky a~zkonfiguruje ji.
+počítač, ten vyčte typ modulu a~zkonfiguruje jej.
 
-\item \textbf{Odpojení a~připojení modulu za chodu sběrnice (např. výměna).}
+\item \textbf{Odpojení a~připojení modulu za chodu sběrnice (např. vý\-mě\-na).}
 
 Vyňatý modul je při odpojení napájení nahlášen jako neaktivní, po výměně je
 aktivován nový modul.

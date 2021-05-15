@@ -6,12 +6,12 @@ této práce vznikla. Jejím hlavním úkolem je připojit se k~\gls{mtbusb} mod
 umožnit jeho ovládání více různým aplikacím. K~tomuto účelu vystavuje \gls{mtb}
 Daemon \gls{tcp} server, ke kterému se řídicí programy mohou připojit.
 
-\subsection{Protokol \gls{tcp} serveru} \label{sec:daemon:proto}
+\subsection{Protokol TCP serveru} \label{sec:daemon:proto}
 
 \gls{tcp} server musí umožňovat oboustrannou komunikaci – jak od klienta k~serveru
 (\textit{požadavek, odpověď}), tak od serveru ke klientovi (\textit{asynchronní
 události}). Například protokol \textit{http} v~kombinaci s~\textit{REST \gls{api}}
-tedy není možné použít. Z~běžně používaných technologií byly zvažovány
+tedy není vhodné použít. Z~běžně používaných technologií byly zvažovány
 \textit{websockets}, ty ale kvůli složitější inicializaci nebyly využity.
 
 Autor zvolil snad nejjednodušší možný komunikační protokol: \gls{tcp} spojení

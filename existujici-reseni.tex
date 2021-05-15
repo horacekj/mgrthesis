@@ -1,4 +1,4 @@
-Nyní představíme v~současnosti nejrozšířenější systémy pro \textit{digitální}
+Nyní představíme v~současnosti nejrozšířenější standardy pro \textit{digitální}
 řízení modelové železnice. Prozkoumáme zařízení, která tyto standardy
 podporují, a~zhodnotíme jejich vlastnosti. Bude vyhodnoceno, jestli zařízení
 naplňují požadavky definované v~předchozí kapitole.
@@ -6,7 +6,7 @@ naplňují požadavky definované v~předchozí kapitole.
 \section{Digital Command Control} \label{sec:dcc}
 
 \textit{Digital Command control} (\gls{dcc}) je celosvětově nejrozšířenější
-systém pro \textit{digitální}\footnote{\textit{Digitální} znamená, že mezi
+standard pro \textit{digitální}\footnote{\textit{Digitální} znamená, že mezi
 jednotlivými prvky řízení proudí digitální data.} řízení modelové železnice
 \cite{dcc_systems:web}. K~\gls{dcc} existují alternativy, které však v~Evropě
 nejsou rozšířené, proto je nebudeme uvažovat.\footnote{Toto
@@ -17,7 +17,7 @@ tyto komponenty mají chovat – od elektrických standardů (např. doporučen�
 způsob zapojení vodičů pod kolejištěm) až po komunikační protokoly. \gls{dcc}
 je otevřený standard vytvořený organizací \textit{National Model Railroad
 Association} (\gls{nmra}), která sdružuje modelářské kluby (a~tedy i~modeláře),
-které jsou přímými uživateli systému \gls{dcc}. Systém \gls{dcc} je tedy
+jež jsou přímými uživateli \gls{dcc}. Standard \gls{dcc} je tedy
 navržen modeláři k~naplnění potřeb modelářů.
 
 Jednotlivé prvky systému \gls{dcc} jsou znázorněny v~\ref{fig:dcc-overview}.
@@ -46,7 +46,7 @@ lokomotivu}, \uv{dekodére číslo 4741, aktivuj čelní světla}.
 
 Ke sběrnici ovladačů jsou připojené buď fyzické ovladače, nebo počítače.
 Operátor provozu zadává příkazy, například otočením kolečka ovladače nebo
-interakcí s~příslušným software, tyto příkazy jsou přeposlány do centrály,
+interakcí s~příslušným softwarem, tyto příkazy jsou přeposlány do centrály,
 centrála je dále přeposílá dekodérům, které přímo vykonávají požadované akce.
 
 Na \textit{sběrnici zpětného hlášení} jsou připojeny moduly s~digitálními vstupy,
@@ -89,13 +89,13 @@ Všimněme si klíčové vlastnosti systému: pro řízení dekodérů
 a~pro sběr informací z~kolejiště jsou použity 2~různé sběrnice: \textit{dcc
 signál} a~\textit{sběrnice zpětného hlášení}. Platí totiž, že signál \gls{dcc}
 je pouze jednosměrný. Signál putuje z~\gls{dcc} centrály přes
-\textit{zesilovače} a přes koleje do lokomotiv a~vozů, které poveluje.
+\textit{zesilovače} a přes koleje do lokomotiv, vozů a~statických dekodérů, které poveluje.
 Existují jen velice omezené prostředky k~poslání dat z~lokomotivy zpět do
 \gls{dcc} centrály\footnote{Takovému systému říkáme \textit{RailCom}
 \cite{railcom:web}.}. Tyto prostředky navíc vznikly až v~pozdějších verzích
 normy \gls{dcc}, takže dnes nejsou všeobecně zaužívané \cite{railcom:web}.
-Sběrnice \gls{dcc} je tedy prakticky vzato jednosměrná, dokonce bez odpovědí
-dekodérů na příkazy
+Sběrnice \gls{dcc} je tedy prakticky vzato jednosměrná – bez odpovědí
+dekodérů na příkazy.
 
 To znamená, že centrála musí DCC příkazy posílat opakovaně, aby zaručila, že je
 dekodér skutečně přijme. Může se totiž snadno stát, že lokomotiva zrovna není
@@ -150,7 +150,7 @@ dvěma způsoby.
 	aby strojvedoucí viděl správnou návěst, protože nesprávná návěst
 	by mu mohla povolit jízdu, přestože se například proti němu blíží vlak. Nebo
 	by například mohla povolit jízdu vyšší rychlostí, než jaká je v~daném
-	úseku předepsaná a~vlak by pak nemusel stihnout později zabrzdit. Proto se
+	úseku předepsaná, a~vlak by později nemusel stihnout zabrzdit. Proto se
 	na skutečné železnici kontroluje, že světly návěstidel, která mají být
 	rozsvícená, skutečně prochází proud.}
 
@@ -209,7 +209,7 @@ centrály. Takové chování je pro profesionální \gls{plc} systém nevhodné.
 \textit{RSbus} je sběrnice firmy \textit{Lenz Elektronik}. Oproti \textit{S88}
 je organizována do topologie sběrnice (viz obr. \ref{fig:rs-topology}). Jednotlivé
 moduly jsou napájeny samostatně, sběrnice je dimenzovaná až na 128 modulů,
-každý s~8 digitálními vstupy \cite{rs:web} \cite{rs_lib:web}.
+každý s~8~digitálními vstupy \cite{rs:web} \cite{rs_lib:web}.
 
 \begin{figure}[ht!]
 \includegraphics[width=\textwidth]{data/rs.pdf}
@@ -289,21 +289,21 @@ V~této kapitole byly popsány základní přístupy k~řízení moderní digit�
 modelové železnice. Bylo zkoumáno, jestli komerční produkty splní požadavky
 definované v~\ref{subsec:gen_requirements}. Po vyloučení technicky
 nezpůsobilých řešení zbyly sběrnice LocoNET (s~poznámkou,
-že její nasazení by bylo finančně náročné a~pracné) a \textit{\gls{bidib}}.
+že její nasazení by bylo finančně náročné a~pracné) a \gls{bidib}.
 
 Při uvažování sběrnice LocoNET vyvstal problém s~integrací ovládání
 návěstidel. Tento problém je obecnějšího rázu – jakékoliv komerční řešení není
-schopné nabídnout takovou flexibilitu, jakou bychom v~\gls{kmz} potřebovali.
+schopné nabídnout takovou flexibilitu, jakou \gls{kmz} potřebuje.
 Je nutné integrovat systém řízení kolejiště se současnými periferiemi, ale
 i~s~periferiemi budoucími. Je chtěné mít možnost pružně reagovat na nové
 periferie, které se objeví například za 10 let.
 
-Uvažme také aspekt zpětné kompatibility – vlastní systém nám umožní co možná
+Uvažme také aspekt zpětné kompatibility – vlastní systém umožní co možná
 nejrozumněji zachovat kompatibilitu se stávajícím systémem řízení kolejiště
 a~minimalizovat tak finanční náklady a čas nutný pro aktualizaci systému.
 Nutnost rozumné zpětné kompatibility tak fakticky vylučuje i~nasazení
 \gls{bidib}.
 
 Vnímejme tuto kapitolu tedy především jako přehled technologií, které se
-při řízení současné digitální modelové železnice používají. Přistupme
+pro řízení současné digitální modelové železnice používají. Přistupme
 k~návrhu nástupce současného systému \gls{mtb} výrobou vlastních komponent.
