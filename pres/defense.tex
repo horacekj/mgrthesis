@@ -16,8 +16,8 @@
 \author[J. Horáček]{Jan Horáček\texorpdfstring{\\}{, }horacekj@mail.muni.cz}
 \institute[FI MU]{Fakulta informatiky Masarykovy univerzity}
 \date{\today}
-\subject{Presentation Subject}
-\keywords{the, presentation, keywords}
+\subject{Návrh a implementace nového protokolu sběrnice MTBbus}
+\keywords{mtb,mtbbus,stm32,avr,arm,pcb,rs485,protokol}
 \begin{document}
 
 \begin{frame}[plain]
@@ -78,7 +78,7 @@
 		\item 233 návěstidel.
 		\item 13 přejezdů.
 		\item 100 rozpojovačů.
-		\item \textbf{70 MTB desek.}
+		\item \textbf{70 MTB modulů.}
 		\end{itemize}
 	\end{column}
 	\begin{column}{.65\textwidth}
@@ -213,7 +213,7 @@ Je třeba přejít na nový systém.
 			\item Zachováno využití devitibitové komunikace.
 			\item Zachován princip \textit{master-slave}.
 		\end{itemize}
-		\item Modul musí vždy odpovědět na každý příkaz.
+		\item Modul musí vždy odpovědět na každou zprávu.
 		\end{itemize}
 	\end{column}
 	\pause
