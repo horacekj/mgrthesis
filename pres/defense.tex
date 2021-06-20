@@ -148,16 +148,12 @@ Je třeba přejít na nový systém.
 \section{Návrh MTB v4}
 \subsection{Požadavky}
 
-\begin{frame}{Požadavky na MTB v4}
+\begin{frame}{Vybrané požadavky na MTB v4}
 \begin{enumerate}
-\item MTB-UNI – umožnit kmitavé výstupy.
-\item MTB-UNI – umožnit S-COM výstupy na všech výstupních pinech.
 \item Univerzální návrh pro různé typy modulů (i do budoucna).
 \item Vyřešit zpětnou kompatibilitu se stávajícími moduly.
-\item Přístup skrze \textit{hJOP RCS API}.
 \item Více možných řídicích SW v počítači.
 \item Hot-swap MTB modulů, detekce nefunkčních.
-\item Identifikační LED.
 \item Aktualizace FW MTB modulů po MTBbus.
 \item Využít komponenty s dlouhodobou dostupností.
 \item Opensource \& openhardware.
@@ -239,25 +235,25 @@ Je třeba přejít na nový systém.
 
 %------------------------------------------------
 
-\begin{frame}{MTBbus v4}{Zpráva}
-Každá \textit{zpráva} se skládá z devítibitových slov.
-\begin{enumerate}
-\item Adresa modulu (jen ve směru master $\rightarrow$ slave).
-\item Délka zprávy.
-\item Kód zprávy.
-\item Data zprávy (až 120 bytů).
-\item Kontrolní součet CRC-16 (2 byty).
-\end{enumerate}
+% \begin{frame}{MTBbus v4}{Zpráva}
+% Každá \textit{zpráva} se skládá z devítibitových slov.
+% \begin{enumerate}
+% \item Adresa modulu (jen ve směru master $\rightarrow$ slave).
+% \item Délka zprávy.
+% \item Kód zprávy.
+% \item Data zprávy (až 120 bytů).
+% \item Kontrolní součet CRC-16 (2 byty).
+% \end{enumerate}
 
-\begin{exampleblock}{Příklad zprávy: \texttt{0x105 0x001 0x001 0x0D0 0x051}}
-\begin{enumerate}
-\item \texttt{0x105}: zpráva pro modul s~adresou 5.
-\item \texttt{0x001}: následuje 1 byte zprávy.
-\item \texttt{0x001}: kód zprávy \texttt{0x01}.
-\item \texttt{0x0D0}, \texttt{0x051}: kontrolní součet \textit{CRC-16}.
-\end{enumerate}
-\end{exampleblock}
-\end{frame}
+% \begin{exampleblock}{Příklad zprávy: \texttt{0x105 0x001 0x001 0x0D0 0x051}}
+% \begin{enumerate}
+% \item \texttt{0x105}: zpráva pro modul s~adresou 5.
+% \item \texttt{0x001}: následuje 1 byte zprávy.
+% \item \texttt{0x001}: kód zprávy \texttt{0x01}.
+% \item \texttt{0x0D0}, \texttt{0x051}: kontrolní součet \textit{CRC-16}.
+% \end{enumerate}
+% \end{exampleblock}
+% \end{frame}
 
 %------------------------------------------------
 
@@ -320,9 +316,8 @@ Každá \textit{zpráva} se skládá z devítibitových slov.
 \begin{frame}{MTB-USB v4}
 \begin{enumerate}
 \item Přeposílá data mezi MTBbus a počítačem.
-\item Záměrně neobsahuje složitou logiku.
-\item Vykonává časově kritické operace sběrnice MTBbus.
 \item Provádí \textit{polling} modulů.
+\item Vykonává časově kritické operace sběrnice MTBbus.
 \item Udržuje seznam aktivních modulů.
 \item Provádí retransmise zpráv do MTBbus při nedoručení.
 \end{enumerate}
@@ -542,7 +537,7 @@ Uvozena speciální sekvencí bytů \texttt{0x2A} \texttt{0x42}.
 \begin{itemize}
 \item Květen 2021: menší stanice o 4 MTB modulech.
 \item Červen 2021: jedno klubovní kolejiště o 20 MTB modulech.
-\item Výhled červenec 2021: největší klubovní kolejiště o 70 MTB modulech.
+\item Červenec 2021: největší klubovní kolejiště o 70 MTB modulech.
 \end{itemize}
 \end{frame}
 
