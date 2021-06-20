@@ -1,0 +1,79 @@
+\documentclass[aspectratio=169]{beamer}
+
+\usepackage[czech]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{csquotes}
+\usepackage{soul}
+\usepackage{booktabs}
+\usetheme[
+  workplace=fi,
+]{MU}
+
+\title[MTB v4]{Návrh a implementace nového protokolu sběrnice MTBbus}
+\subtitle[Obhajoba]{Otázky oponenta}
+\author[J. Horáček]{Jan Horáček\texorpdfstring{\\}{, }horacekj@mail.muni.cz}
+\institute[FI MU]{Fakulta informatiky Masarykovy univerzity}
+\date{\today}
+\subject{Návrh a implementace nového protokolu sběrnice MTBbus}
+\keywords{mtb,mtbbus,stm32,avr,arm,pcb,rs485,protokol}
+\begin{document}
+
+%------------------------------------------------
+
+\section{Otázky oponenta}
+\begin{frame}{Otázky oponenta}
+\begin{alertblock}{Otázka I}
+Bylo zachováno použití sběrnice RS-485 s tvrzením, že \uv{nepřináší žádné zjevné
+nevýhody} (strana 39). Za předpokladu dodržování pravidel pro RS-485, se stejnou
+kabeláží nebo s minimálními úpravami je možné použít rozhraní CAN.
+Pokud porovnáte vlastnosti RS-485 a CAN, považujete ono tvrzení za pravdivé?
+\end{alertblock}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}{Otázky oponenta}
+
+\begin{alertblock}{Otázka II}
+Jakým způsobem se systém zachová, pokud je odpověď z modulu MTB-UNI se změnou
+stavu vstupu odvysílána, není ale z důvodu krátkého zarušení modulem MTB-USB
+přijmuta?
+\end{alertblock}
+\pause
+
+\begin{columns}
+	\begin{column}{.45\textwidth}
+	\begin{exampleblock}{Korektní chování}
+	\texttt{\footnotesize
+> Module 10 Inquiry, C=0 \\
+< State of inputs changed \\
+... \\
+> Module 10 Inquiry, C=1 \\
+< Acknowledgement \\
+... \\
+> Module 10 Inquiry, C=0 \\
+< Acknowledgement \\
+...}
+	\end{exampleblock}
+	\end{column}
+	\pause
+	\begin{column}{.45\textwidth}
+	\begin{exampleblock}{Zarušení}
+	\texttt{\footnotesize
+> Module 10 Inquiry, C=0 \\
+< \st{State of inputs changed} \\
+> Module 10 Inquiry, C=0 \\
+< State of inputs changed \\
+... \\
+> Module 10 Inquiry, C=1 \\
+< Acknowledgement \\
+...}
+	\end{exampleblock}
+	\end{column}
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+
+\end{document}
